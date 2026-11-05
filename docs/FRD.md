@@ -1,6 +1,6 @@
 # Functional requirements document
 
-Status: draft. Target role and content boundaries confirmed; backend and design remain open.
+Status: draft. Target role, content boundaries, first-release ambassador, and ASP.NET Core backend confirmed; design remains open.
 
 ## Purpose
 
@@ -45,7 +45,10 @@ Accounts, admin CMS, database, persisted chat, live GitHub statistics, email del
 
 ## Open decisions
 
-1. Backend: lightweight TypeScript API or ASP.NET Core API.
-2. Preferred visual direction after comparing two alternatives.
-3. Public display name/short form; use the resume's full name unless the owner requests otherwise.
-4. Any case-study depth beyond the resume requires new owner-approved source material.
+1. Preferred visual direction after comparing two alternatives.
+2. Public display name/short form; use the resume's full name unless the owner requests otherwise.
+3. Any case-study depth beyond the resume requires new owner-approved source material.
+
+## Confirmed implementation stack
+
+React + TypeScript frontend, ASP.NET Core API, xUnit backend tests, and Playwright browser coverage before release. Runtime and live managed-AI compatibility remain implementation gates, not completed checks.

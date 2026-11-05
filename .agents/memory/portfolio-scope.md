@@ -14,3 +14,9 @@ The first release includes a grounded AI ambassador. The Business Operations sys
 **Why:** The owner confirmed first-release AI scope and said they cannot disclose the internal tool.
 
 **How to apply:** Do not invent public demos, screenshots, code excerpts, internal topology, or operational details. Missing CRM/e-commerce links may be omitted until the owner supplies them.
+
+The owner chose ASP.NET Core for the portfolio API after reviewing a simpler TypeScript alternative.
+
+**Why:** This was an explicit architecture selection, not a default inferred from the resume.
+
+**How to apply:** Keep future API work in ASP.NET Core. Do not substitute Express or add a Node AI bridge without discussing an actual compatibility limitation first.

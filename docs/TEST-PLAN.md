@@ -5,11 +5,21 @@ Status: planned; no test suite exists or has been run.
 ## Layers
 
 - Frontend unit/component: Vitest + React Testing Library.
-- TypeScript API option: Vitest plus HTTP integration tests with model provider mocked.
-- .NET API option: xUnit + WebApplicationFactory with model provider mocked.
+- Selected backend: xUnit + WebApplicationFactory with the model provider mocked.
 - Browser: Playwright; Chromium plus additional browser engines where installed/supported.
 - Accessibility: automated axe checks plus manual keyboard, screen-reader semantics, and reduced-motion review.
 - Real AI evaluation: small, explicitly bounded smoke/evaluation set; provider calls incur credits and are not part of every deterministic unit run.
+
+## .NET compatibility gate
+
+- Install the selected SDK and record dotnet --info.
+- Build a minimal ASP.NET Core process binding to the managed PORT.
+- Confirm /api/healthz through managed routing.
+- Make one bounded authenticated request using .NET HttpClient and server-injected credentials; never print keys, authorization headers, or raw credential configuration.
+- Verify provider URL/authentication behavior, timeout/cancellation, and safe error reporting.
+- Validate the published runtime/build configuration before release.
+
+Status: catalog availability checked; none of these executable checks has run yet.
 
 ## Acceptance mapping
 

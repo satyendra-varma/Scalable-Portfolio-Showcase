@@ -6,14 +6,15 @@ All stages are planned unless explicitly marked complete in WORKLOG.md.
 
 - Confirm role, public/private boundaries, project availability, and AI scope.
 - Draft FRD, content evidence register, and documentation structure.
-- Resolve backend choice; ask for missing factual details rather than infer them.
+- Backend chosen: ASP.NET Core. Ask for missing factual details rather than infer them.
 - Exit: agreed scope and explicit remaining content gaps.
 
 ## 2. Architecture and contract
 
-- Record selected backend and why; provision required runtime/provider only after agreement.
+- Record selected backend and why; install the selected .NET runtime and provision the managed AI provider during implementation.
+- Gate implementation on a .NET build, managed routing/health check, and a bounded authenticated .NET-to-AI compatibility smoke check. Available runtime catalog entries are not equivalent to passing this gate.
 - Define public content schema, optional URL validation, source IDs, and safe resume process.
-- Define OpenAPI ambassador request/response/errors.
+- Define OpenAPI ambassador request/response/errors; generate the TypeScript client and implement that same contract in .NET.
 - Exit: documented contract and no dependency on confidential material.
 
 ## 3. Visual exploration
