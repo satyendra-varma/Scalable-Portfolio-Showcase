@@ -1,0 +1,1 @@
+- [Portfolio scope and evidence](portfolio-scope.md) — resume-only factual authority, first-release ambassador, and restrictions on internal projects.
