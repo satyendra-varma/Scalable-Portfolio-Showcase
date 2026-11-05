@@ -6,7 +6,7 @@ Comparison entry: `/room-directions`. Shareable directions:
 - A: `/room-directions/warm` — wood, soft light and paper.
 - B: `/room-directions/dark` — blueprint construction, monitor glow and terminal accents.
 
-These are selection previews, not a replacement for the existing home. The existing site's content, downloads and API have not been migrated or certified by this work. No deployment is part of this comparison.
+The owner approved making the selected warm Engineer’s Room the homepage. `/` now opens that room directly; the comparison routes above remain available. This routing change does not certify or migrate legacy project routes, downloads or API content. No publishing is part of this change.
 
 ## Evidence review
 
@@ -31,4 +31,4 @@ Reviewed the supplied resume against `docs/CONTENT.md` and the room brief ending
 
 ## Selection gate
 
-The owner selected **A — Warm workshop**. The direction gate is resolved; the remaining nine flows, production-wide content migration, and full v1 implementation remain separate follow-up work, not part of this comparison. The current home is unchanged. Full recruiter-journey verification is tracked separately; preview checks do not satisfy full-site acceptance.
+The owner selected **A — Warm workshop** and subsequently approved using it as the default homepage. The remaining nine flows, production-wide content migration, and full v1 implementation are not completed by the homepage routing change. Preview checks do not satisfy full-site acceptance.

@@ -5,8 +5,18 @@ import { useState } from 'react';
 import { ContactContent, ProjectList, SkillsContent } from './RoomContent';
 import { RoomExplorer } from './RoomExplorer';
 import { crmFlow, projectEvidence } from '@/content/room-preview';
+import RoomDirections from '@/pages/room-directions';
 
 describe('isolated room preview', () => {
+  it('presents the warm room as a homepage without comparison-only labeling', () => {
+    render(<RoomDirections homepage />);
+    expect(screen.getByTestId('page-room-warm')).toBeInTheDocument();
+    expect(screen.getByText('Engineer’s Room')).toBeInTheDocument();
+    expect(screen.queryByText('Not the live site')).toBeNull();
+    expect(document.title).toBe('Satyendra Varma Nadimpalli | Full Stack .NET Software Engineer');
+    expect(screen.getByTestId('hotspot-explorer')).toBeInTheDocument();
+  });
+
   it('renders exactly two projects and noninteractive missing links', () => {
     render(<ProjectList activeSkill={null} />);
     expect(screen.getAllByRole('article')).toHaveLength(2);

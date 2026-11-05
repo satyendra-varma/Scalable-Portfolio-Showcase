@@ -1,5 +1,11 @@
 # Work log
 
+## Approved homepage update
+
+The owner explicitly approved making the warm Engineer’s Room the default homepage. `/` now renders that room directly; comparison URLs remain available. Homepage title and labeling were updated without changing the room's interaction model.
+
+Verification: frontend type check and five focused room component tests passed; the restarted frontend serves the room at `/`, confirmed by a rendered screenshot. No publishing or unrelated content/API migration was performed.
+
 ## Current checkpoint: revised planning only
 
 The latest attached brief supersedes conflicting earlier scope. **No application code, public assets, configuration, workflows, integrations or deployment settings were changed in this planning pass.**

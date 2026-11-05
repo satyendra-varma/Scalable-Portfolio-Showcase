@@ -25,4 +25,4 @@ The owner selected “A — Warm workshop” from the engineer-room comparison, 
 
 **Why:** The owner explicitly chose A after receiving the warm and dark previews.
 
-**How to apply:** Use warm wood, paper and soft light for subsequent room implementation. The comparison itself does not replace the home or implement the deferred flows. The room brief governs visuals; the resume governs factual claims.
+**How to apply:** Use warm wood, paper and soft light for subsequent room implementation. The owner also explicitly approved “Make room the homepage”; preserve the warm room as the default landing experience. That approval does not complete deferred flows or authorize unrelated content changes. The room brief governs visuals; the resume governs factual claims.

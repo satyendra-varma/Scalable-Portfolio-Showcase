@@ -13,7 +13,7 @@ const meta: Record<Direction, { letter: string; name: string; blurb: string }> =
   dark: { letter: 'B', name: 'Night blueprint', blurb: 'Linework, monitor glow and terminal accents.' },
 };
 
-export default function RoomDirections() {
+export default function RoomDirections({ homepage = false }: { homepage?: boolean }) {
   const params = useParams<{ dir?: string }>();
   const direction: Direction = params.dir === 'dark' ? 'dark' : 'warm';
   const [open, setOpen] = useState<HotspotId | null>(null);
@@ -22,8 +22,12 @@ export default function RoomDirections() {
   const opener = useRef<HTMLElement | null>(null);
 
   useDocumentMeta(
-    `Room direction ${meta[direction].letter} preview | Satyendra Varma Nadimpalli`,
-    'Engineer room direction comparison: two approved projects and one representative CRM flow. Selection preview, not the live portfolio.',
+    homepage
+      ? 'Satyendra Varma Nadimpalli | Full Stack .NET Software Engineer'
+      : `Room direction ${meta[direction].letter} preview | Satyendra Varma Nadimpalli`,
+    homepage
+      ? hero.positioning
+      : 'Engineer room direction comparison: two approved projects and one representative CRM flow. Selection preview, not the live portfolio.',
   );
 
   const close = () => {
@@ -47,7 +51,10 @@ export default function RoomDirections() {
     <div className="rp" data-dir={direction} data-testid={`page-room-${direction}`}>
       <a href="#rp-main" className="rp-skip">Skip to content</a>
       <header className="rp-bar">
-        <p className="rp-bar-tag"><span className="rp-pill">Direction preview</span> Not the live site</p>
+        <p className="rp-bar-tag">
+          <span className="rp-pill">{homepage ? 'Engineer’s Room' : 'Direction preview'}</span>
+          {homepage ? 'Interactive portfolio' : 'Not the live site'}
+        </p>
         <nav aria-label="Direction switcher" className="rp-switch">
           {(['warm', 'dark'] as Direction[]).map((d) => (
             <Link key={d} href={`/room-directions/${d}`} className={`rp-switch-a${d === direction ? ' is-on' : ''}`} aria-current={d === direction ? 'page' : undefined} data-testid={`link-direction-${d}`}>
@@ -62,7 +69,7 @@ export default function RoomDirections() {
             <h1 id="rp-name" className="rp-name" data-testid="text-name">{hero.name}</h1>
             <p className="rp-role" data-testid="text-role">{hero.role}</p>
             <p className="rp-pos" data-testid="text-positioning">{hero.positioning}</p>
-            <p className="rp-dir-note">Direction {meta[direction].letter}: {meta[direction].blurb}</p>
+            {!homepage && <p className="rp-dir-note">Direction {meta[direction].letter}: {meta[direction].blurb}</p>}
             <button type="button" className="rp-toggle" aria-pressed={listView} onClick={() => setListView(!listView)} data-testid="button-list-view">
               {listView ? 'View as room' : 'View as list'}
             </button>
