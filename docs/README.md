@@ -1,6 +1,6 @@
-# Portfolio planning
+# Portfolio documentation
 
-Status: requirements draft; ASP.NET Core backend selected, visual direction pending. No application implementation has begun.
+Status: System Explorer selected and implemented. React/TypeScript frontend and ASP.NET Core .NET 10 API are running in development. The grounded ambassador and public-safe resume work. Browser interaction tests and full release audits remain pending; the site has not been published.
 
 ## Reading order
 
@@ -12,8 +12,24 @@ Status: requirements draft; ASP.NET Core backend selected, visual direction pend
 6. [Release checklist](RELEASE-CHECKLIST.md)
 7. [Work log](WORKLOG.md)
 
+Visual exploration: [Design brief and comparison criteria](DESIGN-BRIEF.md).
+
 Architecture decisions: [ASP.NET Core backend](decisions/001-aspnet-core-backend.md).
 
-Missing public project URLs belong in [project-links.json](project-links.json). Empty URLs must produce no public link, dummy button, or unavailable-demo claim. Once implemented, changing this content file should update the built site on the next build/release, not modify an already published build automatically.
+Missing public project URLs belong in [project-links.json](project-links.json). Null/blank entries produce no link or dummy button. After adding real HTTPS URLs, rebuild and publish again to update a published site. The internal Business Operations tool cannot receive an external link.
 
-These files describe planned behavior, not completed features. Open decisions are explicitly marked.
+Requirements are not test results. See WORKLOG.md and RELEASE-CHECKLIST.md for what was actually verified and what is still pending.
+
+## Common commands
+
+- Frontend unit/component tests: `pnpm --filter @workspace/portfolio test`
+- API unit/integration tests: `pnpm --filter @workspace/api-server test`
+- Frontend type check: `pnpm --filter @workspace/portfolio typecheck`
+- API release package: `pnpm --filter @workspace/api-server build`
+- Regenerate API hooks/schemas: `pnpm --filter @workspace/api-spec codegen`
+- Recreate sanitized public resume: `python3 scripts/sanitize_resume.py`
+- Prepared browser suite: `pnpm --filter @workspace/portfolio test:e2e` (not run in the first build; requires browser installation and running app).
+
+The frontend build requires the managed service's `PORT` and `BASE_PATH` environment values. Use its configured workflow, or set development values explicitly for a one-off local build.
+
+Curated public AI knowledge: [public-facts.json](public-facts.json). Update it only with approved resume evidence, then rerun tests/builds. The original uploaded PDF is not the public download.

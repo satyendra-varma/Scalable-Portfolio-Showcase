@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: ambassador
+    description: Public evidence-grounded portfolio guide
 paths:
   /healthz:
     get:
@@ -24,7 +26,56 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /ambassador/status:
+    get:
+      operationId: getAmbassadorStatus
+      tags: [ambassador]
+      summary: Availability of the portfolio guide without a model call
+      responses:
+        "200":
+          description: Configuration readiness, not a live-provider guarantee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbassadorStatus"
+  /ambassador:
+    post:
+      operationId: askAmbassador
+      tags: [ambassador]
+      summary: Answer using only approved public resume evidence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AmbassadorInput"
+      responses:
+        "200":
+          description: Supported answer with citations, or an explicit refusal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbassadorAnswer"
+        "400":
+          $ref: "#/components/responses/RequestError"
+        "413":
+          $ref: "#/components/responses/RequestError"
+        "429":
+          $ref: "#/components/responses/RequestError"
+        "502":
+          $ref: "#/components/responses/RequestError"
+        "503":
+          $ref: "#/components/responses/RequestError"
+        "504":
+          $ref: "#/components/responses/RequestError"
 components:
+  responses:
+    RequestError:
+      description: Explicit validation, limit, or service error
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ApiProblem"
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +84,54 @@ components:
           type: string
       required:
         - status
+    AmbassadorStatus:
+      type: object
+      required: [available, message]
+      properties:
+        available:
+          type: boolean
+        message:
+          type: string
+    AmbassadorInput:
+      type: object
+      additionalProperties: false
+      required: [message]
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 1200
+    EvidenceSource:
+      type: object
+      required: [id, title, href]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        href:
+          type: string
+    AmbassadorAnswer:
+      type: object
+      required: [answer, status, sources]
+      properties:
+        answer:
+          type: string
+        status:
+          type: string
+          enum: [supported, unsupported]
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/EvidenceSource"
+    ApiProblem:
+      type: object
+      required: [title, status, detail]
+      properties:
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
 

@@ -9,14 +9,20 @@ The owner said: “resume is a single source of truth, dont assume anything. Jus
 
 **How to apply:** Use the attached resume for biographical and project claims. Owner-provided URLs are contact/link destinations, not automatic authorization to import new facts. Ask before expanding beyond the resume.
 
-The first release includes a grounded AI ambassador. The Business Operations system is an internal tool and cannot be disclosed beyond the resume's public-level description.
+The revised release has exactly two featured projects: Enterprise CRM Platform, then Cloud E-Commerce Platform. All other project source material is excluded from publication, including hints and derived metrics. No AI ambassador belongs in this version; it is a later phase.
 
-**Why:** The owner confirmed first-release AI scope and said they cannot disclose the internal tool.
+**Why:** The latest owner-provided brief replaces the earlier release scope and imposes a stricter publication allowlist.
 
-**How to apply:** Do not invent public demos, screenshots, code excerpts, internal topology, or operational details. Missing CRM/e-commerce links may be omitted until the owner supplies them.
+**How to apply:** Follow the revised six planning documents, not earlier content permissions. Missing project URLs must show non-clickable “Live link coming soon” labels. The requested single config location is the portfolio's src/content/site.ts, with CRM_LINK and ECOMMERCE_LINK. Do not implement the revised plan before owner approval.
 
 The owner chose ASP.NET Core for the portfolio API after reviewing a simpler TypeScript alternative.
 
 **Why:** This was an explicit architecture selection, not a default inferred from the resume.
 
 **How to apply:** Keep future API work in ASP.NET Core. Do not substitute Express or add a Node AI bridge without discussing an actual compatibility limitation first.
+
+The owner selected the System Explorer visual direction.
+
+**Why:** The owner explicitly chose it after comparing two live portfolio concepts.
+
+**How to apply:** Preserve that approved visual identity during implementation; do not replace it with the Evidence Story direction or a fresh generic layout.

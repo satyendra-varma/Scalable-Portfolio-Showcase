@@ -1,58 +1,106 @@
-# Content, sources, and publication rules
+# Approved content plan
 
-## Authority
+Status: **planning only; not yet applied to the running site.**
 
-The owner said: “resume is a single source of truth, dont assume anything. Just ask me for anything you want.”
+## Source authority
 
-Resume source: attached_assets/Satyendra_Varma_Resume_1793845881888.pdf.
-Initial design/context brief: attached_assets/Pasted--You-ll-turn-your-background-into-a-visual-resume-built_1793845630976.txt.
+- Resume: `attached_assets/Satyendra_Varma_Resume_1793845881888.pdf`.
+- Latest scope brief: `attached_assets/Pasted-I-m-building-a-personal-portfolio-website-for-Satyendra_1793847251845.txt`.
+- The resume supplies facts; the latest brief determines which facts are permitted for publication.
+- The supplied LinkedIn URL is an approved destination, not permission to import additional claims.
+- Do not publish source material outside this allowlist or hint at omitted material.
 
-The contextual brief defines desired behavior; it is not biographical evidence. The supplied LinkedIn URL is an approved contact destination, not permission to replace resume facts with unreviewed profile claims.
+## Hero
 
-## Approved public contact
+Name: **Satyendra Varma Nadimpalli**
+
+Role: **Full Stack .NET Software Engineer**
+
+Exact positioning:
+
+> Backend-led full-stack engineer building scalable .NET systems and shipping them end to end.
+
+### Three recruiter takeaways
+
+1. Designs scalable multi-tenant backends with .NET 8 and Domain-Driven Design.
+2. Ships and runs systems end to end: Docker, AWS EC2, NGINX reverse proxy, Certbot SSL, CI/CD.
+3. Improves performance: reduced complex database query times by **35% at Nanomindz Technologies**.
+
+Do not generalize this metric to other work or infer scale, revenue, user counts or reliability guarantees.
+
+## Work — exact order
+
+### 1. Enterprise CRM Platform
+
+- **Problem/context:** Enterprise multi-tenant CRM. The resume does not provide a more specific customer pain point; do not invent one.
+- **Contribution:** Delivered a scalable multi-tenant enterprise CRM using .NET 8 and Domain-Driven Design.
+- **Tools/mechanisms:** MediatR CQRS, JWT/RBAC authorization, EF Core global query filters for soft deletes, Redis distributed caching.
+- **Verified delivery:** The platform and mechanisms above are resume-backed. Exact deployment topology, tenant counts and quantified business impact are not provided.
+- **Outcome: to be added**
+- **Link config:** CRM_LINK.
+
+### 2. Cloud E-Commerce Platform
+
+- **Problem/context:** Full-stack e-commerce infrastructure. The resume does not establish a more detailed commercial problem.
+- **Contribution:** Developed and deployed containerized infrastructure using C# .NET Core and MSSQL on AWS EC2 with Docker.
+- **Tools/mechanisms:** NGINX reverse proxy, Certbot SSL, xUnit tests.
+- **Verified delivery:** Development, deployment and the listed technologies are source-backed. Do not infer payment providers, sales figures, traffic or uptime.
+- **Outcome: to be added**
+- **Link config:** ECOMMERCE_LINK.
+
+Outcome placeholders above are editorial reminders in this document. Until the owner supplies verified outcomes, public copy should describe supported delivery without presenting an invented result.
+
+## Experience
+
+### Crescenza Consulting Group
+
+Software Engineer (Contract), Apr 2023 – Present, as stated in the supplied resume. Discuss only the two approved projects above. Do not recalculate tenure or assert independently verified current employment.
+
+### Nanomindz Technologies
+
+.NET Developer, India, Jul 2020 – Jun 2021.
+
+- Developed RESTful Web APIs and WCF services in C#.
+- Optimized SQL Server and Oracle stored procedures, indexes and complex queries, reducing complex query execution time by **35%**.
+- Containerized legacy application components using Docker and integrated them into Jenkins CI/CD pipelines.
+
+Do not substitute GitHub Actions for the source's Jenkins project attribution.
+
+## Skills
+
+Use resume wording and qualifications:
+
+- Backend: C#, .NET 8, ASP.NET Core, Web API, MVC, Entity Framework Core, LINQ, REST APIs.
+- Frontend: React, TypeScript, JavaScript, HTML5/CSS3, Bootstrap.
+- Data/security: SQL Server/MSSQL, PostgreSQL, SQLite, Oracle DB, JWT Auth, RBAC.
+- Cloud/delivery: AWS EC2/S3, Docker, GitHub Actions, Jenkins, NGINX, Certbot, Git, CI/CD; Kubernetes **familiarity**, not expertise.
+- Architecture/testing: DDD, MediatR, MassTransit, Redis, xUnit, Serilog, EF Core global query filters.
+- Practices: Agile/Scrum, SDLC, code review, debugging, production support.
+
+A globally listed skill is not evidence that it was used in a particular project.
+
+## Education
+
+Master’s in Applied Computer Science, Fairleigh Dickinson University, Vancouver, BC, Canada. Sep 2021 – Apr 2023.
+
+Listed focus: Advanced Application Development, Web Architecture, Component Security, Secure Cryptographic Hashing.
+
+## Contact
 
 - Email: satyendrasatya447@gmail.com
 - LinkedIn: https://www.linkedin.com/in/satyendra-varma-nadimpalli-56a199247
-- Location exactly as provided in the resume: Vancouver, BC, Canada.
-- Phone: do not publish, embed in page data, include in public AI context, or leave in downloadable files.
-- No street address was provided.
+- Location: Vancouver, BC, Canada
 
-Do not duplicate private source content into these public-content documents.
+No additional personal contact fields or address detail.
 
-## Evidence register
+## Link presentation and editing
 
-| Source ID | Topic | Exact resume evidence | Allowed interpretation |
-| --- | --- | --- | --- |
-| positioning | Role | “Full Stack .NET Software Engineer with 4+ years of software engineering experience” | Use this wording; do not recalculate or inflate tenure from calendar dates. |
-| crm | Enterprise CRM | “Delivered a scalable multi-tenant enterprise CRM using .NET 8 and Domain-Driven Design” | Discuss multitenancy and DDD as resume-reported contributions, without invented scale numbers. |
-| crm-security | CRM mechanisms | “secure JWT/RBAC authorization, EF Core Global Query Filters for automated soft deletes, and Redis distributed caching paired with MediatR CQRS handlers” | These mechanisms are verified; exact tenant isolation, cache invalidation, queues, and deployment topology are not. |
-| operations | Auditing engine | “automating complex balance calculations, shift scheduling, role-restricted record management, and reducing weekly reconciliation time by 15+ hours” | Report the 15+ hours outcome without inventing customers, revenue, team size, or screenshots. |
-| ecommerce | Cloud e-commerce | “C# .NET Core, MSSQL, Docker” and “AWS EC2”, “xUnit”, “NGINX”, “Certbot SSL encryption” | Describe these technologies; do not invent checkout providers, sales figures, or uptime guarantees. |
-| databases | Database impact | “reducing complex database query execution times by 35%” | Attribute this outcome to the Nanomindz experience, not CRM or e-commerce. |
-| delivery | Earlier delivery work | “Containerized legacy application components using Docker and integrated them into Jenkins CI/CD build pipelines” | Attribute Jenkins work correctly; do not silently substitute GitHub Actions on that project. |
-| education | Education | “Master’s in Applied Computer Science” and “Sep 2021 – Apr 2023” | Preserve institution and degree as written in the resume. |
+Plan one config file at `artifacts/portfolio/src/content/site.ts` (the portfolio's `src/content/site.ts`). It will contain CRM_LINK and ECOMMERCE_LINK.
 
-Use the original resume for the full skills list, dates, and employer wording. Familiarity must remain familiarity, particularly Kubernetes. Skills listed globally are not proof that every project used them.
+Until supplied, each project card displays **Live link coming soon** as plain, non-clickable text. A real approved HTTPS URL replaces the corresponding value with a one-line edit and becomes a link after build/publication. Do not create competing configuration files or fake destinations.
 
-## Project publication
+## Open questions
 
-Requested highlights: CRM, Business Operations system, and custom e-commerce work. Initial ordering recommendation: CRM, Business Operations, e-commerce; owner can change it.
-
-- CRM: public URL pending.
-- E-commerce: public URL pending; the resume establishes one Cloud E-Commerce Platform. Do not invent multiple distinct project histories from the owner's broader wording.
-- Business Operations: internal tool, no public URL, no disclosure beyond resume facts.
-- Future screenshots, code excerpts, or employer branding require permission and source review.
-
-## Optional links
-
-Edit docs/project-links.json. Use null until a real approved HTTPS URL exists. Never substitute example.com, #, fabricated repositories, or invented demos.
-
-The implementation must consume this file through a validated content step. Filling it is not automatic publication; build/release changes are still required.
-
-## Ambassador content
-
-Generate a separate public-safe knowledge object from the approved facts. Never pass the raw PDF, uploads directory, private phone, or unreviewed documents to the model. Every answer must be traceable to approved facts. Unsupported salary, relocation, availability, management history, or unlisted technologies must not be inferred.
-
-## Resume download
-
-Produce and inspect a public-safe PDF before enabling the download. Preserve accurate content while removing phone data and checking the text layer and metadata. The original upload stays outside static public assets.
+1. What verified business outcomes, if any, may be added for either project? Until answered, keep the editorial outcome placeholders above.
+2. What are the two approved live URLs? Their absence does not block a release with the required labels.
+3. Should a newly reviewed resume download be included at all?

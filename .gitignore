@@ -17,6 +17,14 @@ out-tsc
 # dependencies
 node_modules
 
+# .NET and generated verification output
+**/bin/
+**/obj/
+**/TestResults/
+/generated-artifacts/
+.pythonlibs/
+__pycache__/
+
 # IDEs and editors
 /.idea
 .project

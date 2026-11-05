@@ -1,91 +1,63 @@
-# Architecture proposal
+# Architecture — revised portfolio plan
 
-Status: ASP.NET Core selected by the owner. Detailed implementation is proposed; no application code has been written.
+Status: **proposal only, awaiting approval.** Existing code and running services still implement the earlier scope. No runtime, secret, provider or deployment settings are changed in this planning pass.
 
-Decision record: [ASP.NET Core backend](decisions/001-aspnet-core-backend.md).
+## Proposed release architecture
 
-## Shared frontend
+Use the existing React + TypeScript + Vite portfolio artifact. Prefer build-time, reviewed content and static assets for this content-focused release; no database, authentication, contact-delivery service or paid provider call is required.
 
-React + TypeScript + Vite, responsive routes, structured resume-derived content, and focused components. The landing experience supports a short scan; case-study routes support deeper reading and direct links.
+The owner previously selected ASP.NET Core for server functionality. Preserve that choice for any future API work; do not substitute Express or introduce a Node bridge. Whether the existing API should remain deployed in this release is an open decision, not an assumption.
 
-Content originates in reviewed version-controlled files, not a database. The public content contract is shared by the website and the ambassador. Optional URLs are validated from docs/project-links.json, with absent values omitted.
+Recommended request flow:
 
-## Backend alternatives
+Visitor → portfolio page and approved static assets → email/LinkedIn or a supplied project URL.
 
-| Consideration | Lightweight TypeScript/Express API | ASP.NET Core API |
-| --- | --- | --- |
-| Purpose | A small server boundary for the ambassador | Same boundary plus a C# code sample reflecting the owner's expertise |
-| Fit | Existing server foundation and documented managed AI client integration | Stronger alignment with target-role implementation skills |
-| Complexity | One language across site/API; fewer runtime changes | Separate C# runtime, build/test pipeline, and cross-language contract |
-| Tests | Vitest plus HTTP integration tests | xUnit plus WebApplicationFactory integration tests |
-| Managed AI | Documented Node/TypeScript integration available | Verify authenticated proxy compatibility from .NET before committing; do not assume all SDKs work unchanged |
-| Maintenance | Lower for this feature set | Higher, potentially worthwhile as a deliberate showcase |
+No AI request path belongs in this version. Hiding a chat component alone is insufficient: an approved implementation must prevent public use of the corresponding endpoints and remove their content from release outputs.
 
-Historical recommendation for the simplest delivery was TypeScript. The owner chose ASP.NET Core after reviewing the alternatives. Proceed with .NET, not Express or a hidden Node AI bridge. Both options easily support this site; no traffic estimate justifies microservices.
+## Content ownership and configuration
 
-Read-only feasibility checks: dotnet is not currently installed in the environment. The runtime catalog offers .NET 8, 9, and 10. Replit documentation indicates ASP.NET Core and managed AI access are supported; actual SDK installation, an authenticated .NET-to-AI request, managed service routing, build, and publishing compatibility must still be verified during implementation. No runtime, provider, or workflow changes have been made. An available runtime is not a successful end-to-end compatibility test.
+- Logical path requested by the owner: `src/content/site.ts`.
+- Workspace location: `artifacts/portfolio/src/content/site.ts`.
+- This is the proposed single source for approved site copy, section identifiers, project order, and the two URL values named CRM_LINK and ECOMMERCE_LINK.
+- Do not create the file in this planning phase.
+- After approval, consolidate the existing scattered configuration into this file. Retire competing URL sources rather than maintaining two editable files.
+- Literal placeholder, null or blank URL values render the exact non-clickable label “Live link coming soon”.
+- A valid approved HTTPS URL renders a real link. Changing one value is a one-line edit; subsequent build/publication is still required.
+- Validate populated URLs and data shape during the build. Reject executable schemes, credentials, local destinations and fabricated example destinations.
+- Maintain resume traceability in CONTENT.md. Do not ship the raw resume or planning documents as public content.
 
-Do not add a separate Node AI bridge to .NET by default: two backend services would undermine the simplicity goal. If .NET cannot use managed AI directly, return to the owner with the tradeoff.
+## Page composition
 
-## Request path
+Focused components for sticky navigation, Hero, Work, Experience, Skills, Education and Contact. Use stable section IDs and semantic landmarks.
 
-Browser -> public-safe content and project routes.
-Browser -> same-origin POST /api/ambassador -> validated approved facts -> managed AI -> validated answer and source references.
+Use an IntersectionObserver-based active-section mechanism, with deterministic behavior near the page top/bottom and when sections overlap the viewport. Navigation should expose the active location with `aria-current`, not color alone. Offset anchor scrolling for the sticky header and respect reduced-motion preferences.
 
-Use a version-controlled OpenAPI contract as the frontend/backend boundary, with generated React Query hooks and schemas. Implement the contract in ASP.NET Core and test that implementation against it. Define the contract and run codegen before frontend integration. Do not maintain two competing hand-written API definitions.
+Preserve the approved System Explorer visual identity while adjusting its content and section structure. A skip link must move focus to the main content. Mobile navigation must remain keyboard-operable, close predictably and not hide focused content.
 
-Proposed request: bounded message plus bounded in-memory conversation history.
-Proposed response: answer, validated source IDs, and supported/unsupported status.
-Service failures: explicit non-success response with safe retry guidance, never a fabricated answer.
+Detail pages for the two approved projects are optional pending the owner's decision. If retained, derive them from the same content rather than duplicating facts.
 
-## Selected backend structure
+## Publication cleanup after approval
 
-Use a small ASP.NET Core project with a separate xUnit test project, rather than artificial microservices or a large DDD solution for a single endpoint.
+Audit the existing application against the new content allowlist. Remove non-allowlisted content from all release surfaces, including obsolete routes, source data bundled into JavaScript, generated files, metadata and downloadable documents. A hidden card or navigation item is not a privacy control.
 
-- API boundary: routing, request/response DTOs, validation, Problem Details errors, and health checks.
-- Application service: assemble approved evidence, coordinate answer generation, and validate source references.
-- Infrastructure boundary: typed HttpClient for managed AI, explicit cancellation/timeouts, and validated server-side configuration.
-- Content boundary: curated public-safe facts and validated links, shared through a content schema/build step rather than scraping rendered pages.
-- Tests: deterministic application tests and WebApplicationFactory integration tests; substitute the provider client rather than call the live model in every run.
+Keep original uploads outside public directories and denied by preview servers. Review any retained download by rendered pages, text extraction, metadata and link targets. Do not reuse the current PDF unchanged.
 
-Proposed endpoints:
+Address the earlier design previews as well as the main site before claiming the workspace complies with the revised publication rules. This planning pass makes no such claim.
 
-| Endpoint | Purpose | Expected states |
-| --- | --- | --- |
-| GET /api/healthz | Process liveness without a paid model call | 200 |
-| POST /api/ambassador | Evidence-grounded answer and source IDs | 200 supported or unsupported; 400 invalid body; 413 oversized body; 429 throttled; 502 invalid/provider failure; 503 unconfigured/unavailable; 504 timeout |
+## Tests and delivery
 
-Keep public content static initially; do not add content CRUD merely to create more API code. The API binds to the configured PORT and handles its full /api prefix. Use same-origin browser calls and existing managed routing, not localhost URLs or a duplicate manually configured workflow.
+Use Vitest/React Testing Library for rendering and config states, then Playwright for real browser journeys. The revised static frontend does not need backend work merely to demonstrate a skill from the resume. If an API remains part of the release, use xUnit and application-host tests for its actual approved surface.
 
-Runtime proposal: .NET 10 if its available toolchain and publishing path pass the compatibility gate. The portfolio may use a newer runtime without changing the resume's factual .NET 8 experience. Verify runtime support lifecycle before finalizing the target.
+Run builds, source/privacy checks, browser/accessibility checks and documented performance measurements after implementing the approved scope. Old test results are historical evidence, not acceptance of this revision.
 
-The existing API artifact is an unmodified Express scaffold. Implementation will change its managed service commands through the validated artifact configuration flow after the .NET build is ready, preserving its /api routing. No existing product API or user data needs migration based on the currently inspected scaffold.
+Publishing is a separate owner-approved action.
 
-## Grounding and security
+## Later phase: optional ambassador
 
-- Do not give the ambassador browsing, file access, code execution, or write tools.
-- Only curated public facts reach the AI; prompt injection cannot expose a phone number it never receives.
-- Use instructions plus structured output validation and evidence-ID checks. These do not prove semantic truth; answer evaluation and conservative refusal are also required.
-- Consider selecting approved evidence and composing constrained answers rather than unrestricted prose where factual accuracy is most important.
-- Reject invalid bodies; bound message/history sizes, total context, output tokens, request duration, and concurrent calls.
-- Apply per-client and global throttles. Initial single-instance limits may be in memory; multi-instance publishing requires a shared limiter or platform-level equivalent. Never claim restart-persistent enforcement from an in-memory map.
-- Disable application body/transcript logging and sanitize exception logs; record only non-content operational metadata if needed.
-- Treat user text and model text as untrusted; render safe text, not executable HTML.
-- Explain provider processing separately from the application's no-storage policy. Provider retention remains a release verification item.
-- No account/auth flow or database is needed for the approved release.
+Only after separate approval: curate an allowlisted knowledge set, use the selected ASP.NET Core boundary, keep credentials server-side, validate inputs and evidence, impose cost/request limits, provide explicit unsupported/error states, and define storage/provider-processing disclosures. Do not automatically reuse the earlier knowledge set or activate existing endpoints.
 
-## AI provider proposal
+## Open questions
 
-Use Replit AI Integrations for OpenAI access. No personal API key is required; usage is billed to the owner's Replit credits. Provisioning is deferred until the architecture is agreed. No vector database or embeddings are needed for a resume-sized knowledge set.
-
-## Contact and downloadable assets
-
-Use mailto and the approved LinkedIn link initially; no email-sending integration is required. Host only a reviewed public-safe resume PDF. Do not expose attached_assets as a static directory.
-
-## Design and operational constraints
-
-Explore two visual directions before committing. Favor useful project exploration and explainable technical evidence over arbitrary animation. Reduced-motion and touch/keyboard behavior are first-class.
-
-Keep components, content, routes, API, and tests separated. Do not introduce Kubernetes, Redis, extra databases, or Docker execution just because they appear in the resume. Any future AWS/container deployment pipeline is separate from Replit publishing and needs an explicit decision.
-
-Canonical URLs and social metadata must use the real production URL when available, never a guessed domain.
+1. Frontend-only release, or retain a narrowly scoped ASP.NET Core service?
+2. Omit the download, or commission a newly reviewed allowlisted PDF?
+3. Keep two public project detail pages, or use only the requested single-page sections?
