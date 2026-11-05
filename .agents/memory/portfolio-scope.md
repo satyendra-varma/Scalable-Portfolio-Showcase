@@ -21,8 +21,8 @@ The owner chose ASP.NET Core for the portfolio API after reviewing a simpler Typ
 
 **How to apply:** Keep future API work in ASP.NET Core. Do not substitute Express or add a Node AI bridge without discussing an actual compatibility limitation first.
 
-The owner selected the System Explorer visual direction.
+The owner selected “A — Warm workshop” from the engineer-room comparison, superseding the earlier System Explorer-only visual selection.
 
-**Why:** The owner explicitly chose it after comparing two live portfolio concepts.
+**Why:** The owner explicitly chose A after receiving the warm and dark previews.
 
-**How to apply:** Preserve that approved visual identity during implementation; do not replace it with the Evidence Story direction or a fresh generic layout.
+**How to apply:** Use warm wood, paper and soft light for subsequent room implementation. The comparison itself does not replace the home or implement the deferred flows. The room brief governs visuals; the resume governs factual claims.

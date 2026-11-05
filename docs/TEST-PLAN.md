@@ -1,5 +1,43 @@
 # Test plan — revised release
 
+## Engineer-room comparison verification — 2026-11-05
+
+This section records **executed preview-only checks**, not full-site acceptance. The planned release checklist below remains unexecuted for the historical home.
+
+Routes: `/room-directions`, `/room-directions/warm`, `/room-directions/dark`.
+
+Commands/results:
+- `pnpm --filter @workspace/portfolio test`: 24 tests passed across 3 files, including 4 new React Testing Library preview tests.
+- `pnpm --filter @workspace/portfolio typecheck`: passed.
+- `PORT=4173 BASE_PATH=/ pnpm --filter @workspace/portfolio build`: passed. Existing tooltip sourcemap warning and >500 KB bundle warning remain.
+- `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/repl/tools/bin/chromium pnpm --filter @workspace/portfolio exec playwright test e2e/room-directions.spec.ts`: 4 passed. Both directions at 1440×900 and emulated iPhone 13 Chromium (390×664 CSS viewport).
+- Covered five hotspot panels, Escape dismissal and focus return, skill filter match/empty/reset, link and resume placeholders, Explorer selector/diagram Tab order, arrows/Enter/Space/End, ten-stage numbered list, five-section plain mode, above-fold hero, no document horizontal overflow, and reduced-motion computed styles.
+- Axe WCAG 2 A/AA, 2.1 AA and 2.2 AA checks: zero violations in each direction's open Explorer list and full plain-section mode. An initial animation-opacity contrast failure was fixed by using a border glow without fading node text. This is automated coverage, not a claim of exhaustive WCAG certification.
+- Visual screenshots checked at 390×844 and 1440×900: hero precedes room, five labels visible, distinct materials and illustration treatment, visible focus styles defined for all controls. Screenshot paths below.
+
+### Measured mobile performance
+
+Lighthouse 13.6.0, headless system Chromium, fresh CLI navigation, default mobile simulation, simulated throttling (150ms RTT, 1638.4 Kbps throughput, 4× CPU slowdown), local production Vite preview at port 4173. One run per direction; not a deployed-site measurement.
+
+| Direction | Performance | LCP | CLS | TBT |
+| --- | --- | --- | --- | --- |
+| A warm | 99 | 1.7s | 0.018 | 20ms |
+| B dark | 99 | 1.7s | 0.034 | 20ms |
+
+Command: `CHROME_PATH=/repl/tools/bin/chromium pnpm --filter @workspace/portfolio exec lighthouse http://localhost:4173/room-directions/<direction> --chrome-flags='--headless --no-sandbox' --only-categories=performance --output=json --output-path=../../generated-artifacts/lighthouse-production-<direction>.json --quiet --no-enable-error-reporting`.
+
+The development proxy warm run scored 84 (LCP 1.1s, CLS 0.018); development-module overhead is not the production build. The production measurement preceded a final dialog-only wording/list-default adjustment, which does not alter the measured initial room rendering. External Google Fonts and shared historical bundle size remain limitations; scores vary by environment.
+
+### Deliverables and boundaries
+
+- `generated-artifacts/room-warm-desktop.jpg`
+- `generated-artifacts/room-warm-mobile.jpg`
+- `generated-artifacts/room-dark-desktop.jpg`
+- `generated-artifacts/room-dark-mobile.jpg`
+- Raw Lighthouse reports: `generated-artifacts/lighthouse-production-{warm,dark}.json`.
+
+Generated reports/screenshots are intentionally excluded from Git and deployment. Questions and selection gate: `docs/ROOM-DIRECTIONS.md`. No backend, paid AI calls, historical recruiter-journey tests, old PDF acceptance or production-wide privacy audit were run for this task. Stop for owner A/B choice before further v1 work.
+
 Status: **planned, not executed for this revision.** Earlier passing tests do not validate the changed requirements. This pass edits documentation only.
 
 ## Layers
