@@ -19,8 +19,9 @@ Full Stack .NET Software Engineer with 4+ years of software engineering experien
 - Frontend: React, TypeScript, JavaScript, HTML5/CSS3, Bootstrap
 - Databases: SQL Server (MSSQL), PostgreSQL, SQLite, Oracle DB [TO CONFIRM: which DB the CRM uses]
 - Security: JWT auth, RBAC
-- Cloud and DevOps: AWS (EC2, S3), Docker, GitHub Actions, Jenkins, NGINX, Certbot, Git
-- Architecture and testing: Domain-Driven Design, MediatR, Redis, xUnit, Serilog
+- Cloud and DevOps: AWS (EC2, S3), Docker, Kubernetes (familiarity), GitHub Actions, Jenkins, NGINX, Certbot, Git, CI/CD
+- Architecture and testing: Domain-Driven Design, MediatR, MassTransit, Redis, xUnit, Serilog
+- Development practices: Agile/Scrum, SDLC, Code Review, Debugging, Production Support
 
 ## Projects
 ### Enterprise CRM Platform (Crescenza Consulting Group, Apr 2023 to present)
@@ -47,6 +48,7 @@ See the CRM and E-Commerce projects above.
 
 ## Education
 Master's in Applied Computer Science, Fairleigh Dickinson University, Vancouver, BC, Sep 2021 to Apr 2023
+Focus: Advanced Application Development, Web Architecture, Component Security & Secure Cryptographic Hashing.
 
 ## Excluded (do not use anywhere on the site)
 - Phone number

@@ -82,7 +82,7 @@ export const skillGroups: { label: string; skills: string[] }[] = [
   },
   {
     label: 'Practices',
-    skills: ['Agile/Scrum', 'SDLC', 'Code review', 'Debugging', 'Production support'],
+    skills: ['Agile/Scrum', 'SDLC', 'Code Review', 'Debugging', 'Production Support'],
   },
 ];
 
@@ -109,7 +109,7 @@ export const education = {
   degree: "Master's in Applied Computer Science",
   school: 'Fairleigh Dickinson University, Vancouver, BC, Canada',
   dates: 'Sep 2021 – Apr 2023',
-  focus: 'Advanced Application Development, Web Architecture, Component Security, Secure Cryptographic Hashing.',
+  focus: 'Advanced Application Development, Web Architecture, Component Security & Secure Cryptographic Hashing.',
 };
 
 export const contact = {
