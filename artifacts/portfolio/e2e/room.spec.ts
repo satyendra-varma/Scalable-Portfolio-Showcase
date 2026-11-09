@@ -54,6 +54,19 @@ test('room: panels, filters, Explorer and accessible alternatives', async ({ pag
   expect(await page.getByTestId('button-node-1').evaluate(el => getComputedStyle(el).animationName)).toBe('none');
 });
 
+test('fonts are self-hosted: no Google Fonts requests, all three faces load', async ({ page }) => {
+  const external: string[] = [];
+  page.on('request', (req) => {
+    if (/fonts\.(googleapis|gstatic)\.com/.test(req.url())) external.push(req.url());
+  });
+  await page.goto('/');
+  await page.evaluate(() => document.fonts.ready);
+  expect(external).toEqual([]);
+  const loaded = await page.evaluate(() =>
+    ['DM Sans', 'Space Grotesk', 'JetBrains Mono'].map((f) => document.fonts.check(`16px "${f}"`)));
+  expect(loaded).toEqual([true, true, true]);
+});
+
 for (const path of ['/room-directions', '/room-directions/warm', '/projects/crm', '/no-such-page']) {
   test(`retired or unknown route ${path} shows the 404 page`, async ({ page }) => {
     await page.goto(path);
