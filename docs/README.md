@@ -16,7 +16,7 @@ Visual exploration: [Design brief and comparison criteria](DESIGN-BRIEF.md).
 
 Architecture decisions: [ASP.NET Core backend](decisions/001-aspnet-core-backend.md).
 
-Missing public project URLs belong in [project-links.json](project-links.json). Null/blank entries produce no link or dummy button. After adding real HTTPS URLs, rebuild and publish again to update a published site. The internal Business Operations tool cannot receive an external link.
+Missing public project URLs belong in [project-links.json](project-links.json). Null/blank entries produce no link or dummy button. After adding real HTTPS URLs, rebuild and publish again to update a published site.
 
 Requirements are not test results. See WORKLOG.md and RELEASE-CHECKLIST.md for what was actually verified and what is still pending.
 

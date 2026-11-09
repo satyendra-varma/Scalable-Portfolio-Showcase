@@ -10,9 +10,9 @@ describe('project link presentation', () => {
     expect(screen.queryByText(/no public project URL supplied/i)).not.toBeInTheDocument();
   });
 
-  it('explains the internal tool boundary without exposing a link', () => {
+  it('renders no placeholder link when e-commerce URLs are missing', () => {
     const { container } = render(<ProjectLinks project={projects[1]!} />);
-    expect(screen.getByText(/internal tool/i)).toBeInTheDocument();
+    expect(projects[1]!.id).toBe('ecommerce');
     expect(container.querySelector('a')).toBeNull();
   });
 });

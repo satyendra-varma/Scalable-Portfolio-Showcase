@@ -22,12 +22,13 @@ describe('optional project URLs', () => {
     expect(() => validateUrl(value, 'test')).toThrow();
   });
 
-  it.each([null, [], 'wrong', { operations: { liveUrl: 'https://private.company.dev' } },
+  it.each([null, [], 'wrong', { other: { liveUrl: 'https://private.company.dev' } },
     { crm: [] }, { crm: { typoUrl: 'https://site.dev' } }])('rejects invalid configuration shapes', input => {
     expect(() => parseProjectLinks(input)).toThrow();
   });
 
-  it('never returns an external link for the internal operations tool', () => {
-    expect(getProjectLinks('operations')).toEqual([]);
+  it('returns no links while the committed configuration is empty', () => {
+    expect(getProjectLinks('crm')).toEqual([]);
+    expect(getProjectLinks('ecommerce')).toEqual([]);
   });
 });

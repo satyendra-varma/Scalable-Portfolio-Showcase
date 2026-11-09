@@ -1,4 +1,4 @@
-import { Layers3, Server, ShieldCheck, type LucideIcon } from 'lucide-react';
+import { Layers3, Server, type LucideIcon } from 'lucide-react';
 
 export const CONTACT = {
   name: 'Satyendra Varma Nadimpalli',
@@ -8,7 +8,7 @@ export const CONTACT = {
   location: 'Vancouver, BC, Canada',
 } as const;
 
-export type ProjectId = 'crm' | 'operations' | 'ecommerce';
+export type ProjectId = 'crm' | 'ecommerce';
 
 export type Project = {
   id: ProjectId;
@@ -21,7 +21,6 @@ export type Project = {
   stack: string[];
   details: string[];
   icon: LucideIcon;
-  internal: boolean;
   context: string;
   boundary: string;
 };
@@ -42,35 +41,13 @@ export const projects: Project[] = [
       'Paired Redis distributed caching with MediatR CQRS handlers.',
     ],
     icon: Layers3,
-    internal: false,
     context: 'Software Engineer (Contract), Crescenza Consulting Group, Apr 2023 – Present.',
     boundary:
       'The resume does not specify tenant counts, traffic, exact tenant-isolation mechanisms, or deployment topology, so none are claimed here.',
   },
   {
-    id: 'operations',
-    index: '02',
-    title: 'Business Operations & Auditing Engine',
-    type: 'INTERNAL OPERATIONS · .NET + REACT',
-    summary:
-      'Daily transaction auditing that automates balance calculations, shift scheduling, and restricted record management.',
-    outcome: '15+ hours',
-    outcomeLabel: 'weekly reconciliation time reduced',
-    stack: ['.NET Core Web API', 'React', 'Balance calculations', 'Shift scheduling', 'Role-restricted records'],
-    details: [
-      'Architected and deployed a high-reliability daily transactional auditing system using .NET Core Web API and React.',
-      'Automated complex balance calculations and shift scheduling.',
-      'Added role-restricted record management; reduced weekly reconciliation time by 15+ hours.',
-    ],
-    icon: ShieldCheck,
-    internal: true,
-    context: 'Software Engineer (Contract), Crescenza Consulting Group, Apr 2023 – Present.',
-    boundary:
-      'This is an internal tool. There is no public demo, and no internal implementation details, customers, or screenshots are disclosed beyond the resume.',
-  },
-  {
     id: 'ecommerce',
-    index: '03',
+    index: '02',
     title: 'Cloud E-Commerce Platform',
     type: 'CLOUD DELIVERY · AWS EC2',
     summary: 'A containerized full-stack platform with tested .NET services and a configured web edge.',
@@ -83,7 +60,6 @@ export const projects: Project[] = [
       'Configured NGINX reverse proxying and automated Certbot SSL encryption.',
     ],
     icon: Server,
-    internal: false,
     context: 'Software Engineer (Contract), Crescenza Consulting Group, Apr 2023 – Present.',
     boundary: 'No sales, payment-provider, traffic, or uptime figures are provided by the resume, so none are shown.',
   },

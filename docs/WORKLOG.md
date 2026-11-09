@@ -48,6 +48,10 @@ Toolchain notes kept from the removed agent memory:
 - The API keeps `/api/healthz`, its security headers and the problem-details 404. New `HealthTests.cs` covers those and asserts both former AI routes return 404.
 - Still present and now unused by any app: `lib/api-client-react`, `lib/api-zod` and `lib/api-spec` (health check only). Keep them if the API grows again; otherwise they can go.
 
+### Excluded internal project removed from current files (step 3)
+
+Per `docs/RESUME-SOURCE.md`, the internal project that isn't on the allowlist, its name and its metric are gone from every current file: the portfolio's project data and link handling (and their tests), `docs/public-facts.json`, `docs/README.md`, and both mockups. This log deliberately doesn't name it. The project pages, 404 list and mockups now show two projects, and the design brief says "two project subjects". Git history still contains the old text; see the history-rewrite plan below.
+
 ## Approved homepage update
 
 The owner explicitly approved making the warm Engineer’s Room the default homepage. `/` now renders that room directly; comparison URLs remain available. Homepage title and labeling were updated without changing the room's interaction model.

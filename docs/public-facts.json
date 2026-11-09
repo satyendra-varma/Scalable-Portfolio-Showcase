@@ -12,12 +12,6 @@
     "text": "At Crescenza Consulting Group, Satyendra delivered a scalable multi-tenant enterprise CRM using .NET 8 and Domain-Driven Design, secure JWT/RBAC authorization, EF Core Global Query Filters for automated soft deletes, Redis distributed caching, and MediatR CQRS handlers. The resume does not specify tenant counts, traffic, exact tenant-isolation mechanisms, or deployment topology."
   },
   {
-    "id": "operations",
-    "title": "Business Operations & Auditing Engine",
-    "href": "#explorer",
-    "text": "At Crescenza Consulting Group, Satyendra architected and deployed a daily transactional auditing system using .NET Core Web API and React. It automated complex balance calculations, shift scheduling, and role-restricted record management, reducing weekly reconciliation time by 15+ hours. It is an internal tool; no public demo or internal implementation details are available."
-  },
-  {
     "id": "ecommerce",
     "title": "Cloud E-Commerce Platform",
     "href": "#explorer",
@@ -33,7 +27,7 @@
     "id": "crescenza",
     "title": "Crescenza experience",
     "href": "#experience",
-    "text": "The resume lists Software Engineer (Contract), Crescenza Consulting Group, Apr 2023 – Present. It describes work on an enterprise CRM, a Business Operations & Auditing Engine, and a Cloud E-Commerce Platform. Employment dates are reproduced from the supplied resume, not independently verified as current."
+    "text": "The resume lists Software Engineer (Contract), Crescenza Consulting Group, Apr 2023 – Present. The featured projects from this role are the Enterprise CRM Platform and the Cloud E-Commerce Platform. Employment dates are reproduced from the supplied resume, not independently verified as current."
   },
   {
     "id": "backend",

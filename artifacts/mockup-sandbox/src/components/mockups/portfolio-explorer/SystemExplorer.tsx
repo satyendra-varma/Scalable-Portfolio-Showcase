@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowDownRight, ArrowUpRight, Check, ChevronDown, ChevronRight,
-  Circle, Code2, Database, ExternalLink, Layers3, LockKeyhole,
-  Mail, Menu, Network, Server, ShieldCheck, X,
+  Circle, Code2, Database, ExternalLink, Layers3,
+  Mail, Menu, Network, Server, X,
 } from "lucide-react";
 import "./_group.css";
 
@@ -38,24 +38,8 @@ const projects: Project[] = [
     icon: Layers3,
   },
   {
-    id: "operations",
-    index: "02",
-    title: "Business Operations & Auditing Engine",
-    type: "INTERNAL OPERATIONS · .NET + REACT",
-    summary: "Daily transaction auditing that automates balance calculations, shift scheduling, and restricted record management.",
-    outcome: "15+ hours",
-    outcomeLabel: "weekly reconciliation time reduced",
-    stack: [".NET Core Web API", "React", "Balance calculations", "Shift scheduling", "Role-restricted records"],
-    details: [
-      "Architected and deployed a high-reliability daily transactional auditing system using .NET Core Web API and React.",
-      "Automated complex balance calculations and shift scheduling.",
-      "Added role-restricted record management; reduced weekly reconciliation time by 15+ hours.",
-    ],
-    icon: ShieldCheck,
-  },
-  {
     id: "ecommerce",
-    index: "03",
+    index: "02",
     title: "Cloud E-Commerce Platform",
     type: "CLOUD DELIVERY · AWS EC2",
     summary: "A containerized full-stack platform with tested .NET services and a configured web edge.",
@@ -158,7 +142,7 @@ export function SystemExplorer() {
                 <ChevronRight className="sx-tab-arrow" size={17} />
               </button>;
             })}
-            <div className="sx-list-foot"><span className="sx-list-rule" /> 3 SELECTED SYSTEMS</div>
+            <div className="sx-list-foot"><span className="sx-list-rule" /> 2 SELECTED SYSTEMS</div>
           </div>
           <div className="sx-project-detail" role="tabpanel" key={current.id}>
             <div className="sx-detail-top"><span className="sx-detail-index">SYSTEM / {current.index}</span><span className="sx-detail-icon"><CurrentIcon size={19} /></span></div>
@@ -173,17 +157,9 @@ export function SystemExplorer() {
               </motion.ul>}</AnimatePresence>
             </div>
             <div className="sx-stack"><span className="sx-stack-label">TECHNOLOGIES NAMED</span><div className="sx-tags">{current.stack.map((item) => <span key={item}>{item}</span>)}</div></div>
-            {current.id === "operations" && <p className="sx-internal-note"><LockKeyhole size={13} /> Internal tool — no public access link.</p>}
             <p className="sx-no-links">No public project URL supplied.</p>
           </div>
         </div>
-      </section>
-
-      <section className="sx-impact-band">
-        <div className="sx-impact-marker">OUTCOME / 02</div>
-        <div className="sx-impact-main"><span>REAL-WORLD IMPACT</span><strong>15<span>+</span></strong><p>hours of weekly reconciliation time reduced</p></div>
-        <div className="sx-impact-context"><span className="sx-impact-line" /><p>Reported for the <b>Business Operations & Auditing Engine</b>—not a CRM metric.</p></div>
-        <div className="sx-impact-coordinate">BUSINESS OPERATIONS<br />& AUDITING ENGINE</div>
       </section>
 
       <section className="sx-experience" id="experience">

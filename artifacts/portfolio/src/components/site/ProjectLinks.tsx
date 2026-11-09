@@ -1,4 +1,4 @@
-import { ExternalLink, LockKeyhole } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import type { Project } from '@/content/portfolio';
 import { getProjectLinks } from '@/lib/project-links';
 
@@ -6,9 +6,6 @@ export function ProjectLinks({ project }: { project: Project }) {
   const links = getProjectLinks(project.id);
   return (
     <>
-      {project.internal && (
-        <p className="sx-internal-note"><LockKeyhole size={13} aria-hidden="true" /> Internal tool — no public access link.</p>
-      )}
       {links.length > 0 ? (
         <div className="sx-project-links">
           {links.map((l) => (

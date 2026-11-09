@@ -54,8 +54,6 @@ export function parseProjectLinks(input: unknown): Record<'crm' | 'ecommerce', P
 // Validated at import time: an invalid populated value fails the build/start instead of publishing.
 const LINKS = parseProjectLinks(rawLinks);
 
-/** Operations is an internal tool and never receives an external link. */
 export function getProjectLinks(id: ProjectId): ProjectLink[] {
-  if (id === 'operations') return [];
   return LINKS[id];
 }

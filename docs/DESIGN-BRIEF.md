@@ -16,7 +16,7 @@ The website should communicate .NET backend expertise, practical business outcom
 
 - Resume is the factual source of truth; CONTENT.md owns the evidence and publication rules.
 - Preserve the target role and factual attribution of metrics across both concepts.
-- Include the same three project subjects, appropriate experience, and source-backed skills.
+- Include the same two project subjects, appropriate experience, and source-backed skills.
 - No public phone, invented availability, fake project screenshots, fake repositories/demos, or invented infrastructure.
 - Public contact uses only the approved email, LinkedIn, and resume location.
 - Local interactions and navigation should work.

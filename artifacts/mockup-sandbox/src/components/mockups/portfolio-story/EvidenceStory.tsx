@@ -14,16 +14,6 @@ const projects = [
   },
   {
     id: "02",
-    title: "Business Operations & Auditing Engine",
-    type: "Business workflow · .NET Core Web API + React",
-    summary: "Architected and deployed a daily transactional auditing system. Its practical value comes through the work it automated: complex balance calculations, shift scheduling, and role-restricted record management.",
-    tech: [".NET Core Web API", "React"],
-    outcome: "15+ hours",
-    outcomeText: "of weekly reconciliation time reduced, as stated in the resume.",
-    note: "Internal tool. No public access or project link.",
-  },
-  {
-    id: "03",
     title: "Cloud E-Commerce Platform",
     type: "Full-stack delivery · AWS EC2",
     summary: "Developed and deployed a containerized full-stack e-commerce infrastructure on AWS EC2. The resume names the application stack, testing, reverse proxy, and SSL tooling without describing checkout or sales outcomes.",
@@ -88,7 +78,7 @@ export function EvidenceStory() {
           <div className="es-section-number">01 / Selected work</div>
           <div>
             <h2 className="es-section-title">Systems with a reason to exist.</h2>
-            <p className="es-section-dek">Three resume-backed projects, ordered from domain-rich backend work to end-to-end delivery. Open a case note to inspect the evidence; no demo links are implied.</p>
+            <p className="es-section-dek">Two resume-backed projects, ordered from domain-rich backend work to end-to-end delivery. Open a case note to inspect the evidence; no demo links are implied.</p>
           </div>
         </div>
         <div className="es-project-list">
@@ -130,7 +120,6 @@ export function EvidenceStory() {
               <div className="es-job-top"><h3>Software Engineer (Contract)</h3><time>Apr 2023 – Present</time></div>
               <div className="es-employer">Crescenza Consulting Group</div>
               <p>Delivered a .NET 8 multi-tenant enterprise CRM using Domain-Driven Design, with JWT/RBAC authorization, EF Core Global Query Filters for automated soft deletes, and Redis distributed caching paired with MediatR CQRS handlers.</p>
-              <p>Architected and deployed a daily transactional auditing system using .NET Core Web API and React. Automated balance calculations, shift scheduling, and role-restricted record management, reducing weekly reconciliation time by 15+ hours.</p>
               <p>Developed and deployed a containerized full-stack e-commerce infrastructure using C# .NET Core, MSSQL, Docker, AWS EC2, xUnit, NGINX, and Certbot SSL encryption.</p>
             </div>
             <div className="es-job">
