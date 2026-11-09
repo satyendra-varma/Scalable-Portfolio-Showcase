@@ -50,7 +50,7 @@ Toolchain notes kept from the removed agent memory:
 
 ### Excluded internal project removed from current files (step 3)
 
-Per `docs/RESUME-SOURCE.md`, the internal project that isn't on the allowlist, its name and its metric are gone from every current file: the portfolio's project data and link handling (and their tests), `docs/public-facts.json`, `docs/README.md`, and both mockups. This log deliberately doesn't name it. The project pages, 404 list and mockups now show two projects, and the design brief says "two project subjects". Git history still contains the old text; see the history-rewrite plan below.
+Per `docs/RESUME-SOURCE.md`, the internal project that isn't on the allowlist, its name and its metric are gone from every current file: the portfolio's project data and link handling (and their tests), `docs/public-facts.json` (deleted entirely in a later commit), `docs/README.md`, and both mockups. This log deliberately doesn't name it. The project pages, 404 list and mockups now show two projects, and the design brief says "two project subjects". Git history still contains the old text; see the history-rewrite plan below.
 
 ### Resume PDF replaced by a placeholder (step 4)
 

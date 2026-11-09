@@ -37,6 +37,4 @@ Works the same on Windows, macOS and Linux. Needs Node 24, pnpm 10 (`corepack en
 
 `BASE_PATH` defaults to `/`. Set it only when the site is served from a sub-path.
 
-[public-facts.json](public-facts.json) holds the curated facts the removed AI guide answered from. Nothing in v1 reads it; it is kept only as reference for a possible later phase.
-
 `artifacts/portfolio/public/resume.pdf` is a placeholder. Replace it with the clean public copy of the resume (allowlisted content only, no phone number or street address) before linking it anywhere. Nothing links to it today, but every build still copies it to the site root.
