@@ -10,27 +10,15 @@ import { CRM_LINK, ECOMMERCE_LINK } from './src/content/site';
 validateUrl(CRM_LINK, 'CRM_LINK');
 validateUrl(ECOMMERCE_LINK, 'ECOMMERCE_LINK');
 
-const rawPort = process.env.PORT;
-
-if (!rawPort) {
-  throw new Error(
-    'PORT environment variable is required but was not provided.',
-  );
-}
-
+// PORT only affects the dev and preview servers; BASE_PATH serves the site from a sub-path.
+const rawPort = process.env.PORT || '5173';
 const port = Number(rawPort);
 
-if (Number.isNaN(port) || port <= 0) {
+if (!Number.isInteger(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-const basePath = process.env.BASE_PATH;
-
-if (!basePath) {
-  throw new Error(
-    'BASE_PATH environment variable is required but was not provided.',
-  );
-}
+const basePath = process.env.BASE_PATH || '/';
 
 export default defineConfig({
   base: basePath,

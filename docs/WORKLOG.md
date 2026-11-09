@@ -79,6 +79,21 @@ Per `docs/RESUME-SOURCE.md`, the internal project that isn't on the allowlist, i
   - The 404 page uses the blueprint styling with a single "Back to the room" link.
   - `index.html` loads the room's fonts (no more render-delaying CSS `@import`) and uses the room's theme colour.
 
+### Build and tests run on Windows and Linux (step 7)
+
+**Native-binary overrides removed.** `pnpm-workspace.yaml` excluded every non-linux-x64 binary of esbuild, Rollup, Lightning CSS and Tailwind's engine (plus unused ngrok binaries), because Replit only ran Linux. On Windows that broke `vite build` and Vitest with `Cannot find module @rollup/rollup-win32-x64-msvc`; esbuild only survived by downloading its binary through npm during install.
+
+**Trade-off.** The lockfile now lists every platform's optional binary (5,861 → 6,466 lines). pnpm still installs only the binary for the current machine, so installs aren't heavier, but the lockfile is bigger and Linux installs resolve a little more metadata. The old setup kept Replit's Linux images minimal at the cost of breaking Windows and macOS. If a future Linux-only deploy needs a slimmer install, set pnpm's `supportedArchitectures` in that environment instead of stripping binaries for everyone.
+
+**Scripts.**
+
+- API `test`: dropped the Unix-only `DOTNET_PROCESSOR_COUNT=2` prefix, which `cmd.exe` can't run (it was a Replit container workaround). Serial restore stays. If restores stall on a small CI machine, set that variable in the CI environment.
+- API `typecheck`: dropped `--no-restore`, which failed on fresh clones with NETSDK1004. Restore is a no-op once packages are restored.
+- Root `preinstall`: the pnpm-only guard is a Node one-liner instead of `sh -c` (which needed Git's `sh` on Windows).
+- Root `packageManager: pnpm@10.34.9`, so Corepack uses the same pnpm everywhere.
+- Vite configs: `BASE_PATH` defaults to `/`, and `PORT` to 5173 (portfolio) or 5174 (mockup sandbox), so `pnpm run build` needs no environment variables in any shell. Set either one to override.
+- Playwright: `test:e2e` builds and serves the production preview itself on port 4173 unless `PLAYWRIGHT_BASE_URL` points at a running site.
+
 ### Git history rewrite — planned, NOT run (needs owner approval)
 
 **Why.** Deleting files in new commits doesn't remove them from history. Every earlier commit on GitHub still holds (1) the old resume PDF, blob `4ffe67636220cea02bc890184affd24c70ce36a8` (added in `2b3afea`), and (2) the excluded project's name and metric in older versions of the docs, portfolio code, mockups, AI knowledge file and agent memory. Commit messages don't contain either (checked).

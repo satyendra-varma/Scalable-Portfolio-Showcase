@@ -22,15 +22,20 @@ Requirements are not test results. See WORKLOG.md and RELEASE-CHECKLIST.md for w
 
 ## Common commands
 
+Works the same on Windows, macOS and Linux. Needs Node 24, pnpm 10 (`corepack enable` picks the pinned version) and the .NET 10 SDK for the API.
+
+- Install: `pnpm install`
+- Everything (typecheck + all builds): `pnpm run build`
+- Portfolio dev server: `pnpm --filter @workspace/portfolio dev` (port 5173; override with `PORT`)
 - Frontend unit/component tests: `pnpm --filter @workspace/portfolio test`
 - API unit/integration tests: `pnpm --filter @workspace/api-server test`
 - Frontend type check: `pnpm --filter @workspace/portfolio typecheck`
 - API release package: `pnpm --filter @workspace/api-server build`
 - Regenerate API hooks/schemas: `pnpm --filter @workspace/api-spec codegen`
 - Resume redaction script: `python3 scripts/sanitize_resume.py` (needs `pymupdf` and the original upload in `attached_assets/`, which isn't in the repo). It only removes phone numbers, so its output is not a clean public copy on its own.
-- Prepared browser suite: `pnpm --filter @workspace/portfolio test:e2e` (not run in the first build; requires browser installation and running app).
+- Browser suite: `pnpm --filter @workspace/portfolio test:e2e`. It builds the site and serves the production preview on port 4173 itself (set `PLAYWRIGHT_BASE_URL` to test a running site instead). It needs Chromium: run `pnpm --filter @workspace/portfolio exec playwright install chromium` once, or set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to an installed Chrome.
 
-The Vite configs require `PORT` and `BASE_PATH` environment values (Replit used to supply them). Set them explicitly for a local build, for example `PORT=4173 BASE_PATH=/`.
+`BASE_PATH` defaults to `/`. Set it only when the site is served from a sub-path.
 
 [public-facts.json](public-facts.json) holds the curated facts the removed AI guide answered from. Nothing in v1 reads it; it is kept only as reference for a possible later phase.
 

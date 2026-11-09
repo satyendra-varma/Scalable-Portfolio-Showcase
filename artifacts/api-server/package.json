@@ -7,7 +7,7 @@
     "dev": "dotnet run --project Portfolio.Api/Portfolio.Api.csproj --no-launch-profile",
     "build": "dotnet msbuild Portfolio.Api/Portfolio.Api.csproj -t:Publish -restore -p:Configuration=Release -p:PublishDir=../dist/dotnet -nologo",
     "start": "dotnet dist/dotnet/Portfolio.Api.dll",
-    "typecheck": "dotnet build Portfolio.Api/Portfolio.Api.csproj --no-restore --nologo",
-    "test": "DOTNET_PROCESSOR_COUNT=2 dotnet test Portfolio.Api.Tests/Portfolio.Api.Tests.csproj --disable-build-servers -p:RestoreDisableParallel=true"
+    "typecheck": "dotnet build Portfolio.Api/Portfolio.Api.csproj --nologo",
+    "test": "dotnet test Portfolio.Api.Tests/Portfolio.Api.Tests.csproj --disable-build-servers -p:RestoreDisableParallel=true"
   }
 }
