@@ -11,6 +11,10 @@ Use only this file for site content. Do not add facts that are not listed here.
 ## Target role
 Full Stack .NET Software Engineer
 
+## Positioning
+Owner-approved positioning line (based on resume).
+Backend-led full-stack engineer building scalable .NET systems and shipping them end to end.
+
 ## Professional summary
 Full Stack .NET Software Engineer with 4+ years of software engineering experience designing distributed architectures, cloud services, and high-performance backend systems. Specialized in C#, .NET 8, ASP.NET Core, Redis distributed caching, SQL Server, Docker, and AWS. Experienced in Domain-Driven Design, CI/CD pipelines. [TO CONFIRM: "4+ years" and "microservices orchestration"]
 
@@ -20,14 +24,14 @@ Full Stack .NET Software Engineer with 4+ years of software engineering experien
 - Databases: SQL Server (MSSQL), PostgreSQL, SQLite, Oracle DB [TO CONFIRM: which DB the CRM uses]
 - Security: JWT auth, RBAC
 - Cloud and DevOps: AWS (EC2, S3), Docker, Kubernetes (familiarity), GitHub Actions, Jenkins, NGINX, Certbot, Git, CI/CD
-- Architecture and testing: Domain-Driven Design, MediatR, MassTransit, Redis, xUnit, Serilog
+- Architecture and testing: Domain-Driven Design (DDD), MediatR, MassTransit, Redis, xUnit, Serilog
 - Development practices: Agile/Scrum, SDLC, Code Review, Debugging, Production Support
 
 ## Projects
 ### Enterprise CRM Platform (Crescenza Consulting Group, Apr 2023 to present)
 - Multi-tenant enterprise CRM built with .NET 8 and Domain-Driven Design
 - Secure JWT and RBAC authorization
-- EF Core global query filters for automated soft deletes [TO CONFIRM: "applies to every read"]
+- EF Core Global Query Filters for automated soft deletes [TO CONFIRM: "applies to every read"]
 - Redis distributed caching with MediatR CQRS handlers
 - Link: CRM_LINK (placeholder)
 
@@ -47,7 +51,7 @@ See the CRM and E-Commerce projects above.
 - Containerized legacy components with Docker and integrated them into Jenkins CI/CD pipelines in an Agile/Scrum environment
 
 ## Education
-Master's in Applied Computer Science, Fairleigh Dickinson University, Vancouver, BC, Sep 2021 to Apr 2023
+Master's in Applied Computer Science, Fairleigh Dickinson University, Vancouver, BC, Canada, Sep 2021 to Apr 2023
 Focus: Advanced Application Development, Web Architecture, Component Security & Secure Cryptographic Hashing.
 
 ## Excluded (do not use anywhere on the site)
