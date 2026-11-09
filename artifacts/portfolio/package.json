@@ -44,7 +44,6 @@
     "@radix-ui/react-tooltip": "^1.2.0",
     "@tailwindcss/typography": "^0.5.15",
     "@tailwindcss/vite": "catalog:",
-    "@tanstack/react-query": "catalog:",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -78,7 +77,6 @@
     "vaul": "^1.1.2",
     "vite": "catalog:",
     "vitest": "^5.1.0",
-    "wouter": "^3.3.5",
-    "zod": "catalog:"
+    "wouter": "^3.3.5"
   }
 }
