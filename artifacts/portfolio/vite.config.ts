@@ -5,8 +5,6 @@ import { defineConfig } from 'vite';
 import { parseProjectLinks } from './src/lib/project-links';
 import projectLinks from '../../docs/project-links.json';
 
-import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
-
 // Vite does not execute browser modules during bundling. Validate configuration
 // here too, so bad project URLs stop the build, not just the visitor's browser.
 parseProjectLinks(projectLinks);
@@ -35,24 +33,7 @@ if (!basePath) {
 
 export default defineConfig({
   base: basePath,
-  plugins: [
-    react(),
-    tailwindcss(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== 'production' &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import('@replit/vite-plugin-cartographer').then((m) =>
-            m.cartographer({
-              root: path.resolve(import.meta.dirname, '..'),
-            }),
-          ),
-          await import('@replit/vite-plugin-dev-banner').then((m) =>
-            m.devBanner(),
-          ),
-        ]
-      : []),
-  ],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname, 'src'),

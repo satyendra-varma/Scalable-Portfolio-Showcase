@@ -30,6 +30,6 @@ Requirements are not test results. See WORKLOG.md and RELEASE-CHECKLIST.md for w
 - Recreate sanitized public resume: `python3 scripts/sanitize_resume.py`
 - Prepared browser suite: `pnpm --filter @workspace/portfolio test:e2e` (not run in the first build; requires browser installation and running app).
 
-The frontend build requires the managed service's `PORT` and `BASE_PATH` environment values. Use its configured workflow, or set development values explicitly for a one-off local build.
+The Vite configs require `PORT` and `BASE_PATH` environment values (Replit used to supply them). Set them explicitly for a local build, for example `PORT=4173 BASE_PATH=/`.
 
 Curated public AI knowledge: [public-facts.json](public-facts.json). Update it only with approved resume evidence, then rerun tests/builds. The original uploaded PDF is not the public download.

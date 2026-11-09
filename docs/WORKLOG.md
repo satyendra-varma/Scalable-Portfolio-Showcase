@@ -1,5 +1,44 @@
 # Work log
 
+## v1 cleanup — branch `cleanup/v1-scope` (2026-11-08)
+
+Owner-approved decisions for v1:
+
+- Night blueprint is the only room direction; the warm workshop, the A/B switcher and `/room-directions` go.
+- The room's project panels are the only project view; the `/projects/*` pages, the old shell, the old 404 link list and the old footer's resume link go.
+- No AI guide in v1: no endpoints, tests, chat UI or model calls.
+- Replit files and dependencies are removed without replacements for now (recorded below for later planning).
+- The committed resume PDF is replaced by a placeholder until a clean public copy exists.
+- The build must run on Windows and Linux.
+
+Each step is a separate commit on the branch.
+
+### Replit removal (step 1)
+
+| Removed | What it did | What a future replacement needs to cover |
+| --- | --- | --- |
+| `.replit` | Declared the toolchain (Node 24, .NET 10, Python 3.13, Nix packages for MuPDF), the autoscale deployment with a post-build `pnpm store prune`, the Run-button workflow and the post-merge hook. | Pinned toolchain versions (Node 24, pnpm 10, .NET 10 SDK; Python with PyMuPDF only for the resume script), a hosting target, and its build and start commands. |
+| `.replitignore` | Kept `.agents`, build output, test results and `attached_assets` out of deploy images. | An equivalent ignore list for whatever builds the deploy image (for example `.dockerignore`), so uploads and agent files never ship. |
+| `replit.md` | Unfilled Replit Agent template; it described Express and Postgres, which this project doesn't use. | Nothing; `docs/README.md` is the project overview. |
+| `.agents/` | Replit Agent memory (owner decisions, toolchain notes) and pointers to preview screenshots in Replit storage. | Nothing. The decisions live in `docs/`; the toolchain notes are kept below. |
+| `artifacts/portfolio/.replit-artifact/artifact.toml` | Served the site: dev command, production build (`pnpm --filter @workspace/portfolio run build`), static serving of `artifacts/portfolio/dist/public`, SPA rewrite `/* → /index.html`, and `PORT=21113`, `BASE_PATH=/`. | Static hosting of `dist/public` with the same SPA rewrite (so unknown paths reach the app's 404 page), the build command, and `BASE_PATH` if the site isn't served from `/`. |
+| `artifacts/api-server/.replit-artifact/artifact.toml` | Ran the ASP.NET Core API under `/api` on port 8080 with `ASPNETCORE_ENVIRONMENT=Production`; built with the package script, started with `dotnet dist/dotnet/Portfolio.Api.dll`, and health-checked `/api/healthz` at startup. | Only if the API stays in the release: a .NET 10 host, routing of `/api/*`, `PORT`, and a health check on `/api/healthz`. |
+| `artifacts/mockup-sandbox/.replit-artifact/artifact.toml` | Ran the design-preview canvas in development at `/__mockup` on port 8081. It was never deployed. | A local dev command only. |
+| `pyproject.toml`, `uv.lock`, `src/repl_nix_workspace/` | Replit's Python workspace. Its only real content was the `pymupdf` dependency of `scripts/sanitize_resume.py`. | A Python dependency file (for example `requirements.txt` with `pymupdf`) if the resume script is kept. |
+| `@replit/connectors-sdk` (root dependency) | Replit's integrations SDK. Nothing imported it. | Nothing. |
+| `@replit/vite-plugin-runtime-error-modal` | Replit's runtime-error overlay, always on in both Vite apps. `main.tsx` carried an `onCaughtError` workaround to stop caught errors raising it; that went too. | Nothing required: Vite's own overlay still shows compile errors, and React logs caught errors to the console. |
+| `@replit/vite-plugin-dev-banner` | Replit's banner in the portfolio dev preview (only when `REPL_ID` was set). | Nothing. |
+| `@replit/vite-plugin-cartographer` | Element mapping for Replit Agent's visual editor (only when `REPL_ID` was set). | Nothing. |
+| Replit entries in `pnpm-workspace.yaml` | Catalog versions for the three plugins, and an exemption of `@replit/*` and `stripe-replit-sync` from the one-day minimum release age. | Nothing; the release-age rule now applies to every package. |
+| Replit section of `.gitignore`, `.pythonlibs/` | Ignored Replit's cache, pnpm store (`.local/`) and Python library folders. | Nothing. |
+
+Handled by later steps: `scripts/post-merge.sh` (step 2), Replit's managed-AI settings `AI_INTEGRATIONS_OPENAI_*` (removed with the AI guide, step 2), and the overrides that strip non-Linux native binaries (step 7). Two unused shadcn components (`ui/button.tsx`, `ui/badge.tsx`) still carry `// @replit` comments; they were left untouched.
+
+Toolchain notes kept from the removed agent memory:
+
+- The API's production package uses `dotnet msbuild -t:Publish` (its `build` script) because `dotnet publish` with an output property failed with MSB1008 in Replit's SDK. Recheck before switching back.
+- The API test script restores serially (`-p:RestoreDisableParallel=true`); unbounded restores stalled in Replit's container.
+
 ## Approved homepage update
 
 The owner explicitly approved making the warm Engineer’s Room the default homepage. `/` now renders that room directly; comparison URLs remain available. Homepage title and labeling were updated without changing the room's interaction model.
