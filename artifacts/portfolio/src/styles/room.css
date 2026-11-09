@@ -99,7 +99,9 @@
 .rp-dl dt { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding-top: 3px; }
 .rp-dl dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 @media (max-width: 480px) { .rp-dl { grid-template-columns: 1fr; } .rp-dl dd { margin-bottom: 6px; } }
-.rp-bullets { margin: 8px 0 0; padding-left: 18px; font-size: 14px; line-height: 1.55; }
+.rp-bullets { margin: 8px 0 0; padding-left: 18px; font-size: 14px; line-height: 1.55; list-style: disc; } /* Tailwind's reset removes markers */
+.rp-bullets li::marker { color: var(--evidence); }
+.rp-card-points { margin: 6px 0 14px; }
 .rp-placeholder { display: inline-block; font-family: var(--mono); font-size: 12px; padding: 4px 8px; border: 1px dashed var(--muted); border-radius: 4px; color: var(--muted); }
 .rp-link { font-weight: 600; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 

@@ -14,52 +14,52 @@ export const hero = {
 
 export type ProjectId = 'crm' | 'ecommerce';
 
+// Every string below is copied verbatim from docs/RESUME-SOURCE.md (room.test.tsx checks this).
 export const projects: {
   id: ProjectId;
   name: string;
-  context: string;
-  contribution: string;
-  mechanisms: string;
+  points: string[];
   link: string | null;
 }[] = [
   {
     id: 'crm',
     name: 'Enterprise CRM Platform',
-    context: 'Enterprise multi-tenant CRM.',
-    contribution:
-      'Delivered a scalable multi-tenant enterprise CRM using .NET 8 and Domain-Driven Design.',
-    mechanisms:
-      'MediatR CQRS, JWT/RBAC authorization, EF Core global query filters for soft deletes, Redis distributed caching.',
+    points: [
+      'Multi-tenant enterprise CRM built with .NET 8 and Domain-Driven Design',
+      'Secure JWT and RBAC authorization',
+      'EF Core Global Query Filters for automated soft deletes',
+      'Redis distributed caching with MediatR CQRS handlers',
+    ],
     link: validateUrl(CRM_LINK, 'CRM_LINK'),
   },
   {
     id: 'ecommerce',
     name: 'Cloud E-Commerce Platform',
-    context: 'Full-stack e-commerce infrastructure.',
-    contribution:
-      'Developed and deployed containerized infrastructure using C# .NET Core and MSSQL on AWS EC2 with Docker.',
-    mechanisms: 'NGINX reverse proxy, Certbot SSL, xUnit tests.',
+    points: [
+      'Containerized full-stack e-commerce platform: C# .NET Core, MSSQL, Docker',
+      'Deployed on AWS EC2, with NGINX reverse proxy and Certbot SSL',
+      'Backed by xUnit unit tests',
+    ],
     link: validateUrl(ECOMMERCE_LINK, 'ECOMMERCE_LINK'),
   },
 ];
 
-/** Skill -> projects where the source explicitly attributes it. Absent = general skill only. */
+/** Skill -> projects whose source entry names it. Absent = general skill only. */
 export const projectEvidence: Record<string, ProjectId[]> = {
   'C#': ['ecommerce'],
   '.NET 8': ['crm'],
   'Entity Framework Core': ['crm'],
-  'SQL Server/MSSQL': ['ecommerce'],
-  'JWT Auth': ['crm'],
+  'SQL Server (MSSQL)': ['ecommerce'],
+  'JWT auth': ['crm'],
   RBAC: ['crm'],
-  'AWS EC2': ['ecommerce'],
+  'AWS (EC2, S3)': ['ecommerce'],
   Docker: ['ecommerce'],
   NGINX: ['ecommerce'],
   Certbot: ['ecommerce'],
-  DDD: ['crm'],
+  'Domain-Driven Design (DDD)': ['crm'],
   MediatR: ['crm'],
   Redis: ['crm'],
   xUnit: ['ecommerce'],
-  'EF Core global query filters': ['crm'],
 };
 
 export const skillGroups: { label: string; skills: string[] }[] = [
@@ -68,20 +68,18 @@ export const skillGroups: { label: string; skills: string[] }[] = [
     skills: ['C#', '.NET 8', 'ASP.NET Core', 'Web API', 'MVC', 'Entity Framework Core', 'LINQ', 'REST APIs'],
   },
   { label: 'Frontend', skills: ['React', 'TypeScript', 'JavaScript', 'HTML5/CSS3', 'Bootstrap'] },
+  { label: 'Databases', skills: ['SQL Server (MSSQL)', 'PostgreSQL', 'SQLite', 'Oracle DB'] },
+  { label: 'Security', skills: ['JWT auth', 'RBAC'] },
   {
-    label: 'Data & security',
-    skills: ['SQL Server/MSSQL', 'PostgreSQL', 'SQLite', 'Oracle DB', 'JWT Auth', 'RBAC'],
+    label: 'Cloud and DevOps',
+    skills: ['AWS (EC2, S3)', 'Docker', 'Kubernetes (familiarity)', 'GitHub Actions', 'Jenkins', 'NGINX', 'Certbot', 'Git', 'CI/CD'],
   },
   {
-    label: 'Cloud & delivery',
-    skills: ['AWS EC2', 'AWS S3', 'Docker', 'GitHub Actions', 'Jenkins', 'NGINX', 'Certbot', 'Git', 'CI/CD', 'Kubernetes (familiarity)'],
+    label: 'Architecture and testing',
+    skills: ['Domain-Driven Design (DDD)', 'MediatR', 'MassTransit', 'Redis', 'xUnit', 'Serilog'],
   },
   {
-    label: 'Architecture & testing',
-    skills: ['DDD', 'MediatR', 'MassTransit', 'Redis', 'xUnit', 'Serilog', 'EF Core global query filters'],
-  },
-  {
-    label: 'Practices',
+    label: 'Development practices',
     skills: ['Agile/Scrum', 'SDLC', 'Code Review', 'Debugging', 'Production Support'],
   },
 ];
@@ -90,17 +88,17 @@ export const experience = [
   {
     org: 'Crescenza Consulting Group',
     title: 'Software Engineer (Contract)',
-    dates: 'Apr 2023 – Present (as stated in resume)',
+    dates: 'Apr 2023 to present',
     points: ['Enterprise CRM Platform', 'Cloud E-Commerce Platform'],
   },
   {
     org: 'Nanomindz Technologies',
     title: '.NET Developer, India',
-    dates: 'Jul 2020 – Jun 2021',
+    dates: 'Jul 2020 to Jun 2021',
     points: [
-      'Developed RESTful Web APIs and WCF services in C#.',
-      'Optimized SQL Server and Oracle stored procedures, indexes and complex queries, reducing complex query execution time by 35%.',
-      'Containerized legacy application components using Docker and integrated them into Jenkins CI/CD pipelines.',
+      'Developed backend RESTful Web APIs and WCF services in C# for internal enterprise subsystems and web clients',
+      'Optimized SQL Server and Oracle stored procedures, indexes, and queries, reducing complex query execution times by 35%',
+      'Containerized legacy components with Docker and integrated them into Jenkins CI/CD pipelines in an Agile/Scrum environment',
     ],
   },
 ];
@@ -108,8 +106,8 @@ export const experience = [
 export const education = {
   degree: "Master's in Applied Computer Science",
   school: 'Fairleigh Dickinson University, Vancouver, BC, Canada',
-  dates: 'Sep 2021 – Apr 2023',
-  focus: 'Advanced Application Development, Web Architecture, Component Security & Secure Cryptographic Hashing.',
+  dates: 'Sep 2021 to Apr 2023',
+  focus: 'Focus: Advanced Application Development, Web Architecture, Component Security & Secure Cryptographic Hashing.',
 };
 
 export const contact = {

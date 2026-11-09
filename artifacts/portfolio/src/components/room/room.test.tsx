@@ -49,7 +49,7 @@ describe('engineer room', () => {
     expect(screen.queryAllByRole('article')).toHaveLength(0);
     await user.click(screen.getByRole('button', { name: 'Clear filter' }));
     expect(screen.getAllByRole('article')).toHaveLength(2);
-    expect(projectEvidence['AWS S3']).toBeUndefined();
+    expect(projectEvidence['Kubernetes (familiarity)']).toBeUndefined();
   });
   it('offers ten evidence-labeled stages and an equivalent numbered list', async () => {
     const user = userEvent.setup();

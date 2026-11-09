@@ -16,11 +16,7 @@ export function ProjectList({ activeSkill, headingLevel = 3 }: { activeSkill: st
       {list.map((p) => (
         <article key={p.id} className="rp-card" data-testid={`card-project-${p.id}`}>
           <H className="rp-card-title">{p.name}</H>
-          <dl className="rp-dl">
-            <dt>Context</dt><dd>{p.context}</dd>
-            <dt>Contribution</dt><dd>{p.contribution}</dd>
-            <dt>Tools</dt><dd>{p.mechanisms}</dd>
-          </dl>
+          <ul className="rp-bullets rp-card-points">{p.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
           {p.link ? (
             <a className="rp-link" href={p.link} target="_blank" rel="noreferrer" data-testid={`link-project-${p.id}`}>Visit live project</a>
           ) : (
@@ -78,7 +74,7 @@ export function ExperienceContent() {
       <article className="rp-card">
         <h3 className="rp-card-title">{education.degree}</h3>
         <p className="rp-meta">{education.school} · {education.dates}</p>
-        <p>Listed focus: {education.focus}</p>
+        <p>{education.focus}</p>
       </article>
     </div>
   );
