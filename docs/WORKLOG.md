@@ -133,6 +133,77 @@ Optional additions to the same run: `--path .agents --invert-paths` also strips 
 - `git cat-file -t 4ffe67636220cea02bc890184affd24c70ce36a8` should fail.
 - `git log --all -p | grep -i -F -f terms.txt` should print nothing (`terms.txt` is the same terms, one per line, also kept outside the repo).
 
+## Follow-up: CI and final cleanup (2026-11-09)
+
+Earlier follow-up commits on the same branch:
+
+- `fe4a398` Add CI for Linux and Windows (`.github/workflows/ci.yml`; run 42580299290 passed on both).
+- `5ae71a2` Remove unlabeled mockup claims and Replit comments (run 42581151296 passed on both).
+
+### Commits in this task
+
+| Commit | Message | Build | Unit tests | API tests | Playwright |
+| --- | --- | --- | --- | --- | --- |
+| `6533a5f` | Delete public-facts.json | pass | 19/19 | 5/5 | 10/10 |
+| `6769b8e` | Delete the unused generated API packages | pass | 19/19 | 5/5 | 10/10 |
+
+Local checks ran on Windows 11 against a clean copy of each commit: frozen-lockfile install, root `pnpm run build` (typecheck plus every package build), Vitest, the API test script, and Playwright (desktop and mobile Chromium, using the installed Chrome). No failures, so no fixes were needed.
+
+`pnpm-lock.yaml` was regenerated with `pnpm install --lockfile-only` (5,827 lines, down from 6,466; orval and its dependencies dropped out). It was not hand-edited, and each check's frozen install confirmed it matches the package files.
+
+### CI on the final code commit (`6769b8e`)
+
+Run [42583363353](https://github.com/satyendra-varma/Scalable-Portfolio-Showcase/actions/runs/42583363353), conclusion **success**:
+
+| Job | Duration | Unit tests | API tests | Playwright |
+| --- | --- | --- | --- | --- |
+| ubuntu-latest | about 2 min | 19/19 | 5/5 | 10/10 |
+| windows-latest | about 6 min | 19/19 | 5/5 | 10/10 |
+
+### Lighthouse (measured, nothing changed)
+
+Lighthouse 13.6.0, mobile form factor, simulated throttling, headless Chrome, against the local production preview of `6769b8e`; three runs. Not a deployed-site measurement.
+
+- Scores in all three runs: Performance **88**, Accessibility 100, Best Practices 100, SEO 100.
+- LCP 0.9 s, TBT 40–70 ms, **CLS 0.233–0.237**.
+- Performance misses the 90+ target only because of CLS. Lighthouse attributes one layout shift of `main#rp-main` to "Web font loaded" (three fonts).
+- This is a regression from the earlier v1 cleanup step 6, which moved the room's fonts from a render-blocking CSS `@import` into a non-blocking `<link>` in `index.html`. The Replit measurement before that change showed CLS 0.034. Not fixed here (see "Needs decision").
+
+### Remaining mentions of the removed items
+
+- `docs/WORKLOG.md` (the step 2 AI-guide bullet, the step 2 note about the three packages, and the step 3 note about `public-facts.json`): historical notes that now say the items were removed later. **Harmless.**
+- No code, config, workflow or other doc mentions `lib/api-client-react`, `lib/api-zod`, `lib/api-spec` or `public-facts.json`.
+
+### Proposed additions (not built)
+
+- Redraw-free font loading: self-host the three fonts with `font-display: optional` or a metric-matched fallback (`size-adjust`), to remove the CLS above without touching layout.
+- Keep the room header on one row on phones (the "Get in touch" link wraps under the pill at 390 px).
+- Draw the nine remaining System Explorer flows, once their stages are confirmed (`docs/ROOM-DIRECTIONS.md` question 7).
+- Add a Lighthouse check to CI so performance regressions surface automatically.
+- Cache Playwright's Chromium in CI to shorten the Windows job.
+
+### Needs decision
+
+- **Room content vs `docs/RESUME-SOURCE.md`.** The room still shows skills that RESUME-SOURCE doesn't list: MassTransit, Kubernetes (familiarity), CI/CD, the whole Practices group, and the education "Listed focus" line. These come from CONTENT.md and the earlier resume, so they are not invented, but under the new rule they should either be added to RESUME-SOURCE or removed.
+- **The CLS fix** above: pick an approach before changing font loading.
+- **Orphaned config, now harmless:**
+  - the `lib/*` workspace glob (no `lib/` folder remains);
+  - the `js-yaml` override (it was for orval; nothing uses js-yaml now);
+  - the `proxy-addr` override (it was for Express, though a transitive copy still resolves);
+  - the root `tsconfig.json` with no references, plus the `typecheck:libs` script that builds it (now a no-op);
+  - the `zod` devDependency in the portfolio and the mockup sandbox (no source imports it);
+  - the react-query provider in `App.tsx` (no queries remain).
+- **The API service** now only answers `/api/healthz`. Keep it for a later phase, or drop it for a frontend-only v1 (FRD open question 1).
+- **Unused shadcn components** in `artifacts/portfolio/src/components/ui/` (most are unused by the room).
+- **RecruiterBrief mockup headline** "Domain-driven foundations. Practical application boundaries." isn't resume wording.
+- **Placeholder `resume.pdf`** is still served at `/resume.pdf` (nothing links to it).
+- **Git history rewrite** is still pending your approval (plan above).
+
+### Unsure
+
+- I read "regenerate pnpm-lock.yaml by running pnpm install" as `pnpm install --lockfile-only`. That rewrites the lockfile without creating `node_modules` or a pnpm store on the `S:` drive. A full `pnpm install` from that lockfile then ran in every check, locally and in CI.
+- This report is committed after the code, so the CI run listed above covers the last code commit (`6769b8e`). The report commit itself only changes this file.
+
 ## Approved homepage update
 
 The owner explicitly approved making the warm Engineer’s Room the default homepage. `/` now renders that room directly; comparison URLs remain available. Homepage title and labeling were updated without changing the room's interaction model.
