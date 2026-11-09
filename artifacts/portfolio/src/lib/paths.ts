@@ -6,8 +6,6 @@ export const appPath = (path: string) => `${BASE}${path.startsWith('/') ? path :
 /** Home-page section link that works from any route. */
 export const sectionHref = (hash: string, onHome: boolean) => (onHome ? hash : `${appPath('/')}${hash}`);
 
-export const RESUME_URL = `${import.meta.env.BASE_URL}resume.pdf`;
-
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 

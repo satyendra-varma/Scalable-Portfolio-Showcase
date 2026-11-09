@@ -27,9 +27,11 @@ Requirements are not test results. See WORKLOG.md and RELEASE-CHECKLIST.md for w
 - Frontend type check: `pnpm --filter @workspace/portfolio typecheck`
 - API release package: `pnpm --filter @workspace/api-server build`
 - Regenerate API hooks/schemas: `pnpm --filter @workspace/api-spec codegen`
-- Recreate sanitized public resume: `python3 scripts/sanitize_resume.py`
+- Resume redaction script: `python3 scripts/sanitize_resume.py` (needs `pymupdf` and the original upload in `attached_assets/`, which isn't in the repo). It only removes phone numbers, so its output is not a clean public copy on its own.
 - Prepared browser suite: `pnpm --filter @workspace/portfolio test:e2e` (not run in the first build; requires browser installation and running app).
 
 The Vite configs require `PORT` and `BASE_PATH` environment values (Replit used to supply them). Set them explicitly for a local build, for example `PORT=4173 BASE_PATH=/`.
 
-[public-facts.json](public-facts.json) holds the curated facts the removed AI guide answered from. Nothing in v1 reads it; it is kept only as reference for a possible later phase. The original uploaded PDF is not the public download.
+[public-facts.json](public-facts.json) holds the curated facts the removed AI guide answered from. Nothing in v1 reads it; it is kept only as reference for a possible later phase.
+
+`artifacts/portfolio/public/resume.pdf` is a placeholder. Replace it with the clean public copy of the resume (allowlisted content only, no phone number or street address) before linking it anywhere. Nothing links to it today, but every build still copies it to the site root.

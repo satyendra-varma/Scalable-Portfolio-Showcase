@@ -52,6 +52,52 @@ Toolchain notes kept from the removed agent memory:
 
 Per `docs/RESUME-SOURCE.md`, the internal project that isn't on the allowlist, its name and its metric are gone from every current file: the portfolio's project data and link handling (and their tests), `docs/public-facts.json`, `docs/README.md`, and both mockups. This log deliberately doesn't name it. The project pages, 404 list and mockups now show two projects, and the design brief says "two project subjects". Git history still contains the old text; see the history-rewrite plan below.
 
+### Resume PDF replaced by a placeholder (step 4)
+
+- Removed the committed `artifacts/portfolio/public/resume.pdf` (phone redacted, but it carried the excluded project and other text outside the allowlist).
+- Added a one-page placeholder at the same path that says to replace it with the clean public copy. `.gitattributes` marks PDFs as binary so line-ending conversion can't corrupt them.
+- Removed the old footer's "Download resume" link and the unused `RESUME_URL` helper. The room's contact panel already shows "Resume download unavailable".
+- `scripts/sanitize_resume.py` only redacts phone numbers. Running it on the original upload would reproduce excluded content, so a clean copy needs a separate review against `docs/RESUME-SOURCE.md`.
+
+### Git history rewrite — planned, NOT run (needs owner approval)
+
+**Why.** Deleting files in new commits doesn't remove them from history. Every earlier commit on GitHub still holds (1) the old resume PDF, blob `4ffe67636220cea02bc890184affd24c70ce36a8` (added in `2b3afea`), and (2) the excluded project's name and metric in older versions of the docs, portfolio code, mockups, AI knowledge file and agent memory. Commit messages don't contain either (checked).
+
+**Tool.** [git-filter-repo](https://github.com/newren/git-filter-repo): `pip install git-filter-repo`.
+
+**When.** After this branch is merged into `main` and pushed, so every commit to keep is on GitHub.
+
+**Prepare two files outside the repository** (they must never be committed):
+
+- `strip-blobs.txt`, containing one line: `4ffe67636220cea02bc890184affd24c70ce36a8`. This deletes only the old PDF's contents; the placeholder has a different blob ID, so it stays.
+- `replacements.txt`, one rule per line in filter-repo's format (`text==>replacement`, or `regex:pattern==>replacement`), covering the excluded project's name and its variants, the metric, and its distinctive description phrases, each replaced with `[removed]`. The terms live only in this file so that the log never names them.
+
+**Commands** (run from the folder holding the two files):
+
+```bash
+git clone --mirror https://github.com/satyendra-varma/Scalable-Portfolio-Showcase.git portfolio-backup.git
+git clone --mirror https://github.com/satyendra-varma/Scalable-Portfolio-Showcase.git portfolio-rewrite.git
+cd portfolio-rewrite.git
+git filter-repo --strip-blobs-with-ids ../strip-blobs.txt --replace-text ../replacements.txt
+git remote add origin https://github.com/satyendra-varma/Scalable-Portfolio-Showcase.git
+git push --force --mirror origin
+```
+
+Optional additions to the same run: `--path .agents --invert-paths` also strips the old Replit Agent files, which hold the Repl ID and storage paths.
+
+**Effect.**
+
+- Every commit gets a new hash, and the old PDF and the replaced text disappear from all versions.
+- `portfolio-backup.git` keeps the untouched originals; delete it once the result is verified.
+- **Every existing clone, including the local working copy on `S:`, must be re-cloned** (or hard-reset to the new `main`). Never push from an old clone: that would bring the history back.
+- filter-repo drops `origin` on purpose; the commands above re-add it.
+- GitHub can keep unreferenced objects and cached views for a while, and pull-request refs can't be rewritten. If that matters, ask GitHub Support to run garbage collection after the push.
+
+**Check afterwards:**
+
+- `git cat-file -t 4ffe67636220cea02bc890184affd24c70ce36a8` should fail.
+- `git log --all -p | grep -i -F -f terms.txt` should print nothing (`terms.txt` is the same terms, one per line, also kept outside the repo).
+
 ## Approved homepage update
 
 The owner explicitly approved making the warm Engineer’s Room the default homepage. `/` now renders that room directly; comparison URLs remain available. Homepage title and labeling were updated without changing the room's interaction model.

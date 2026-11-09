@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
-import { ArrowUpRight, Download, ExternalLink, Mail, Menu, X } from 'lucide-react';
+import { ArrowUpRight, ExternalLink, Mail, Menu, X } from 'lucide-react';
 import { CONTACT } from '@/content/portfolio';
-import { RESUME_URL, sectionHref } from '@/lib/paths';
+import { sectionHref } from '@/lib/paths';
 
 function TopBar({ onHome }: { onHome: boolean }) {
   const [open, setOpen] = useState(false);
@@ -60,9 +60,6 @@ function SiteFooter({ onHome }: { onHome: boolean }) {
         <div className="sx-footer-actions">
           <a className="sx-button sx-button-light" href={`mailto:${CONTACT.email}`} data-testid="link-footer-email">
             <Mail size={16} aria-hidden="true" /> Email Satyendra <ArrowUpRight size={15} aria-hidden="true" />
-          </a>
-          <a className="sx-button sx-button-ghost" href={RESUME_URL} download data-testid="link-resume">
-            <Download size={15} aria-hidden="true" /> Download resume (PDF)
           </a>
         </div>
       </div>
