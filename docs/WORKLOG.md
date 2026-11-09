@@ -195,7 +195,7 @@ Lighthouse 13.6.0, mobile form factor, simulated throttling, headless Chrome, ag
   - the react-query provider in `App.tsx` (no queries remain).
 - **The API service** now only answers `/api/healthz`. Keep it for a later phase, or drop it for a frontend-only v1 (FRD open question 1).
 - **Unused shadcn components** in `artifacts/portfolio/src/components/ui/` (most are unused by the room).
-- **RecruiterBrief mockup headline** "Domain-driven foundations. Practical application boundaries." isn't resume wording.
+- ~~**RecruiterBrief mockup headline** isn't resume wording.~~ Resolved: the RecruiterBrief mockup was deleted.
 - **Placeholder `resume.pdf`** is still served at `/resume.pdf` (nothing links to it).
 - **Git history rewrite** is still pending your approval (plan above).
 
