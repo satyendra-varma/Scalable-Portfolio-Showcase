@@ -42,7 +42,7 @@ const projects: Project[] = [
     index: "02",
     title: "Cloud E-Commerce Platform",
     type: "CLOUD DELIVERY · AWS EC2",
-    summary: "A containerized full-stack platform with tested .NET services and a configured web edge.",
+    summary: "A containerized full-stack platform with tested .NET services, deployed on AWS EC2.",
     outcome: "Containerized",
     outcomeLabel: "full-stack infrastructure on AWS EC2",
     stack: ["C# .NET Core", "MSSQL", "Docker", "AWS EC2", "xUnit", "NGINX", "Certbot"],
