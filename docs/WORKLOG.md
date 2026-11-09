@@ -196,13 +196,19 @@ Lighthouse 13.6.0, mobile form factor, simulated throttling, headless Chrome, ag
 - **The API service** now only answers `/api/healthz`. Keep it for a later phase, or drop it for a frontend-only v1 (FRD open question 1).
 - **Unused shadcn components** in `artifacts/portfolio/src/components/ui/` (most are unused by the room).
 - ~~**RecruiterBrief mockup headline** isn't resume wording.~~ Resolved: the RecruiterBrief mockup was deleted.
-- **Placeholder `resume.pdf`** is still served at `/resume.pdf` (nothing links to it).
+- ~~**Placeholder `resume.pdf`** is still served.~~ Resolved: the placeholder was removed.
 - **Git history rewrite** is still pending your approval (plan above).
 
 ### Unsure
 
 - I read "regenerate pnpm-lock.yaml by running pnpm install" as `pnpm install --lockfile-only`. That rewrites the lockfile without creating `node_modules` or a pnpm store on the `S:` drive. A full `pnpm install` from that lockfile then ran in every check, locally and in CI.
 - This report is committed after the code, so the CI run listed above covers the last code commit (`6769b8e`). The report commit itself only changes this file.
+
+## Open items closed (2026-11-09, second pass)
+
+### Resume PDF removed (step 5)
+
+The placeholder `artifacts/portfolio/public/resume.pdf` is gone, so builds no longer publish any PDF, and nothing links to `/resume.pdf` (a browser test checks that the path doesn't return a PDF). **The download button returns when the clean public PDF is added** at that path: review it against `docs/RESUME-SOURCE.md`, then restore a download link in the room's Contact panel, which until then says the download is unavailable. The real PDF was not added.
 
 ## Approved homepage update
 

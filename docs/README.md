@@ -36,4 +36,4 @@ Works the same on Windows, macOS and Linux. Needs Node 24, pnpm 10 (`corepack en
 
 `BASE_PATH` defaults to `/`. Set it only when the site is served from a sub-path.
 
-`artifacts/portfolio/public/resume.pdf` is a placeholder. Replace it with the clean public copy of the resume (allowlisted content only, no phone number or street address) before linking it anywhere. Nothing links to it today, but every build still copies it to the site root.
+There is no resume download in v1, and no PDF ships with the site. When the clean public copy exists (allowlisted content only, no phone number or street address), add it at `artifacts/portfolio/public/resume.pdf` and bring back the download button. Until then the room's Contact panel says the download is unavailable.
