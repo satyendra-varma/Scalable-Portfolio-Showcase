@@ -4,6 +4,9 @@ import AxeBuilder from '@axe-core/playwright';
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
 
 test('room: panels, filters, Explorer and accessible alternatives', async ({ page, isMobile }) => {
+  // A long journey (five panels, filters, keyboard paths, two axe scans). Cold Windows CI runners
+  // have taken over 30 s for it, so give it the slow-test budget instead of the 30 s default.
+  test.slow();
   if (!isMobile) await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   for (const id of ['text-name', 'text-role', 'text-positioning']) {
