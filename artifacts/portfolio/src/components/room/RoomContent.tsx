@@ -20,7 +20,6 @@ export function ProjectList({ activeSkill, headingLevel = 3 }: { activeSkill: st
             <dt>Context</dt><dd>{p.context}</dd>
             <dt>Contribution</dt><dd>{p.contribution}</dd>
             <dt>Tools</dt><dd>{p.mechanisms}</dd>
-            <dt>Outcome</dt><dd>Not yet documented.</dd>
           </dl>
           {p.link ? (
             <a className="rp-link" href={p.link} target="_blank" rel="noreferrer" data-testid={`link-project-${p.id}`}>Visit live project</a>

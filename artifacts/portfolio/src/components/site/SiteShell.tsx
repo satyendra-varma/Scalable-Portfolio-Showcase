@@ -69,7 +69,6 @@ function SiteFooter({ onHome }: { onHome: boolean }) {
           LinkedIn <ExternalLink size={13} aria-hidden="true" /><span className="sx-visually-hidden"> (opens in a new tab)</span>
         </a>
         <span>{CONTACT.location}</span>
-        <span className="sx-footer-note">PUBLIC-SAFE PROFILE · RESUME-BACKED FACTS ONLY</span>
         <a className="sx-back-top" href={sectionHref('#top', onHome)} data-testid="link-back-top">BACK TO TOP ↑</a>
       </div>
     </footer>

@@ -170,7 +170,7 @@ export function SystemExplorer() {
         <div className="sx-timeline">
           <article className="sx-role-entry">
             <div className="sx-entry-date"><span>APR 2023</span><i /><span>PRESENT</span></div>
-            <div className="sx-entry-body"><div className="sx-entry-heading"><div><h3>Software Engineer <span>(Contract)</span></h3><p>Crescenza Consulting Group</p></div><span className="sx-entry-current">CURRENT ROLE</span></div>
+            <div className="sx-entry-body"><div className="sx-entry-heading"><div><h3>Software Engineer <span>(Contract)</span></h3><p>Crescenza Consulting Group</p></div></div>
               <div className="sx-entry-projects">
                 {projects.map((project) => <button key={project.id} className={`sx-entry-project ${activeProject === project.id ? "selected" : ""}`} onClick={() => { selectProject(project.id); document.getElementById("explorer")?.scrollIntoView({ behavior: "smooth" }); }}>
                   <span>{project.index}</span>{project.title}<ArrowUpRight size={14} />
@@ -207,7 +207,7 @@ export function SystemExplorer() {
 
       <footer className="sx-footer" id="contact">
         <div className="sx-footer-top"><p className="sx-kicker">LET’S TALK SYSTEMS</p><h2>Good engineering<br />starts with <em>the right problem.</em></h2><a className="sx-button sx-button-light" href="mailto:satyendrasatya447@gmail.com"><Mail size={16} /> Email Satyendra <ArrowUpRight size={15} /></a></div>
-        <div className="sx-footer-bottom"><a href="mailto:satyendrasatya447@gmail.com">satyendrasatya447@gmail.com</a><a href="https://www.linkedin.com/in/satyendra-varma-nadimpalli-56a199247" target="_blank" rel="noreferrer">LinkedIn <ExternalLink size={13} /></a><span>Vancouver, BC, Canada</span><span className="sx-footer-note">PUBLIC-SAFE PROFILE · RESUME PDF PENDING REVIEW</span><a className="sx-back-top" href="#top">BACK TO TOP ↑</a></div>
+        <div className="sx-footer-bottom"><a href="mailto:satyendrasatya447@gmail.com">satyendrasatya447@gmail.com</a><a href="https://www.linkedin.com/in/satyendra-varma-nadimpalli-56a199247" target="_blank" rel="noreferrer">LinkedIn <ExternalLink size={13} /></a><span>Vancouver, BC, Canada</span><a className="sx-back-top" href="#top">BACK TO TOP ↑</a></div>
       </footer>
     </main>
   );

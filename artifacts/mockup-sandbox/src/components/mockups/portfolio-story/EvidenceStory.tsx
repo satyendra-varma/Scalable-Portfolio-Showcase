@@ -66,13 +66,6 @@ export function EvidenceStory() {
         </section>
       </div>
 
-      <div className="es-band">
-        <div className="es-shell es-band-inner">
-          <div className="es-label">Working thesis</div>
-          <p>Good engineering is legible twice: in the choices made inside a system, and in the hours, workflows, or bottlenecks those choices change.</p>
-        </div>
-      </div>
-
       <section className="es-shell es-section" id="work">
         <div className="es-section-head">
           <div className="es-section-number">01 / Selected work</div>

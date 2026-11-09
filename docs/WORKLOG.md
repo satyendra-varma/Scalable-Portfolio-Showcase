@@ -59,6 +59,14 @@ Per `docs/RESUME-SOURCE.md`, the internal project that isn't on the allowlist, i
 - Removed the old footer's "Download resume" link and the unused `RESUME_URL` helper. The room's contact panel already shows "Resume download unavailable".
 - `scripts/sanitize_resume.py` only redacts phone numbers. Running it on the original upload would reproduce excluded content, so a clean copy needs a separate review against `docs/RESUME-SOURCE.md`.
 
+### Unlabeled and placeholder text removed (step 5)
+
+- Room project cards: dropped the "Outcome: Not yet documented." row. Outcomes stay as editorial placeholders in `docs/CONTENT.md` until verified ones exist.
+- RecruiterBrief mockup: removed both three-step flows (they were headed "RESUME EVIDENCE" without a "Representative design (to confirm)" label), their styles, and the sentence that described them. The block is now titled "Role context and boundaries."
+- SystemExplorer mockup: removed the "CURRENT ROLE" badge (CONTENT.md: don't assert current employment) and its "PUBLIC-SAFE PROFILE · RESUME PDF PENDING REVIEW" footer line.
+- EvidenceStory mockup: removed the "Working thesis" band.
+- Old site footer: removed "PUBLIC-SAFE PROFILE · RESUME-BACKED FACTS ONLY".
+
 ### Git history rewrite — planned, NOT run (needs owner approval)
 
 **Why.** Deleting files in new commits doesn't remove them from history. Every earlier commit on GitHub still holds (1) the old resume PDF, blob `4ffe67636220cea02bc890184affd24c70ce36a8` (added in `2b3afea`), and (2) the excluded project's name and metric in older versions of the docs, portfolio code, mockups, AI knowledge file and agent memory. Commit messages don't contain either (checked).
