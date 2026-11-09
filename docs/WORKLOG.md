@@ -176,7 +176,7 @@ Lighthouse 13.6.0, mobile form factor, simulated throttling, headless Chrome, ag
 
 ### Proposed additions (not built)
 
-- Redraw-free font loading: self-host the three fonts with `font-display: optional` or a metric-matched fallback (`size-adjust`), to remove the CLS above without touching layout.
+- ~~Self-host the fonts with a metric-matched fallback to remove the CLS.~~ Done in the second pass (`256ea15`).
 - Keep the room header on one row on phones (the "Get in touch" link wraps under the pill at 390 px).
 - Draw the nine remaining System Explorer flows, once their stages are confirmed (`docs/ROOM-DIRECTIONS.md` question 7).
 - Add a Lighthouse check to CI so performance regressions surface automatically.
@@ -184,15 +184,9 @@ Lighthouse 13.6.0, mobile form factor, simulated throttling, headless Chrome, ag
 
 ### Needs decision
 
-- **Room content vs `docs/RESUME-SOURCE.md`.** The room still shows skills that RESUME-SOURCE doesn't list: MassTransit, Kubernetes (familiarity), CI/CD, the whole Practices group, and the education "Listed focus" line. These come from CONTENT.md and the earlier resume, so they are not invented, but under the new rule they should either be added to RESUME-SOURCE or removed.
-- **The CLS fix** above: pick an approach before changing font loading.
-- **Orphaned config, now harmless:**
-  - the `lib/*` workspace glob (no `lib/` folder remains);
-  - the `js-yaml` override (it was for orval; nothing uses js-yaml now);
-  - the `proxy-addr` override (it was for Express, though a transitive copy still resolves);
-  - the root `tsconfig.json` with no references, plus the `typecheck:libs` script that builds it (now a no-op);
-  - the `zod` devDependency in the portfolio and the mockup sandbox (no source imports it);
-  - the react-query provider in `App.tsx` (no queries remain).
+- ~~**Room content vs `docs/RESUME-SOURCE.md`.**~~ Those items were added to RESUME-SOURCE in the second pass (`a161c07`); the remaining differences are listed in the second-pass report below.
+- ~~**The CLS fix.**~~ Done in the second pass (`256ea15`): CLS 0.233 → 0.
+- ~~**Orphaned config.**~~ All removed in the second pass (`64cf5dc`). Correction: nothing installed `proxy-addr` at that point; the earlier "transitive copy" note was wrong (the search had matched the override line itself).
 - **The API service** now only answers `/api/healthz`. Keep it for a later phase, or drop it for a frontend-only v1 (FRD open question 1).
 - **Unused shadcn components** in `artifacts/portfolio/src/components/ui/` (most are unused by the room).
 - ~~**RecruiterBrief mockup headline** isn't resume wording.~~ Resolved: the RecruiterBrief mockup was deleted.
@@ -209,6 +203,87 @@ Lighthouse 13.6.0, mobile form factor, simulated throttling, headless Chrome, ag
 ### Resume PDF removed (step 5)
 
 The placeholder `artifacts/portfolio/public/resume.pdf` is gone, so builds no longer publish any PDF, and nothing links to `/resume.pdf` (a browser test checks that the path doesn't return a PDF). **The download button returns when the clean public PDF is added** at that path: review it against `docs/RESUME-SOURCE.md`, then restore a download link in the room's Contact panel, which until then says the download is unavailable. The real PDF was not added.
+
+### Report
+
+**Commits**
+
+| Commit | Message | Build | Unit tests | API tests | Playwright |
+| --- | --- | --- | --- | --- | --- |
+| `256ea15` | Self-host the room fonts with metric-matched fallbacks | pass | 19/19 | 5/5 | 12/12 |
+| `b221968` | Give the room journey browser test the slow-test budget (CI fix for step 1) | pass | 19/19 | 5/5 | 12/12 |
+| `a161c07` | Add the remaining resume skills and focus to RESUME-SOURCE | pass | 19/19 | 5/5 | 12/12 |
+| `64cf5dc` | Remove leftover config from the deleted packages | pass | 19/19 | 5/5 | 12/12 |
+| `a44547c` | Delete the RecruiterBrief mockup | pass | 19/19 | 5/5 | 12/12 |
+| `42c9aca` | Stop serving the placeholder resume PDF | pass | 19/19 | 5/5 | 14/14 |
+
+Local checks ran on Windows 11 against a clean copy of each commit: frozen install, root build, Vitest, the API test script, and Playwright (desktop and mobile Chromium). Browser tests went from 10 to 12 with the fonts test (step 1), and from 12 to 14 with the "no PDF served" test (step 5).
+
+**CI per commit** (ubuntu-latest / windows-latest)
+
+| Commit | Run | Result |
+| --- | --- | --- |
+| `256ea15` | 42587406470 | Ubuntu pass; **Windows failed**: 11/12 browser tests (see the CI fix below) |
+| `b221968` | 42588601812 | pass / pass |
+| `a161c07` | 42591558671 | pass / pass |
+| `64cf5dc` | 42605566395 | pass / pass |
+| `a44547c` | 42619917126 | pass / pass |
+| `42c9aca` | [42666562361](https://github.com/satyendra-varma/Scalable-Portfolio-Showcase/actions/runs/42666562361) | pass / pass |
+
+**Final commit `42c9aca`.** Unit 19/19, API 5/5 and Playwright 14/14 on both ubuntu-latest (browser suite 23.6 s) and windows-latest (41.9 s).
+
+**CI fix.** On `256ea15`, only the desktop room-journey test failed, and only on Windows. It exceeded Playwright's 30 s default at 31.6 s, with multi-second idle gaps between actions. It had taken 7–16 s in earlier Windows runs, 5.9 s on mobile in the same run, and passed on Linux and locally. `b221968` marks that one journey `test.slow()` (three times the budget); the application is unchanged. It passed on the first retry.
+
+**Lighthouse** (13.6.0, mobile form factor, simulated throttling, headless Chrome, local production preview; 3 runs each)
+
+| Build | Performance (runs → median) | CLS (median) | LCP / TBT (median) |
+| --- | --- | --- | --- |
+| Before: `6769b8e` (same code as `fa77f78`) | 88, 88, 88 → **88** | **0.233** | 0.9 s / 50 ms |
+| After the font fix (`256ea15` contents) | 100, 99, 100 → **100** | **0** | 1.54 s / 42 ms |
+| Final: `42c9aca` | 100, 100, 94 → **100** | **0** | 0.91 s / 46 ms |
+
+- Accessibility, Best Practices and SEO were 100 in every run.
+- The single 94 came from one run's main-thread blocking time (278 ms), not layout.
+- With the web fonts blocked, the adjusted fallbacks lay out the hero pixel-identically to the web fonts at 1440 px and 390 px.
+
+**Room vs `docs/RESUME-SOURCE.md`.** The five requested items now appear in RESUME-SOURCE with the resume's wording. No `[TO CONFIRM]` marker applied only to them, so none were removed. The room uses the same wording for them. The room shows nothing beyond RESUME-SOURCE except the items listed under "Needs decision" below.
+
+**Remaining mentions of removed items**
+
+- `docs/WORKLOG.md`: historical notes about `public-facts.json`, the `lib/api-*` packages, the RecruiterBrief mockup, the old resume PDF, and the earlier orphaned-config list (now marked resolved). Harmless.
+- `docs/README.md`: the "no resume download yet" note. Intended.
+- `artifacts/portfolio/e2e/room.spec.ts`: two tests checking that no resume link exists and no PDF is served. Intended.
+- `scripts/sanitize_resume.py`: its output path is `public/resume.pdf`, which is where a clean copy would go. Harmless, but the script only redacts phone numbers.
+- `artifacts/mockup-sandbox/index.html` and the two mockup `_group.css` files still load Google Fonts. Step 1 covered the room; the mockup sandbox is a development-only canvas and isn't deployed. Needs decision.
+- No current code, config or doc mentions `public-facts.json`, `lib/api-*`, react-query, the `js-yaml`/`proxy-addr` overrides, `typecheck:libs` or the RecruiterBrief mockup, and the lockfile has no react-query, js-yaml, proxy-addr or orval entries. `zod` is still in the lockfile, but only as a dependency of `chromium-bidi` (browser-test tooling), not of this project.
+
+**Proposed additions (not built)**
+
+- Keep the room header on one row on phones; at 390 px the "Get in touch" link wraps under the pill.
+- Draw the nine remaining System Explorer flows once their stages are confirmed (`docs/ROOM-DIRECTIONS.md` question 7).
+- Add a Lighthouse check to CI so a CLS or performance regression fails the build.
+- Cache Playwright's Chromium in CI to shorten the Windows job.
+
+**Needs decision**
+
+- **Room content not in RESUME-SOURCE:**
+  - the hero positioning sentence (owner wording from `docs/CONTENT.md`);
+  - the "EF Core global query filters" skill chip (RESUME-SOURCE has it only as a CRM project fact, though the resume lists it under skills);
+  - ", Canada" after the school (RESUME-SOURCE's education line says "Vancouver, BC"; its contact location includes Canada).
+  
+  Add each to RESUME-SOURCE, or remove it from the room. Smaller wording differences: "AWS EC2"/"AWS S3" chips versus "AWS (EC2, S3)", "DDD" versus "Domain-Driven Design", and "SQL Server/MSSQL" versus "SQL Server (MSSQL)".
+- **Mockup-sandbox Google Fonts** (see above): self-host them too, or leave them, since the canvas is never deployed.
+- **The API service** only answers `/api/healthz`. Keep it, or drop it for a frontend-only v1.
+- **Unused shadcn components** in `artifacts/portfolio/src/components/ui/`.
+- **Git history rewrite** is still pending approval. It was not run, and nothing was force-pushed.
+
+**Unsure**
+
+- This task's brief started with the placeholder "[PASTE THE AMBITION BRIEF]". I applied the earlier ambition brief and its limits: resume-source facts only, no new features, and accessible motion.
+- **Local check of `a44547c`:** the first run failed at install because two copies of my own check ran into the same folder (`EBUSY`/`EEXIST`). That was a mistake in how I launched it, not a project problem. The second, clean run passed.
+- **Fallback sizes** were measured in Chrome on Windows against Arial and Courier New. On systems without those fonts (most Linux desktops) the fallback chain continues to the system font, which isn't size-matched. The font preload makes a visible swap rare either way.
+- **Lockfile:** regenerated with `pnpm install --lockfile-only`; every check then did a full frozen install from it.
+- **Lighthouse** was measured on a local production preview, not a deployed site.
 
 ## Approved homepage update
 
