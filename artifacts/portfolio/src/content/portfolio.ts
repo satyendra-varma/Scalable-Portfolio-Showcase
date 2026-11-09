@@ -90,22 +90,3 @@ export const projects: Project[] = [
 ];
 
 export const getProject = (id: string | undefined) => projects.find((p) => p.id === id);
-
-export const starterQuestions = [
-  'What are Satyendra’s strongest .NET backend contributions?',
-  'How did the Business Operations system improve the workflow?',
-  'Which technologies are explicitly listed on the CRM?',
-  'What cloud and delivery experience does he have?',
-];
-
-export const skillGroups = [
-  { name: 'Backend & systems', items: 'C#, .NET 8, ASP.NET Core, Web API, MVC, Entity Framework Core, LINQ, REST APIs' },
-  { name: 'Frontend', items: 'React, TypeScript, JavaScript, HTML5/CSS3, Bootstrap' },
-  { name: 'Databases & security', items: 'SQL Server (MSSQL), PostgreSQL, SQLite, Oracle DB, JWT Auth, RBAC' },
-  { name: 'Cloud & DevOps', items: 'AWS (EC2, S3), Docker, Kubernetes (familiarity), GitHub Actions, Jenkins, NGINX, Certbot, Git, CI/CD' },
-  { name: 'Architecture & testing', items: 'Domain-Driven Design (DDD), MediatR, MassTransit, Redis, xUnit, Serilog, EF Core Global Query Filters' },
-  { name: 'Development practices', items: 'Agile/Scrum, SDLC, Code Review, Debugging, Production Support' },
-];
-
-/** Section anchors that ambassador sources may link back to. */
-export const SECTION_ANCHORS = ['#top', '#explorer', '#experience', '#capabilities', '#ambassador', '#about', '#contact'] as const;

@@ -6,11 +6,4 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export * from './ambassadorAnswer';
-export * from './ambassadorAnswerStatus';
-export * from './ambassadorInput';
-export * from './ambassadorStatus';
-export * from './apiProblem';
-export * from './evidenceSource';
 export * from './healthStatus';
-export * from './requestErrorResponse';

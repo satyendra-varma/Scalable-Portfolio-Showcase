@@ -17,34 +17,3 @@ export const HealthCheckResponse = zod.object({
 })
 
 
-/**
- * @summary Availability of the portfolio guide without a model call
- */
-export const GetAmbassadorStatusResponse = zod.object({
-  "available": zod.boolean(),
-  "message": zod.string()
-})
-
-
-/**
- * @summary Answer using only approved public resume evidence
- */
-export const askAmbassadorBodyMessageMax = 1200;
-
-
-
-export const AskAmbassadorBody = zod.object({
-  "message": zod.string().min(1).max(askAmbassadorBodyMessageMax)
-})
-
-export const AskAmbassadorResponse = zod.object({
-  "answer": zod.string(),
-  "status": zod.enum(['supported', 'unsupported']),
-  "sources": zod.array(zod.object({
-  "id": zod.string(),
-  "title": zod.string(),
-  "href": zod.string()
-}))
-})
-
-

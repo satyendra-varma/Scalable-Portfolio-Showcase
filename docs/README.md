@@ -1,6 +1,6 @@
 # Portfolio documentation
 
-Status: System Explorer selected and implemented. React/TypeScript frontend and ASP.NET Core .NET 10 API are running in development. The grounded ambassador and public-safe resume work. Browser interaction tests and full release audits remain pending; the site has not been published.
+Status: System Explorer selected and implemented. The React/TypeScript frontend and an ASP.NET Core .NET 10 API (health check only) run in development. The AI guide was removed from v1. Full release audits remain pending; the site has not been published.
 
 ## Reading order
 
@@ -32,4 +32,4 @@ Requirements are not test results. See WORKLOG.md and RELEASE-CHECKLIST.md for w
 
 The Vite configs require `PORT` and `BASE_PATH` environment values (Replit used to supply them). Set them explicitly for a local build, for example `PORT=4173 BASE_PATH=/`.
 
-Curated public AI knowledge: [public-facts.json](public-facts.json). Update it only with approved resume evidence, then rerun tests/builds. The original uploaded PDF is not the public download.
+[public-facts.json](public-facts.json) holds the curated facts the removed AI guide answered from. Nothing in v1 reads it; it is kept only as reference for a possible later phase. The original uploaded PDF is not the public download.

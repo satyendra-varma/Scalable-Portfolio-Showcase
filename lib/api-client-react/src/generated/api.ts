@@ -6,34 +6,26 @@
  * OpenAPI spec version: 0.1.0
  */
 import {
-  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
-  UseMutationOptions,
-  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
-  AmbassadorAnswer,
-  AmbassadorInput,
-  AmbassadorStatus,
-  HealthStatus,
-  RequestErrorResponse
+  HealthStatus
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
-import type { ErrorType , BodyType } from '../custom-fetch';
+import type { ErrorType } from '../custom-fetch';
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -160,193 +152,4 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
 
 
 
-
-export const getGetAmbassadorStatusUrl = () => {
-
-
-
-
-  return `/api/ambassador/status`
-}
-
-/**
- * @summary Availability of the portfolio guide without a model call
- */
-export const getAmbassadorStatus = async ( options?: Parameters<typeof customFetch>[1]): Promise<AmbassadorStatus> => {
-
-  return customFetch<AmbassadorStatus>(getGetAmbassadorStatusUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetAmbassadorStatusQueryKey = () => {
-    return [
-    `/api/ambassador/status`
-    ] as const;
-    }
-
-
-export const getGetAmbassadorStatusQueryOptions = <TData = Awaited<ReturnType<typeof getAmbassadorStatus>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAmbassadorStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetAmbassadorStatusQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAmbassadorStatus>>> = ({ signal }) => getAmbassadorStatus({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAmbassadorStatus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetAmbassadorStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getAmbassadorStatus>>>
-export type GetAmbassadorStatusQueryError = ErrorType<unknown>
-
-
-export function useGetAmbassadorStatus<TData = Awaited<ReturnType<typeof getAmbassadorStatus>>, TError = ErrorType<unknown>>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAmbassadorStatus>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAmbassadorStatus>>,
-          TError,
-          Awaited<ReturnType<typeof getAmbassadorStatus>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAmbassadorStatus<TData = Awaited<ReturnType<typeof getAmbassadorStatus>>, TError = ErrorType<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAmbassadorStatus>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAmbassadorStatus>>,
-          TError,
-          Awaited<ReturnType<typeof getAmbassadorStatus>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAmbassadorStatus<TData = Awaited<ReturnType<typeof getAmbassadorStatus>>, TError = ErrorType<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAmbassadorStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Availability of the portfolio guide without a model call
- */
-
-export function useGetAmbassadorStatus<TData = Awaited<ReturnType<typeof getAmbassadorStatus>>, TError = ErrorType<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAmbassadorStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetAmbassadorStatusQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export const getAskAmbassadorUrl = () => {
-
-
-
-
-  return `/api/ambassador`
-}
-
-/**
- * @summary Answer using only approved public resume evidence
- */
-export const askAmbassador = async (ambassadorInput: AmbassadorInput, options?: Parameters<typeof customFetch>[1]): Promise<AmbassadorAnswer> => {
-
-    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Symbol.iterator in h) {
-      return Object.fromEntries(
-        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
-      );
-    }
-    const headers: Record<string, string | readonly string[]> = {};
-    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
-      if (value !== undefined) headers[name] = value;
-    }
-    return headers;
-  };
-return customFetch<AmbassadorAnswer>(getAskAmbassadorUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(ambassadorInput)
-  }
-);}
-
-
-
-
-
-export const getAskAmbassadorMutationKey = () => ['askAmbassador'] as const;
-
-export const getAskAmbassadorMutationOptions = <TError = ErrorType<RequestErrorResponse>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof askAmbassador>>, TError,AskAmbassadorMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof askAmbassador>>, TError,AskAmbassadorMutationVariables, TContext> => {
-
-const mutationKey = getAskAmbassadorMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof askAmbassador>>, AskAmbassadorMutationVariables> = (props) => {
-          const {data} = props ?? {};
-
-          return  askAmbassador(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type AskAmbassadorMutationResult = NonNullable<Awaited<ReturnType<typeof askAmbassador>>>
-    export type AskAmbassadorMutationBody = BodyType<AmbassadorInput>
-    export type AskAmbassadorMutationError = ErrorType<RequestErrorResponse>
-    export type AskAmbassadorMutationVariables = {data: BodyType<AmbassadorInput>}
-
-    /**
- * @summary Answer using only approved public resume evidence
- */
-export const useAskAmbassador = <TError = ErrorType<RequestErrorResponse>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof askAmbassador>>, TError,AskAmbassadorMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof askAmbassador>>,
-        TError,
-        AskAmbassadorMutationVariables,
-        TContext
-      > => {
-      return useMutation(getAskAmbassadorMutationOptions(options), queryClient);
-    }
 

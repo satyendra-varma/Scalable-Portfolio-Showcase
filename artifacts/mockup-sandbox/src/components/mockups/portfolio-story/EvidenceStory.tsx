@@ -1,29 +1,5 @@
-import { useState } from "react";
 import { ArrowUpRight, Plus, MapPin, Mail, Linkedin } from "lucide-react";
 import "./_group.css";
-
-const questions = [
-  {
-    question: "What is the strongest business outcome in the portfolio?",
-    answer: "The Business Operations & Auditing Engine automated complex balance calculations, shift scheduling, and role-restricted record management, reducing weekly reconciliation time by 15+ hours.",
-    source: "Business Operations & Auditing Engine · Resume",
-  },
-  {
-    question: "How does the CRM work demonstrate backend depth?",
-    answer: "The resume describes a .NET 8 multi-tenant enterprise CRM using Domain-Driven Design, JWT/RBAC authorization, EF Core Global Query Filters for automated soft deletes, Redis distributed caching, and MediatR CQRS handlers.",
-    source: "Enterprise CRM Platform · Resume",
-  },
-  {
-    question: "Which cloud and delivery technologies are listed?",
-    answer: "The Cloud E-Commerce Platform is described with C# .NET Core, MSSQL, and Docker on AWS EC2, alongside xUnit testing, NGINX reverse proxying, and Certbot SSL encryption. Jenkins CI/CD is listed for the earlier legacy-component delivery work.",
-    source: "Cloud E-Commerce Platform + Nanomindz Technologies · Resume",
-  },
-  {
-    question: "What are the candidate's experience and education?",
-    answer: "Satyendra's resume states 4+ years of software engineering experience. It lists a Master’s in Applied Computer Science from Fairleigh Dickinson University, Vancouver, BC, Canada, completed Sep 2021 – Apr 2023.",
-    source: "Professional Summary + Education · Resume",
-  },
-];
 
 const projects = [
   {
@@ -69,8 +45,6 @@ const skillGroups = [
 ];
 
 export function EvidenceStory() {
-  const [activeQuestion, setActiveQuestion] = useState<number | null>(null);
-
   return (
     <main className="evidence-story" id="top">
       <div className="es-shell">
@@ -82,7 +56,6 @@ export function EvidenceStory() {
             <a href="#work">Selected work</a>
             <a href="#experience">Experience</a>
             <a href="#capabilities">Capabilities</a>
-            <a href="#ambassador">Ask the notes</a>
           </nav>
         </header>
 
@@ -190,38 +163,6 @@ export function EvidenceStory() {
           <div className="es-education-card">
             <div><h3>Master’s in Applied Computer Science</h3><p>Fairleigh Dickinson University · Vancouver, BC, Canada</p></div>
             <time>Sep 2021 – Apr 2023</time>
-          </div>
-        </div>
-      </section>
-
-      <section className="es-shell es-section" id="ambassador">
-        <div className="es-section-head">
-          <div className="es-section-number">05 / Guided reading</div>
-          <div>
-            <h2 className="es-section-title">Ask the portfolio.</h2>
-            <p className="es-section-dek">A small, source-grounded preview of how a recruiter could explore the evidence.</p>
-          </div>
-        </div>
-        <div className="es-ambassador">
-          <div>
-            <span className="es-preview-label">Design preview — not connected to AI</span>
-            <h3>Start with a question.<br />Stay with the facts.</h3>
-            <p className="es-ambassador-intro">Choose a starter question to reveal an example response and its source. This prototype is local and does not process or store messages.</p>
-          </div>
-          <div>
-            <div className="es-questions" role="group" aria-label="Recruiter starter questions">
-              {questions.map((item, index) => (
-                <button className="es-question" key={item.question} type="button" aria-pressed={activeQuestion === index} onClick={() => setActiveQuestion(index)}>
-                  <span>{item.question}</span><ArrowUpRight size={15} />
-                </button>
-              ))}
-            </div>
-            {activeQuestion !== null && (
-              <div className="es-answer" aria-live="polite">
-                <span className="es-source">Example response · Source: {questions[activeQuestion].source}</span>
-                <p>{questions[activeQuestion].answer}</p>
-              </div>
-            )}
           </div>
         </div>
       </section>

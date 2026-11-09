@@ -39,6 +39,15 @@ Toolchain notes kept from the removed agent memory:
 - The API's production package uses `dotnet msbuild -t:Publish` (its `build` script) because `dotnet publish` with an output property failed with MSB1008 in Replit's SDK. Recheck before switching back.
 - The API test script restores serially (`-p:RestoreDisableParallel=true`); unbounded restores stalled in Replit's container.
 
+### Dead code and AI guide removal (step 2)
+
+- Old single-page home: `pages/home.tsx` and its `Hero`, `Explorer`, `Ambassador` and `Sections` components (nothing routed to them), plus the portfolio.ts exports only they used.
+- Replit template leftovers: the Express server (`artifacts/api-server/src`, `build.mjs`, its tsconfig and Node dependencies), `lib/db` (Postgres/Drizzle), `scripts/post-merge.sh`, and the `scripts` workspace package (`hello.ts`, package.json, tsconfig). `scripts/sanitize_resume.py` stays as a plain script.
+- Stale browser test `e2e/portfolio.spec.ts` (it targeted `/#ambassador`, which no longer exists).
+- AI guide: the `/api/ambassador` and `/api/ambassador/status` endpoints, the evidence catalog and model selector, the rate limiter that only guarded them, their xUnit tests, the ambassador operations in `lib/api-spec/openapi.yaml` and the generated hooks/schemas (regenerated with orval), the managed-AI smoke check `scripts/dotnet-compatibility`, and the static "ask the portfolio" chat previews in the SystemExplorer and EvidenceStory mockups. No code makes model calls.
+- The API keeps `/api/healthz`, its security headers and the problem-details 404. New `HealthTests.cs` covers those and asserts both former AI routes return 404.
+- Still present and now unused by any app: `lib/api-client-react`, `lib/api-zod` and `lib/api-spec` (health check only). Keep them if the API grows again; otherwise they can go.
+
 ## Approved homepage update
 
 The owner explicitly approved making the warm Engineer’s Room the default homepage. `/` now renders that room directly; comparison URLs remain available. Homepage title and labeling were updated without changing the room's interaction model.

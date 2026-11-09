@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowDownRight, ArrowUpRight, Check, ChevronDown, ChevronRight,
   Circle, Code2, Database, ExternalLink, Layers3, LockKeyhole,
-  Mail, Menu, Network, Server, ShieldCheck, Sparkles, X,
+  Mail, Menu, Network, Server, ShieldCheck, X,
 } from "lucide-react";
 import "./_group.css";
 
@@ -71,32 +71,6 @@ const projects: Project[] = [
   },
 ];
 
-const questions = [
-  "What are Satyendra’s strongest .NET backend contributions?",
-  "How did the Business Operations system improve the workflow?",
-  "Which technologies are explicitly listed on the CRM?",
-  "What cloud and delivery experience does he have?",
-];
-
-const answers: Record<number, { text: string; sources: string[] }> = {
-  0: {
-    text: "The resume highlights a .NET 8 multi-tenant enterprise CRM using DDD, JWT/RBAC authorization, EF Core Global Query Filters for soft deletes, and Redis paired with MediatR CQRS handlers. It also reports backend REST APIs and WCF services at Nanomindz.",
-    sources: ["CRM Platform", "Nanomindz Technologies"],
-  },
-  1: {
-    text: "The internal Business Operations & Auditing Engine used .NET Core Web API and React to automate complex balance calculations, shift scheduling, and role-restricted record management. The resume reports 15+ hours less weekly reconciliation time.",
-    sources: ["Business Operations & Auditing Engine"],
-  },
-  2: {
-    text: "The CRM entry names .NET 8, Domain-Driven Design, JWT/RBAC authorization, EF Core Global Query Filters, Redis distributed caching, and MediatR CQRS handlers.",
-    sources: ["Enterprise CRM Platform"],
-  },
-  3: {
-    text: "The resume lists AWS EC2, S3, Docker, Jenkins, GitHub Actions, NGINX, Certbot, and CI/CD among skills. Project evidence specifically connects AWS EC2, Docker, NGINX, Certbot, and xUnit to the Cloud E-Commerce Platform; Jenkins pipelines to legacy components at Nanomindz.",
-    sources: ["Cloud E-Commerce Platform", "Nanomindz Technologies", "Key skills"],
-  },
-};
-
 const skillGroups = [
   { name: "Backend & systems", items: "C#, .NET 8, ASP.NET Core, Web API, MVC, Entity Framework Core, LINQ, REST APIs" },
   { name: "Frontend", items: "React, TypeScript, JavaScript, HTML5/CSS3, Bootstrap" },
@@ -109,7 +83,6 @@ const skillGroups = [
 export function SystemExplorer() {
   const [activeProject, setActiveProject] = useState("crm");
   const [expanded, setExpanded] = useState<string[]>(["crm"]);
-  const [answerIndex, setAnswerIndex] = useState<number | null>(null);
   const [mobileMenu, setMobileMenu] = useState(false);
   const current = projects.find((project) => project.id === activeProject) ?? projects[0];
   const CurrentIcon = current.icon;
@@ -248,26 +221,8 @@ export function SystemExplorer() {
         <div className="sx-skill-list">{skillGroups.map((group, i) => <div className="sx-skill-row" key={group.name}><span className="sx-skill-number">0{i + 1}</span><h3>{group.name}</h3><p>{group.items}</p><span className="sx-skill-cross">+</span></div>)}</div>
       </section>
 
-      <section className="sx-ambassador" id="ambassador">
-        <div className="sx-ambassador-head">
-          <div><p className="sx-kicker sx-kicker-dark">04 / ASK FROM THE EVIDENCE</p><h2>A guided<br /><em>technical review.</em></h2><p>Explore a few source-backed answers, without guessing what the resume doesn’t say.</p></div>
-          <div className="sx-preview-badge"><Sparkles size={15} /><span>DESIGN PREVIEW<br /><b>NOT CONNECTED TO AI</b></span></div>
-        </div>
-        <div className="sx-ambassador-panel">
-          <div className="sx-chat-top"><span className="sx-chat-avatar">SV</span><div><b>Portfolio guide</b><small>Example answers · resume-backed</small></div><span className="sx-static-label"><i /> STATIC PREVIEW</span></div>
-          <div className="sx-chat-content">
-            <p className="sx-chat-prompt">Choose a starter question</p>
-            <div className="sx-question-list">{questions.map((question, i) => <button key={question} className={`sx-question ${answerIndex === i ? "chosen" : ""}`} onClick={() => setAnswerIndex(i)}><span>0{i + 1}</span>{question}<ArrowUpRight size={14} /></button>)}</div>
-            {answerIndex !== null && <motion.div className="sx-answer" key={answerIndex} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-              <span className="sx-answer-label"><Check size={13} /> SOURCE-BACKED EXAMPLE</span><p>{answers[answerIndex].text}</p><div className="sx-source-list"><span>SOURCES</span>{answers[answerIndex].sources.map((source) => <a key={source} href={source === "Nanomindz Technologies" ? "#experience" : source === "Key skills" ? "#capabilities" : "#explorer"}>{source} <ArrowUpRight size={11} /></a>)}</div>
-            </motion.div>}
-            <p className="sx-preview-disclaimer">This is a static design preview, not an AI chat. Responses are hand-written examples based on the resume.</p>
-          </div>
-        </div>
-      </section>
-
       <section className="sx-background" id="about">
-        <div className="sx-background-heading"><p className="sx-kicker">05 / FOUNDATION</p><h2>Grounded in<br /><em>the fundamentals.</em></h2></div>
+        <div className="sx-background-heading"><p className="sx-kicker">04 / FOUNDATION</p><h2>Grounded in<br /><em>the fundamentals.</em></h2></div>
         <div className="sx-background-body">
           <div className="sx-education"><span className="sx-bg-label">EDUCATION</span><h3>Master’s in Applied Computer Science</h3><p>Fairleigh Dickinson University</p><span>Vancouver, BC, Canada <i>·</i> Sep 2021 – Apr 2023</span><div className="sx-focus"><b>FOCUS AREAS</b><p>Advanced Application Development, Web Architecture, Component Security & Secure Cryptographic Hashing</p></div></div>
           <div className="sx-profile-note"><span className="sx-bg-label">ENGINEERING APPROACH</span><p>Distributed architectures, cloud services, and high-performance backend systems—paired with a practical focus on how software changes day-to-day work.</p><span className="sx-profile-rule" /><span className="sx-location"><Circle size={7} fill="currentColor" /> Vancouver, BC, Canada</span></div>
