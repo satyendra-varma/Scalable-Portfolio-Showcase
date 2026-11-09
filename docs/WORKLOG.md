@@ -46,7 +46,7 @@ Toolchain notes kept from the removed agent memory:
 - Stale browser test `e2e/portfolio.spec.ts` (it targeted `/#ambassador`, which no longer exists).
 - AI guide: the `/api/ambassador` and `/api/ambassador/status` endpoints, the evidence catalog and model selector, the rate limiter that only guarded them, their xUnit tests, the ambassador operations in `lib/api-spec/openapi.yaml` and the generated hooks/schemas (regenerated with orval), the managed-AI smoke check `scripts/dotnet-compatibility`, and the static "ask the portfolio" chat previews in the SystemExplorer and EvidenceStory mockups. No code makes model calls.
 - The API keeps `/api/healthz`, its security headers and the problem-details 404. New `HealthTests.cs` covers those and asserts both former AI routes return 404.
-- Still present and now unused by any app: `lib/api-client-react`, `lib/api-zod` and `lib/api-spec` (health check only). Keep them if the API grows again; otherwise they can go.
+- `lib/api-client-react`, `lib/api-zod` and `lib/api-spec` (health check only) were left in place here and deleted in a later commit, once it was confirmed nothing used them.
 
 ### Excluded internal project removed from current files (step 3)
 

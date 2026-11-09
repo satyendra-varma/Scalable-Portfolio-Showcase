@@ -31,7 +31,6 @@ Works the same on Windows, macOS and Linux. Needs Node 24, pnpm 10 (`corepack en
 - API unit/integration tests: `pnpm --filter @workspace/api-server test`
 - Frontend type check: `pnpm --filter @workspace/portfolio typecheck`
 - API release package: `pnpm --filter @workspace/api-server build`
-- Regenerate API hooks/schemas: `pnpm --filter @workspace/api-spec codegen`
 - Resume redaction script: `python3 scripts/sanitize_resume.py` (needs `pymupdf` and the original upload in `attached_assets/`, which isn't in the repo). It only removes phone numbers, so its output is not a clean public copy on its own.
 - Browser suite: `pnpm --filter @workspace/portfolio test:e2e`. It builds the site and serves the production preview on port 4173 itself (set `PLAYWRIGHT_BASE_URL` to test a running site instead). It needs Chromium: run `pnpm --filter @workspace/portfolio exec playwright install chromium` once, or set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to an installed Chrome.
 
