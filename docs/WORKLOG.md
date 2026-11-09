@@ -266,12 +266,7 @@ Local checks ran on Windows 11 against a clean copy of each commit: frozen insta
 
 **Needs decision**
 
-- **Room content not in RESUME-SOURCE:**
-  - the hero positioning sentence (owner wording from `docs/CONTENT.md`);
-  - the "EF Core global query filters" skill chip (RESUME-SOURCE has it only as a CRM project fact, though the resume lists it under skills);
-  - ", Canada" after the school (RESUME-SOURCE's education line says "Vancouver, BC"; its contact location includes Canada).
-  
-  Add each to RESUME-SOURCE, or remove it from the room. Smaller wording differences: "AWS EC2"/"AWS S3" chips versus "AWS (EC2, S3)", "DDD" versus "Domain-Driven Design", and "SQL Server/MSSQL" versus "SQL Server (MSSQL)".
+- ~~**Room content not in RESUME-SOURCE.**~~ Resolved: see "Room content matched to RESUME-SOURCE" below.
 - **Mockup-sandbox Google Fonts** (see above): self-host them too, or leave them, since the canvas is never deployed.
 - **The API service** only answers `/api/healthz`. Keep it, or drop it for a frontend-only v1.
 - **Unused shadcn components** in `artifacts/portfolio/src/components/ui/`.
@@ -284,6 +279,47 @@ Local checks ran on Windows 11 against a clean copy of each commit: frozen insta
 - **Fallback sizes** were measured in Chrome on Windows against Arial and Courier New. On systems without those fonts (most Linux desktops) the fallback chain continues to the system font, which isn't size-matched. The font preload makes a visible swap rare either way.
 - **Lockfile:** regenerated with `pnpm install --lockfile-only`; every check then did a full frozen install from it.
 - **Lighthouse** was measured on a local production preview, not a deployed site.
+
+## Room content matched to RESUME-SOURCE (2026-11-09)
+
+**Commits**
+
+| Commit | Message |
+| --- | --- |
+| `6f2e34f` | Close the remaining gaps in RESUME-SOURCE |
+| `b0a4aef` | Make the room show exactly what RESUME-SOURCE lists |
+
+**Local results** (Windows 11, clean copy of `b0a4aef`): build pass, unit tests 25/25, API tests 5/5, Playwright 14/14. Unit tests went from 19 to 25 with the new `room.source.test.ts`, which reads this repo's `docs/RESUME-SOURCE.md` and fails if any room string isn't in it verbatim.
+
+**CI** on `b0a4aef`, run [42721799495](https://github.com/satyendra-varma/Scalable-Portfolio-Showcase/actions/runs/42721799495): success on both systems.
+
+| Job | Unit tests | API tests | Playwright |
+| --- | --- | --- | --- |
+| ubuntu-latest | 25/25 | 5/5 | 14/14 |
+| windows-latest | 25/25 | 5/5 | 14/14 |
+
+**Changed in `docs/RESUME-SOURCE.md`**
+
+- New "Positioning" section with the line labeled "Owner-approved positioning line (based on resume)."
+- CRM project: "EF Core Global Query Filters for automated soft deletes" (the resume's exact wording); "applies to every read" stays [TO CONFIRM].
+- Education: "Fairleigh Dickinson University, Vancouver, BC, Canada".
+- Architecture and testing: "Domain-Driven Design (DDD)". AWS already read "AWS (EC2, S3)", the resume's exact phrasing, so it is unchanged.
+
+**Changed in the room** (the only source is RESUME-SOURCE, copied verbatim)
+
+- Project cards show the source's project bullets. Removed: the paraphrased context/contribution/tools text (including "Delivered a scalable ...", which isn't in the source) and the Context/Contribution/Tools labels.
+- Skills panel follows the source's skill lines, group names and order:
+  - groups: Backend, Frontend, Databases, Security, Cloud and DevOps, Architecture and testing, Development practices;
+  - chips: "AWS (EC2, S3)" (was two chips), "Domain-Driven Design (DDD)" (was "DDD"), "SQL Server (MSSQL)", "JWT auth".
+- The "EF Core global query filters" chip left the skills panel, because the source lists it under the CRM project, not under Skills. The CRM card shows it instead.
+- Experience: the Nanomindz bullets now use the source's full wording. Dates read "Apr 2023 to present" and "Jul 2020 to Jun 2021", and "(as stated in resume)" is gone.
+- Education: "Sep 2021 to Apr 2023" and the source's "Focus: ..." line ("Listed focus:" is gone).
+- Fixed: Tailwind's reset hid the bullet markers on the room's bullet lists. They now show, in the blueprint amber.
+
+**Still shown, not from the source** (left on purpose)
+
+- Interface text: hotspot names, buttons, filter status messages, "Live link coming soon" and "Resume download unavailable".
+- The System Explorer's CRM flow notes, which are design annotations labeled "Representative design (to confirm)" rather than resume claims.
 
 ## Approved homepage update
 
