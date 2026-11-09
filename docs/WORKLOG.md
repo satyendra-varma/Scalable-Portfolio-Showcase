@@ -67,6 +67,18 @@ Per `docs/RESUME-SOURCE.md`, the internal project that isn't on the allowlist, i
 - EvidenceStory mockup: removed the "Working thesis" band.
 - Old site footer: removed "PUBLIC-SAFE PROFILE · RESUME-BACKED FACTS ONLY".
 
+### Night blueprint room is the only view (step 6)
+
+- Routes: `/` is the room; everything else, including the retired `/room-directions`, `/room-directions/:dir` and `/projects/:slug`, shows the 404 page.
+- Removed: the warm workshop illustration and styles, the A/B direction switcher, the old System Explorer shell (`SiteShell`, `ProjectLinks`, project pages, `content/portfolio.ts`, `lib/paths.ts`, `explorer.css`, `additions.css`), and the 404 page's old link list.
+- Link config: `docs/project-links.json` is gone. `src/content/site.ts` is the single source for `CRM_LINK` and `ECOMMERCE_LINK`, and its values now go through the same URL validation (in the room and at build time) that the old file had.
+- Renamed: `pages/room-directions.tsx` → `pages/room.tsx`, `content/room-preview.ts` → `content/room.ts`, `e2e/room-directions.spec.ts` → `e2e/room.spec.ts`.
+- Polish:
+  - The header slot the switcher used now holds a "Get in touch" email link.
+  - The Explorer's stale "deferred until a direction is chosen" banner now says one flow is mapped and nine are not drawn yet.
+  - The 404 page uses the blueprint styling with a single "Back to the room" link.
+  - `index.html` loads the room's fonts (no more render-delaying CSS `@import`) and uses the room's theme colour.
+
 ### Git history rewrite — planned, NOT run (needs owner approval)
 
 **Why.** Deleting files in new commits doesn't remove them from history. Every earlier commit on GitHub still holds (1) the old resume PDF, blob `4ffe67636220cea02bc890184affd24c70ce36a8` (added in `2b3afea`), and (2) the excluded project's name and metric in older versions of the docs, portfolio code, mockups, AI knowledge file and agent memory. Commit messages don't contain either (checked).

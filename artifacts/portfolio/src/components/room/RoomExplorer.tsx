@@ -1,5 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { crmFlow, deferredFlows, flowSequenceNote } from '@/content/room-preview';
+import { crmFlow, deferredFlows, flowSequenceNote } from '@/content/room';
 
 export function RoomExplorer({ initialAsList = false }: { initialAsList?: boolean }) {
   const [active, setActive] = useState(0);
@@ -16,7 +16,7 @@ export function RoomExplorer({ initialAsList = false }: { initialAsList?: boolea
   const shown = selected ?? active;
   return (
     <div className="ex">
-      <p className="ex-banner" data-testid="text-preview-label">Direction preview: one sample flow. The other nine flows are deferred until a direction is chosen.</p>
+      <p className="ex-banner" data-testid="text-flow-status">One flow is mapped so far. The other nine are listed and not drawn yet.</p>
       <div className="ex-grid">
         <nav className="ex-selector" aria-label="Flow selector">
           <h3 className="ex-h">Enterprise CRM Platform</h3>
@@ -25,11 +25,11 @@ export function RoomExplorer({ initialAsList = false }: { initialAsList?: boolea
               CRM request lifecycle <span className="ex-count">10 nodes</span>
             </button>
           </div>
-          <h3 className="ex-h">Deferred in this preview</h3>
+          <h3 className="ex-h">Not drawn yet</h3>
           {deferredFlows.map((g) => (
             <div key={g.project} className="ex-deferred">
               <p className="ex-proj">{g.project}</p>
-              <ul>{g.flows.map((f) => <li key={f}>{f} <span className="ex-tag">Deferred</span></li>)}</ul>
+              <ul>{g.flows.map((f) => <li key={f}>{f} <span className="ex-tag">Planned</span></li>)}</ul>
             </div>
           ))}
         </nav>

@@ -1,12 +1,8 @@
-# Engineer room — selection preview
+# Engineer room — direction
 
 ## Scope
 
-Comparison entry: `/room-directions`. Shareable directions:
-- A: `/room-directions/warm` — wood, soft light and paper.
-- B: `/room-directions/dark` — blueprint construction, monitor glow and terminal accents.
-
-The owner approved making the selected warm Engineer’s Room the homepage. `/` now opens that room directly; the comparison routes above remain available. This routing change does not certify or migrate legacy project routes, downloads or API content. No publishing is part of this change.
+The owner chose **B — Night blueprint** (blueprint construction, monitor glow and terminal accents) as the only room direction, and it is the homepage at `/`. On 2026-11-08 the warm workshop direction, the A/B switcher, the `/room-directions` comparison routes and the old `/projects/*` pages were removed; those paths now show the 404 page. The room's project panels are the only project view. No publishing is part of this change.
 
 ## Evidence review
 
@@ -21,7 +17,7 @@ Reviewed the supplied resume against `docs/CONTENT.md` and the room brief ending
 
 ## Questions before v1
 
-1. Resolved: the owner selected **A — Warm workshop**.
+1. Resolved: the owner first selected **A — Warm workshop**, then made **B — Night blueprint** the only direction (2026-11-08).
 2. Confirm CRM database choice and the request/cache/handler ordering.
 3. Confirm the scope and exceptions of soft-delete query filters; the resume does not establish “all reads.”
 4. Supply approved project URLs when available. Until then both labels remain non-clickable.
@@ -31,4 +27,4 @@ Reviewed the supplied resume against `docs/CONTENT.md` and the room brief ending
 
 ## Selection gate
 
-The owner selected **A — Warm workshop** and subsequently approved using it as the default homepage. The remaining nine flows, production-wide content migration, and full v1 implementation are not completed by the homepage routing change. Preview checks do not satisfy full-site acceptance.
+The owner selected **B — Night blueprint** as the only direction; it is the homepage. The remaining nine flows, production-wide content migration, and full v1 implementation are not completed by this change. Preview checks do not satisfy full-site acceptance.

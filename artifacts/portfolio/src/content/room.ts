@@ -1,8 +1,8 @@
 /**
- * Allowlisted content for the engineer-room direction previews.
- * Sourced only from docs/CONTENT.md (checked against the resume). Do not import the
- * legacy portfolio payload here.
+ * Allowlisted content for the Engineer's Room.
+ * Sourced only from docs/CONTENT.md (checked against the resume).
  */
+import { validateUrl } from '@/lib/project-links';
 import { CRM_LINK, ECOMMERCE_LINK } from './site';
 
 export const hero = {
@@ -20,7 +20,7 @@ export const projects: {
   context: string;
   contribution: string;
   mechanisms: string;
-  link: string;
+  link: string | null;
 }[] = [
   {
     id: 'crm',
@@ -30,7 +30,7 @@ export const projects: {
       'Delivered a scalable multi-tenant enterprise CRM using .NET 8 and Domain-Driven Design.',
     mechanisms:
       'MediatR CQRS, JWT/RBAC authorization, EF Core global query filters for soft deletes, Redis distributed caching.',
-    link: CRM_LINK,
+    link: validateUrl(CRM_LINK, 'CRM_LINK'),
   },
   {
     id: 'ecommerce',
@@ -39,7 +39,7 @@ export const projects: {
     contribution:
       'Developed and deployed containerized infrastructure using C# .NET Core and MSSQL on AWS EC2 with Docker.',
     mechanisms: 'NGINX reverse proxy, Certbot SSL, xUnit tests.',
-    link: ECOMMERCE_LINK,
+    link: validateUrl(ECOMMERCE_LINK, 'ECOMMERCE_LINK'),
   },
 ];
 

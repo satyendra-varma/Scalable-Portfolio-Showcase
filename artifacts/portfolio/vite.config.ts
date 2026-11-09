@@ -2,12 +2,13 @@ import path from 'path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
-import { parseProjectLinks } from './src/lib/project-links';
-import projectLinks from '../../docs/project-links.json';
+import { validateUrl } from './src/lib/project-links';
+import { CRM_LINK, ECOMMERCE_LINK } from './src/content/site';
 
-// Vite does not execute browser modules during bundling. Validate configuration
-// here too, so bad project URLs stop the build, not just the visitor's browser.
-parseProjectLinks(projectLinks);
+// Vite does not execute browser modules during bundling. Validate the links
+// here too, so a bad project URL stops the build, not just the visitor's browser.
+validateUrl(CRM_LINK, 'CRM_LINK');
+validateUrl(ECOMMERCE_LINK, 'ECOMMERCE_LINK');
 
 const rawPort = process.env.PORT;
 

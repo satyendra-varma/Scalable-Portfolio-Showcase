@@ -1,6 +1,6 @@
 # Portfolio documentation
 
-Status: System Explorer selected and implemented. The React/TypeScript frontend and an ASP.NET Core .NET 10 API (health check only) run in development. The AI guide was removed from v1. Full release audits remain pending; the site has not been published.
+Status: The Night blueprint Engineer's Room is the homepage and the only view (see [ROOM-DIRECTIONS.md](ROOM-DIRECTIONS.md)). The React/TypeScript frontend and an ASP.NET Core .NET 10 API (health check only) run in development. The AI guide was removed from v1. Full release audits remain pending; the site has not been published.
 
 ## Reading order
 
@@ -16,7 +16,7 @@ Visual exploration: [Design brief and comparison criteria](DESIGN-BRIEF.md).
 
 Architecture decisions: [ASP.NET Core backend](decisions/001-aspnet-core-backend.md).
 
-Missing public project URLs belong in [project-links.json](project-links.json). Null/blank entries produce no link or dummy button. After adding real HTTPS URLs, rebuild and publish again to update a published site.
+Public project URLs live in `artifacts/portfolio/src/content/site.ts` (`CRM_LINK`, `ECOMMERCE_LINK`). A blank value shows "Live link coming soon" as plain text. A real public HTTPS URL becomes a link; anything else (http, localhost, example domains, credentials) fails the build. After changing a URL, rebuild and publish again to update a published site.
 
 Requirements are not test results. See WORKLOG.md and RELEASE-CHECKLIST.md for what was actually verified and what is still pending.
 

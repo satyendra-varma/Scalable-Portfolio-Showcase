@@ -4,8 +4,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
-import ProjectPage from '@/pages/project';
-import RoomDirections from '@/pages/room-directions';
+import Room from '@/pages/room';
 import {
   Route,
   Switch,
@@ -21,10 +20,7 @@ function Router() {
     // survives a page crash.
     <RoutedErrorBoundary>
       <Switch>
-        <Route path="/"><RoomDirections homepage /></Route>
-        <Route path="/projects/:slug" component={ProjectPage} />
-        <Route path="/room-directions"><RoomDirections /></Route>
-        <Route path="/room-directions/:dir"><RoomDirections /></Route>
+        <Route path="/" component={Room} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>

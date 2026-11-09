@@ -1,5 +1,7 @@
 # Portfolio design exploration
 
+> Superseded for the live site: the Night blueprint Engineer's Room is now the only design ([ROOM-DIRECTIONS.md](ROOM-DIRECTIONS.md)). This brief records the earlier System Explorer / Evidence Story exploration behind the mockups.
+
 ## Owner selection
 
 The owner selected **System Explorer**. It has been integrated into `artifacts/portfolio` using the approved prototype source; Evidence Story remains a reference, not the production direction.

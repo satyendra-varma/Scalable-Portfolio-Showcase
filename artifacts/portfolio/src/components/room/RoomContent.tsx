@@ -1,4 +1,4 @@
-import { contact, education, experience, projects, projectEvidence, skillGroups } from '@/content/room-preview';
+import { contact, education, experience, projects, projectEvidence, skillGroups } from '@/content/room';
 
 export function ProjectList({ activeSkill, headingLevel = 3 }: { activeSkill: string | null; headingLevel?: 3 | 4 }) {
   const ids = activeSkill ? projectEvidence[activeSkill] ?? [] : null;

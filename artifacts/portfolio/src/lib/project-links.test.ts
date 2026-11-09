@@ -1,19 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { getProjectLinks, parseProjectLinks, validateUrl } from './project-links';
+import { validateUrl } from './project-links';
+import { CRM_LINK, ECOMMERCE_LINK } from '@/content/site';
 
-describe('optional project URLs', () => {
-  it('omits null and blank links', () => {
-    expect(parseProjectLinks({ crm: { liveUrl: null, repositoryUrl: '' }, ecommerce: {} }))
-      .toEqual({ crm: [], ecommerce: [] });
+describe('project link validation', () => {
+  it('treats null and blank values as "no link yet"', () => {
+    expect(validateUrl(null, 'test')).toBeNull();
+    expect(validateUrl('', 'test')).toBeNull();
+    expect(validateUrl('   ', 'test')).toBeNull();
   });
 
-  it('shows supplied HTTPS links with their correct labels', () => {
-    const parsed = parseProjectLinks({
-      crm: { liveUrl: 'https://crm.company.dev' },
-      ecommerce: { repositoryUrl: 'https://github.com/owner/store' },
-    });
-    expect(parsed.crm[0]).toMatchObject({ kind: 'live', url: 'https://crm.company.dev/' });
-    expect(parsed.ecommerce[0]).toMatchObject({ kind: 'repository', label: 'Source repository' });
+  it('accepts and normalizes public HTTPS URLs', () => {
+    expect(validateUrl('https://crm.company.dev', 'test')).toBe('https://crm.company.dev/');
+    expect(validateUrl(' https://github.com/owner/store ', 'test')).toBe('https://github.com/owner/store');
   });
 
   it.each(['https://example.com', 'http://site.dev', 'javascript:alert(1)', 'https://localhost',
@@ -22,13 +20,12 @@ describe('optional project URLs', () => {
     expect(() => validateUrl(value, 'test')).toThrow();
   });
 
-  it.each([null, [], 'wrong', { other: { liveUrl: 'https://private.company.dev' } },
-    { crm: [] }, { crm: { typoUrl: 'https://site.dev' } }])('rejects invalid configuration shapes', input => {
-    expect(() => parseProjectLinks(input)).toThrow();
+  it('rejects non-string values', () => {
+    expect(() => validateUrl(42, 'test')).toThrow();
   });
 
-  it('returns no links while the committed configuration is empty', () => {
-    expect(getProjectLinks('crm')).toEqual([]);
-    expect(getProjectLinks('ecommerce')).toEqual([]);
+  it('keeps the committed site.ts links valid', () => {
+    expect(() => validateUrl(CRM_LINK, 'CRM_LINK')).not.toThrow();
+    expect(() => validateUrl(ECOMMERCE_LINK, 'ECOMMERCE_LINK')).not.toThrow();
   });
 });
