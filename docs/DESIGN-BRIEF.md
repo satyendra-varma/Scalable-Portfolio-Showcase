@@ -1,71 +1,75 @@
-# Portfolio design exploration
+# Design brief — four night-blueprint rooms
 
-> Superseded for the live site: the Night blueprint Engineer's Room is now the only design ([ROOM-DIRECTIONS.md](ROOM-DIRECTIONS.md)). This brief records the earlier System Explorer / Evidence Story exploration behind the mockups.
+Status: **in progress on `feature/night-room-variants`.** The owner compares the four variations at `/room-variants`, picks one, and the other three are removed in a follow-up task. The homepage `/` stays as it is until then.
 
-## Owner selection
+## Why
 
-The owner selected **System Explorer**. It has been integrated into `artifacts/portfolio` using the approved prototype source; Evidence Story remains a reference, not the production direction.
+The owner rejected the warm workshop as looking old. The site must feel modern and memorable enough that a recruiter or engineering lead pays attention, and it must still read as a **backend engineer's portfolio within seconds**. The owner judges styles by seeing them, not by their names, so the four variations sit side by side, one click apart, on phone and desktop.
 
-Status: two independent prototypes built and visually reviewed at desktop and 390px widths; neither direction is approved for production.
+## Concept: four drawings of one room
 
-## Design problem
+Engineers communicate through drawings. Each variation draws **the same room** as a different kind of technical drawing, so the four are different ways of seeing, not four tints of one picture. In every one, the **desk monitor is the focal point**, with its own idle animation, and it opens the System Explorer.
 
-Help a recruiter understand a Full Stack .NET Software Engineer's strengths quickly, while giving an engineering reviewer enough verified technical evidence to continue exploring.
+| # | Variation | Drawing | Accent | Monitor idle style | Ground | Display type |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | **Isometric** (`isometric`) | Isometric blueprint: thin white linework, dimension lines and extension ticks on Prussian blue | `#5CE1F2` cyan | **Scanline sweep**: a soft light band travels down the screen | `#0A2240` Prussian blue | Space Grotesk |
+| 2 | **Elevation** (`elevation`) | Front elevation of the desk wall, objects framed by HUD corner brackets, like a control room | `#FFB547` amber | **Terminal typing**: code lines draw in left to right, then a block caret blinks | `#0F1114` graphite | JetBrains Mono, uppercase |
+| 3 | **Plan** (`plan`) | Top-down floor plan (walls, door swing, furniture) with a circular detail callout that magnifies the monitor | `#B6F25A` lime | **Radar sweep**: a rotating arm with blips that fade | `#06140F` phosphor green-black | DM Sans, heavy |
+| 4 | **Exploded** (`exploded`) | Exploded axonometric: floor, desk and wall layers lifted apart along dashed guides | `#C69CFF` violet | **Packet stream**: dots travel out of the monitor along circuit traces | `#0E0B20` ink violet | Space Grotesk, oversized |
 
-The website should communicate .NET backend expertise, practical business outcomes, React delivery, and cloud/deployment experience without overclaiming scale or exposing internal project details.
+The four motions differ in kind: a vertical sweep, a write-on, a rotation and a travelling path. So do the four accent hues (187°, 36°, 84°, 265°).
 
-## Fixed constraints
+### Palettes (text tokens)
 
-- Resume is the factual source of truth; CONTENT.md owns the evidence and publication rules.
-- Preserve the target role and factual attribution of metrics across both concepts.
-- Include the same two project subjects, appropriate experience, and source-backed skills.
-- No public phone, invented availability, fake project screenshots, fake repositories/demos, or invented infrastructure.
-- Public contact uses only the approved email, LinkedIn, and resume location.
-- Local interactions and navigation should work.
-- Prototype ambassador must clearly state it is not connected to AI. Sample answers are examples, not live model responses.
-- Never link the original resume as the public download; the sanitized PDF remains a production implementation item.
-- Responsive, keyboard-friendly, and reduced-motion-aware.
+| Token | Isometric | Elevation | Plan | Exploded |
+| --- | --- | --- | --- | --- |
+| `--bg` | `#0A2240` | `#0F1114` | `#06140F` | `#0E0B20` |
+| `--surface` (panels) | `#0E2A4D` | `#171A1F` | `#0B2018` | `#161132` |
+| `--chip` | `#11335B` | `#1F232A` | `#0F2A20` | `#1D1742` |
+| hotspot label background (opaque) | `#061A30` | `#0A0B0D` | `#03100A` | `#090717` |
+| `--ink` (text) | `#EAF4FF` | `#F3EFE8` | `#E8FFF2` | `#F2EDFF` |
+| `--muted` (secondary text) | `#A8C3DE` | `#B5ADA1` | `#9FC8B3` | `#B9B0DD` |
+| `--accent` | `#5CE1F2` | `#FFB547` | `#B6F25A` | `#C69CFF` |
+| `--accent-ink` (text on accent) | `#04222E` | `#1C1203` | `#0C1A04` | `#170A2C` |
+| `--evidence` ("From resume" marks) | `#FFD37A` | `#7DD3FC` | `#FFD166` | `#5EEAD4` |
+| Lowest text contrast in the set | 6.99:1 | 7.10:1 | 8.30:1 | 7.66:1 |
 
-## Variation axes
+Every text and background pair in these palettes clears WCAG 2.2 AA (4.5:1) with margin. The measured table for the built pages lives in `docs/screenshots/variants/CONTRAST.md`.
 
-1. Content hierarchy: narrative/outcome emphasis versus capability/evidence exploration.
-2. Interaction: reading-led disclosure versus visitor-directed discovery.
-3. Visual mood: human and publication-like versus precise and instrument-like.
+## Rules every variation follows
 
-These axes should change how a visitor understands the work, not only the color palette.
+1. **Content:** only `docs/RESUME-SOURCE.md`, plus interface labels already in the app. The scenes add no words; decorative drawing text is limited to strings the current scene already uses.
+2. **No new claims:** no metrics, projects, dates or claims. Private details stay out (phone, street address, the excluded internal project and its metrics).
+3. **Hero first:** name, role and positioning sit **above** the scene at 390 px and 1440 px. A browser test checks the bounding boxes.
+4. **Hotspots:** real buttons with visible text labels, at least 24 × 24 px, with an opaque label background. Focus shows a static outline that doesn't depend on motion.
+5. **Motion:** `transform` and `opacity` only. With `prefers-reduced-motion`, pulses, idle loops and transitions stop, and no content depends on them. A unit test scans every room stylesheet's keyframes and transitions.
+6. **Contrast:** WCAG 2.2 AA for all text; automated axe checks run on every variation.
+7. **One explorer:** the System Explorer is the same component everywhere; only its tokens change.
+8. **Flows:** flow 01, the CRM request lifecycle, is the only working diagram. Flows 02–10 are labelled "Planned" and can't be opened.
 
-## Direction: Evidence Story
+## System Explorer (shared)
 
-Hypothesis: a direct, carefully edited narrative will make role alignment and source-backed outcomes easier to absorb in a short scan.
+The explorer is a full-screen blueprint panel. Its rail lists the three projects (Enterprise CRM Platform, Cloud E-Commerce Platform, Nanomindz Technologies) and their ten flows, numbered 01–10:
 
-Mood: confident, human, and authored. Visual execution is delegated rather than fixed to a specific palette or layout.
+- **Flow 01** opens as a ten-node diagram. Nodes are keyboard-navigable and have a detail pane and an equivalent numbered list.
+- **Flows 02–10** are plain list items tagged "Planned". They aren't buttons or links.
 
-Potential tradeoff to evaluate: clarity and continuity versus depth of interactive exploration.
+Node labels keep the "From resume" or "Representative design (to confirm)" markers.
 
-Preview component: artifacts/mockup-sandbox/src/components/mockups/portfolio-story/EvidenceStory.tsx.
+## Comparison page
 
-## Direction: System Explorer
+- `/room-variants` shows variation 1, and `/room-variants/<id>` shows each variation directly.
+- A fixed dock switches between them with one click. Each dock item shows the name, accent swatch and hex, and idle style, and the active one is marked for assistive technology.
+- The page asks search engines not to index it.
 
-Hypothesis: capability-led exploration will help technical reviewers inspect relevant evidence without reading every detail.
+## Deliverables
 
-Mood: precise, quietly energetic, and immediately understandable. Interaction should organize information, not imitate a terminal or imply fake production telemetry.
+- Screenshots of each variation at 390 px and 1440 px, plus a labelled contact sheet, in `docs/screenshots/variants/`.
+- A contrast table for every text colour pair per variation, measured on the built pages.
+- Lighthouse mobile performance per variation (median of 3 runs).
+- Build, unit, API and Playwright checks passing locally and in CI (ubuntu-latest and windows-latest).
 
-Potential tradeoff to evaluate: exploration and technical distinctiveness versus first-scan simplicity.
+## History
 
-Preview component: artifacts/mockup-sandbox/src/components/mockups/portfolio-explorer/SystemExplorer.tsx.
-
-## Comparison criteria
-
-1. Can a visitor immediately identify the target role?
-2. Are strengths linked to accurate evidence rather than unsupported claims?
-3. Can the visitor reach project details and contact actions without guessing?
-4. Do interactions add understanding, with clear feedback and keyboard access?
-5. Does the hierarchy remain readable at 390px?
-6. Does the ambassador look integrated while honestly identifying preview behavior?
-7. Is the overall design distinctive without interfering with professional credibility?
-
-Selection should consider the full scrollable page and narrow-screen behavior, not just the desktop opening view.
-
-## Production handoff
-
-Owner selects a direction before it is integrated into the React app. Production work must connect the ASP.NET Core API, replace the ambassador demo with real validated behavior, generate the public-safe PDF, wire optional link configuration, and execute the agreed test plan. Visual prototype completion does not satisfy those requirements.
+- 2026-10: two mockups explored content hierarchy, **System Explorer** (capability-led) versus **Evidence Story** (narrative). System Explorer was selected; both mockups remain in `artifacts/mockup-sandbox`.
+- 2026-11: the engineer's room replaced the single-page layout. The owner first picked the warm workshop, then made Night blueprint the only direction, and has now rejected the warm look as dated. See `docs/ROOM-DIRECTIONS.md`.
