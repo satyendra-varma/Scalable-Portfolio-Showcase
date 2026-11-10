@@ -24,7 +24,7 @@ Full Stack .NET Software Engineer with 4+ years of software engineering experien
 - Databases: SQL Server (MSSQL), PostgreSQL, SQLite, Oracle DB [TO CONFIRM: which DB the CRM uses]
 - Security: JWT auth, RBAC
 - Cloud and DevOps: AWS (EC2, S3), Docker, Kubernetes (familiarity), GitHub Actions, Jenkins, NGINX, Certbot, Git, CI/CD
-- Architecture and testing: Domain-Driven Design (DDD), MediatR, MassTransit, Redis, xUnit, Serilog
+- Architecture and testing: Domain-Driven Design (DDD), MediatR, MassTransit, Redis, xUnit, Serilog, EF Core Global Query Filters
 - Development practices: Agile/Scrum, SDLC, Code Review, Debugging, Production Support
 
 ## Projects

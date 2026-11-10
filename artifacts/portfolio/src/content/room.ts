@@ -60,6 +60,7 @@ export const projectEvidence: Record<string, ProjectId[]> = {
   MediatR: ['crm'],
   Redis: ['crm'],
   xUnit: ['ecommerce'],
+  'EF Core Global Query Filters': ['crm'],
 };
 
 export const skillGroups: { label: string; skills: string[] }[] = [
@@ -76,7 +77,7 @@ export const skillGroups: { label: string; skills: string[] }[] = [
   },
   {
     label: 'Architecture and testing',
-    skills: ['Domain-Driven Design (DDD)', 'MediatR', 'MassTransit', 'Redis', 'xUnit', 'Serilog'],
+    skills: ['Domain-Driven Design (DDD)', 'MediatR', 'MassTransit', 'Redis', 'xUnit', 'Serilog', 'EF Core Global Query Filters'],
   },
   {
     label: 'Development practices',

@@ -23,6 +23,15 @@ describe('room content matches RESUME-SOURCE.md', () => {
     }
   });
 
+  it('EF Core Global Query Filters is an Architecture and testing chip and stays on the CRM card', () => {
+    const arch = skillGroups.find((g) => g.label === 'Architecture and testing')!;
+    expect(arch.skills).toContain('EF Core Global Query Filters');
+    expect(projects.find((p) => p.id === 'crm')!.points).toContain('EF Core Global Query Filters for automated soft deletes');
+    const chips = skillGroups.flatMap((g) => g.skills);
+    expect(chips.filter((s) => s === 'Entity Framework Core')).toHaveLength(1);
+    expect(new Set(chips).size).toBe(chips.length);
+  });
+
   it('project evidence only maps skills the room shows', () => {
     const shown = new Set(skillGroups.flatMap((g) => g.skills));
     for (const skill of Object.keys(projectEvidence)) expect(shown).toContain(skill);
