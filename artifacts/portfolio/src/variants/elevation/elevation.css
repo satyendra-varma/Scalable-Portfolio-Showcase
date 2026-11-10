@@ -3,6 +3,118 @@
   --bg: #0F1114; --surface: #171A1F; --chip: #1F232A; --hot: #0A0B0D;
   --ink: #F3EFE8; --muted: #B5ADA1; --accent: #FFB547; --accent-ink: #1C1203; --evidence: #7DD3FC;
   --line: #3A414C; --grid: #3A414C40;
-  --stage-ratio: 4 / 3; --stage-max: 900px;
+  --stage-ratio: 5 / 3; --stage-max: 1120px;
+  --el-line: #5A6371; --el-obj: #13161A; --el-in: #0C0E10;
+  --mono: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace;
   background: var(--bg);
+}
+
+/* ---------- Hero: mission-control header block ---------- */
+.rv[data-variant='elevation'] .rv-hero {
+  position: relative; margin: 8px 0 clamp(14px, 2vw, 24px); padding: clamp(22px, 3.4vw, 44px) clamp(18px, 3vw, 40px) clamp(14px, 1.8vw, 22px);
+  text-align: left;
+}
+.rv[data-variant='elevation'] .rv-hero::before,
+.rv[data-variant='elevation'] .rv-hero::after { content: ''; position: absolute; width: 22px; height: 22px; border: 0 solid var(--accent); pointer-events: none; }
+.rv[data-variant='elevation'] .rv-hero::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
+.rv[data-variant='elevation'] .rv-hero::after { right: 0; bottom: 0; border-width: 0 2px 2px 0; }
+.rv[data-variant='elevation'] .rv-name {
+  font-family: var(--mono); font-weight: 800; text-transform: uppercase; letter-spacing: -.06em; line-height: .96;
+  font-size: clamp(30px, 6.4vw, 84px); overflow-wrap: anywhere;
+}
+.rv[data-variant='elevation'] .rv-role { margin-top: 14px; letter-spacing: .14em; font-size: clamp(12px, 1.3vw, 16px); }
+.rv[data-variant='elevation'] .rv-role::before { content: none; }
+.rv[data-variant='elevation'] .rv-pos { font-family: 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif; margin-top: 12px; color: var(--ink); }
+.rv[data-variant='elevation'] .rv-toggle {
+  margin-top: 20px; border-radius: 0; border: 1.5px solid var(--accent); color: var(--accent); text-transform: uppercase; letter-spacing: .1em;
+  font-size: 12px; background: transparent;
+}
+.rv[data-variant='elevation'] .rv-toggle:hover { background: var(--accent); color: var(--accent-ink); }
+.rv[data-variant='elevation'] .rv-toggle:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+/* ---------- Drawing ---------- */
+.rv[data-variant='elevation'] .el-svg { font-family: var(--mono); }
+.rv[data-variant='elevation'] .el-narrow { display: none; }
+@media (max-width: 600px) {
+  .rv[data-variant='elevation'] { --stage-ratio: 600 / 780; }
+  .rv[data-variant='elevation'] .el-wide { display: none; }
+  .rv[data-variant='elevation'] .el-narrow { display: block; }
+}
+
+.rv[data-variant='elevation'] .el-wall { fill: #101316; stroke: none; }
+.rv[data-variant='elevation'] .el-gridl { fill: none; stroke: #5A6371; stroke-opacity: .13; stroke-width: 1; }
+.rv[data-variant='elevation'] .el-floor { stroke: var(--el-line); stroke-width: 2; fill: none; }
+.rv[data-variant='elevation'] .el-tick { stroke: var(--el-line); stroke-opacity: .7; stroke-width: 1; fill: none; }
+.rv[data-variant='elevation'] .el-dim { stroke: var(--el-line); stroke-opacity: .55; stroke-width: 1; fill: none; }
+.rv[data-variant='elevation'] .el-txt { fill: #8A93A1; font-size: 13px; letter-spacing: .12em; }
+
+.rv[data-variant='elevation'] .el-body { fill: var(--el-obj); stroke: var(--el-line); stroke-width: 1.5; }
+.rv[data-variant='elevation'] .el-in { fill: var(--el-in); stroke: var(--el-line); stroke-opacity: .6; stroke-width: 1; }
+.rv[data-variant='elevation'] .el-l { fill: none; stroke: var(--el-line); stroke-width: 1.5; }
+.rv[data-variant='elevation'] .el-edge { fill: var(--el-line); fill-opacity: .8; }
+.rv[data-variant='elevation'] .el-spine { fill: #3A414C; stroke: var(--el-line); stroke-opacity: .7; stroke-width: 1; }
+.rv[data-variant='elevation'] .el-spine.el-hot { fill: var(--accent); fill-opacity: .8; stroke: none; }
+.rv[data-variant='elevation'] .el-active { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-opacity: .9; }
+.rv[data-variant='elevation'] .el-handle { stroke: var(--accent); stroke-width: 3; stroke-linecap: round; fill: none; stroke-opacity: .85; }
+.rv[data-variant='elevation'] .el-slot { fill: #050607; stroke: var(--el-line); stroke-opacity: .7; }
+.rv[data-variant='elevation'] .el-screw,
+.rv[data-variant='elevation'] .el-knob { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+.rv[data-variant='elevation'] .el-box { fill: #0F1215; stroke: var(--el-line); stroke-width: 1.25; }
+.rv[data-variant='elevation'] .el-box.el-hot { stroke: var(--accent); fill: #2A1D08; }
+.rv[data-variant='elevation'] .el-conn { fill: none; stroke: var(--el-line); stroke-width: 1.5; }
+.rv[data-variant='elevation'] .el-conn.el-hotl { stroke: var(--accent); }
+.rv[data-variant='elevation'] .el-br { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: square; }
+
+/* Monitor: the focal point */
+.rv[data-variant='elevation'] .el-halo { fill: none; stroke: var(--accent); stroke-opacity: .12; stroke-width: 1; }
+.rv[data-variant='elevation'] .el-halo2 { stroke-opacity: .2; }
+.rv[data-variant='elevation'] .el-screen { fill: #1E1507; stroke: var(--accent); stroke-opacity: .55; stroke-width: 1; }
+.rv[data-variant='elevation'] .el-glint { fill: var(--accent); fill-opacity: .05; }
+.rv[data-variant='elevation'] .el-ruler { stroke: var(--accent); stroke-opacity: .2; stroke-width: 1; stroke-dasharray: 2 6; }
+.rv[data-variant='elevation'] .el-led { fill: var(--accent); }
+.rv[data-variant='elevation'] .el-prompt { fill: var(--accent); font-size: 15px; font-weight: 700; }
+.rv[data-variant='elevation'] .el-line { fill: var(--ink); fill-opacity: .5; transform-box: fill-box; transform-origin: left center; }
+.rv[data-variant='elevation'] .el-line.el-a { fill: var(--accent); fill-opacity: .85; }
+.rv[data-variant='elevation'] .el-caret { fill: var(--accent); }
+
+/* Idle: terminal typing, 5.6s loop, confined to the monitor. transform and opacity only. */
+.rv[data-variant='elevation'] .el-prompt { animation: elevation-prompt 5.6s linear infinite; }
+.rv[data-variant='elevation'] .el-l2 { animation: elevation-type-2 5.6s linear infinite; }
+.rv[data-variant='elevation'] .el-l3 { animation: elevation-type-3 5.6s linear infinite; }
+.rv[data-variant='elevation'] .el-l4 { animation: elevation-type-4 5.6s linear infinite; }
+.rv[data-variant='elevation'] .el-l5 { animation: elevation-type-5 5.6s linear infinite; }
+.rv[data-variant='elevation'] .el-caret { animation: elevation-caret 5.6s step-end infinite; }
+
+@keyframes elevation-prompt { 0%, 2% { opacity: 0; } 4%, 82% { opacity: 1; } 88%, 100% { opacity: 0; } }
+@keyframes elevation-type-2 { 0%, 12% { transform: scaleX(0); opacity: 1; } 20%, 82% { transform: scaleX(1); opacity: 1; } 88%, 99.9% { transform: scaleX(1); opacity: 0; } 100% { transform: scaleX(0); opacity: 0; } }
+@keyframes elevation-type-3 { 0%, 24% { transform: scaleX(0); opacity: 1; } 32%, 82% { transform: scaleX(1); opacity: 1; } 88%, 99.9% { transform: scaleX(1); opacity: 0; } 100% { transform: scaleX(0); opacity: 0; } }
+@keyframes elevation-type-4 { 0%, 36% { transform: scaleX(0); opacity: 1; } 46%, 82% { transform: scaleX(1); opacity: 1; } 88%, 99.9% { transform: scaleX(1); opacity: 0; } 100% { transform: scaleX(0); opacity: 0; } }
+@keyframes elevation-type-5 { 0%, 50% { transform: scaleX(0); opacity: 1; } 58%, 82% { transform: scaleX(1); opacity: 1; } 88%, 99.9% { transform: scaleX(1); opacity: 0; } 100% { transform: scaleX(0); opacity: 0; } }
+@keyframes elevation-caret {
+  0%, 58% { opacity: 0; } 60% { opacity: 1; } 66% { opacity: 0; } 72% { opacity: 1; } 78% { opacity: 0; } 84% { opacity: 1; } 88%, 100% { opacity: 0; }
+}
+
+/* Entrance: objects draw in once (fill-mode backwards, so nothing depends on it). */
+.rv[data-variant='elevation'] .el-obj { animation: elevation-in .7s ease-out backwards; }
+.rv[data-variant='elevation'] .el-monitor { animation-delay: .1s; }
+@keyframes elevation-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- Hotspots: HUD tags with bracket corners ---------- */
+.rv[data-variant='elevation'] .rv-hotspot {
+  position: relative; border-radius: 0; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; font-size: 11px;
+}
+.rv[data-variant='elevation'] .rv-hotspot::before,
+.rv[data-variant='elevation'] .rv-hotspot::after { content: ''; position: absolute; width: 7px; height: 7px; border: 0 solid var(--accent); pointer-events: none; }
+.rv[data-variant='elevation'] .rv-hotspot::before { top: -4px; left: -4px; border-width: 2px 0 0 2px; }
+.rv[data-variant='elevation'] .rv-hotspot::after { right: -4px; bottom: -4px; border-width: 0 2px 2px 0; }
+.rv[data-variant='elevation'] .rv-hotspot-dot { border-radius: 0; width: 7px; height: 7px; }
+.rv[data-variant='elevation'] .rv-hotspot-dot::after { border-radius: 0; }
+.rv[data-variant='elevation'] .rv-hotspot-object { font-size: 9px; letter-spacing: .12em; }
+.rv[data-variant='elevation'] .rv-hotspot.is-focal { font-size: 12px; }
+.rv[data-variant='elevation'] .rv-hotspot.is-focal::before,
+.rv[data-variant='elevation'] .rv-hotspot.is-focal::after { border-color: var(--ink); }
+.rv[data-variant='elevation'] .rv-hotspot:focus-visible { outline: 3px solid var(--ink); outline-offset: 5px; }
+@media (max-width: 600px) {
+  .rv[data-variant='elevation'] .rv-hotspot { font-size: 10px; letter-spacing: .05em; }
+  .rv[data-variant='elevation'] .rv-hotspot.is-focal { font-size: 11px; }
 }
