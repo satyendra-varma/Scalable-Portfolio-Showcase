@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: checks (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    steps:
+      - uses: actions/checkout@v4
+
+      # Version comes from "packageManager" in package.json.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (typecheck + all packages)
+        run: pnpm run build
+
+      - name: Unit tests
+        run: pnpm --filter @workspace/portfolio test
+
+      - name: API tests
+        run: pnpm --filter @workspace/api-server test
+
+      - name: Install Playwright Chromium
+        run: pnpm --filter @workspace/portfolio exec playwright install --with-deps chromium
+
+      - name: Browser tests
+        run: pnpm --filter @workspace/portfolio test:e2e
+
+      - name: Upload Playwright results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-${{ matrix.os }}
+          path: generated-artifacts/playwright-results
+          if-no-files-found: ignore
+          retention-days: 7

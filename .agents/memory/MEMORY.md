@@ -1,2 +1,0 @@
-- [Portfolio scope and evidence](portfolio-scope.md) — revised two-project allowlist, AI deferred, pending-link labels, and approval-before-implementation boundary.
-- [.NET toolchain](dotnet-toolchain.md) — direct managed-AI access works from .NET; use bounded concurrency for test restores in this environment.

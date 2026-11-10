@@ -2,57 +2,27 @@ import path from 'path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
-import { parseProjectLinks } from './src/lib/project-links';
-import projectLinks from '../../docs/project-links.json';
+import { validateUrl } from './src/lib/project-links';
+import { CRM_LINK, ECOMMERCE_LINK } from './src/content/site';
 
-import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
+// Vite does not execute browser modules during bundling. Validate the links
+// here too, so a bad project URL stops the build, not just the visitor's browser.
+validateUrl(CRM_LINK, 'CRM_LINK');
+validateUrl(ECOMMERCE_LINK, 'ECOMMERCE_LINK');
 
-// Vite does not execute browser modules during bundling. Validate configuration
-// here too, so bad project URLs stop the build, not just the visitor's browser.
-parseProjectLinks(projectLinks);
-
-const rawPort = process.env.PORT;
-
-if (!rawPort) {
-  throw new Error(
-    'PORT environment variable is required but was not provided.',
-  );
-}
-
+// PORT only affects the dev and preview servers; BASE_PATH serves the site from a sub-path.
+const rawPort = process.env.PORT || '5173';
 const port = Number(rawPort);
 
-if (Number.isNaN(port) || port <= 0) {
+if (!Number.isInteger(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-const basePath = process.env.BASE_PATH;
-
-if (!basePath) {
-  throw new Error(
-    'BASE_PATH environment variable is required but was not provided.',
-  );
-}
+const basePath = process.env.BASE_PATH || '/';
 
 export default defineConfig({
   base: basePath,
-  plugins: [
-    react(),
-    tailwindcss(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== 'production' &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import('@replit/vite-plugin-cartographer').then((m) =>
-            m.cartographer({
-              root: path.resolve(import.meta.dirname, '..'),
-            }),
-          ),
-          await import('@replit/vite-plugin-dev-banner').then((m) =>
-            m.devBanner(),
-          ),
-        ]
-      : []),
-  ],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname, 'src'),

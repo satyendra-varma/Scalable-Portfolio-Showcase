@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowDownRight, ArrowUpRight, Check, ChevronDown, ChevronRight,
-  Circle, Code2, Database, ExternalLink, Layers3, LockKeyhole,
-  Mail, Menu, Network, Server, ShieldCheck, Sparkles, X,
+  Circle, Code2, Database, ExternalLink, Layers3,
+  Mail, Menu, Network, Server, X,
 } from "lucide-react";
 import "./_group.css";
 
@@ -38,27 +38,11 @@ const projects: Project[] = [
     icon: Layers3,
   },
   {
-    id: "operations",
-    index: "02",
-    title: "Business Operations & Auditing Engine",
-    type: "INTERNAL OPERATIONS · .NET + REACT",
-    summary: "Daily transaction auditing that automates balance calculations, shift scheduling, and restricted record management.",
-    outcome: "15+ hours",
-    outcomeLabel: "weekly reconciliation time reduced",
-    stack: [".NET Core Web API", "React", "Balance calculations", "Shift scheduling", "Role-restricted records"],
-    details: [
-      "Architected and deployed a high-reliability daily transactional auditing system using .NET Core Web API and React.",
-      "Automated complex balance calculations and shift scheduling.",
-      "Added role-restricted record management; reduced weekly reconciliation time by 15+ hours.",
-    ],
-    icon: ShieldCheck,
-  },
-  {
     id: "ecommerce",
-    index: "03",
+    index: "02",
     title: "Cloud E-Commerce Platform",
     type: "CLOUD DELIVERY · AWS EC2",
-    summary: "A containerized full-stack platform with tested .NET services and a configured web edge.",
+    summary: "A containerized full-stack platform with tested .NET services, deployed on AWS EC2.",
     outcome: "Containerized",
     outcomeLabel: "full-stack infrastructure on AWS EC2",
     stack: ["C# .NET Core", "MSSQL", "Docker", "AWS EC2", "xUnit", "NGINX", "Certbot"],
@@ -70,32 +54,6 @@ const projects: Project[] = [
     icon: Server,
   },
 ];
-
-const questions = [
-  "What are Satyendra’s strongest .NET backend contributions?",
-  "How did the Business Operations system improve the workflow?",
-  "Which technologies are explicitly listed on the CRM?",
-  "What cloud and delivery experience does he have?",
-];
-
-const answers: Record<number, { text: string; sources: string[] }> = {
-  0: {
-    text: "The resume highlights a .NET 8 multi-tenant enterprise CRM using DDD, JWT/RBAC authorization, EF Core Global Query Filters for soft deletes, and Redis paired with MediatR CQRS handlers. It also reports backend REST APIs and WCF services at Nanomindz.",
-    sources: ["CRM Platform", "Nanomindz Technologies"],
-  },
-  1: {
-    text: "The internal Business Operations & Auditing Engine used .NET Core Web API and React to automate complex balance calculations, shift scheduling, and role-restricted record management. The resume reports 15+ hours less weekly reconciliation time.",
-    sources: ["Business Operations & Auditing Engine"],
-  },
-  2: {
-    text: "The CRM entry names .NET 8, Domain-Driven Design, JWT/RBAC authorization, EF Core Global Query Filters, Redis distributed caching, and MediatR CQRS handlers.",
-    sources: ["Enterprise CRM Platform"],
-  },
-  3: {
-    text: "The resume lists AWS EC2, S3, Docker, Jenkins, GitHub Actions, NGINX, Certbot, and CI/CD among skills. Project evidence specifically connects AWS EC2, Docker, NGINX, Certbot, and xUnit to the Cloud E-Commerce Platform; Jenkins pipelines to legacy components at Nanomindz.",
-    sources: ["Cloud E-Commerce Platform", "Nanomindz Technologies", "Key skills"],
-  },
-};
 
 const skillGroups = [
   { name: "Backend & systems", items: "C#, .NET 8, ASP.NET Core, Web API, MVC, Entity Framework Core, LINQ, REST APIs" },
@@ -109,7 +67,6 @@ const skillGroups = [
 export function SystemExplorer() {
   const [activeProject, setActiveProject] = useState("crm");
   const [expanded, setExpanded] = useState<string[]>(["crm"]);
-  const [answerIndex, setAnswerIndex] = useState<number | null>(null);
   const [mobileMenu, setMobileMenu] = useState(false);
   const current = projects.find((project) => project.id === activeProject) ?? projects[0];
   const CurrentIcon = current.icon;
@@ -185,7 +142,7 @@ export function SystemExplorer() {
                 <ChevronRight className="sx-tab-arrow" size={17} />
               </button>;
             })}
-            <div className="sx-list-foot"><span className="sx-list-rule" /> 3 SELECTED SYSTEMS</div>
+            <div className="sx-list-foot"><span className="sx-list-rule" /> 2 SELECTED SYSTEMS</div>
           </div>
           <div className="sx-project-detail" role="tabpanel" key={current.id}>
             <div className="sx-detail-top"><span className="sx-detail-index">SYSTEM / {current.index}</span><span className="sx-detail-icon"><CurrentIcon size={19} /></span></div>
@@ -200,17 +157,9 @@ export function SystemExplorer() {
               </motion.ul>}</AnimatePresence>
             </div>
             <div className="sx-stack"><span className="sx-stack-label">TECHNOLOGIES NAMED</span><div className="sx-tags">{current.stack.map((item) => <span key={item}>{item}</span>)}</div></div>
-            {current.id === "operations" && <p className="sx-internal-note"><LockKeyhole size={13} /> Internal tool — no public access link.</p>}
             <p className="sx-no-links">No public project URL supplied.</p>
           </div>
         </div>
-      </section>
-
-      <section className="sx-impact-band">
-        <div className="sx-impact-marker">OUTCOME / 02</div>
-        <div className="sx-impact-main"><span>REAL-WORLD IMPACT</span><strong>15<span>+</span></strong><p>hours of weekly reconciliation time reduced</p></div>
-        <div className="sx-impact-context"><span className="sx-impact-line" /><p>Reported for the <b>Business Operations & Auditing Engine</b>—not a CRM metric.</p></div>
-        <div className="sx-impact-coordinate">BUSINESS OPERATIONS<br />& AUDITING ENGINE</div>
       </section>
 
       <section className="sx-experience" id="experience">
@@ -221,7 +170,7 @@ export function SystemExplorer() {
         <div className="sx-timeline">
           <article className="sx-role-entry">
             <div className="sx-entry-date"><span>APR 2023</span><i /><span>PRESENT</span></div>
-            <div className="sx-entry-body"><div className="sx-entry-heading"><div><h3>Software Engineer <span>(Contract)</span></h3><p>Crescenza Consulting Group</p></div><span className="sx-entry-current">CURRENT ROLE</span></div>
+            <div className="sx-entry-body"><div className="sx-entry-heading"><div><h3>Software Engineer <span>(Contract)</span></h3><p>Crescenza Consulting Group</p></div></div>
               <div className="sx-entry-projects">
                 {projects.map((project) => <button key={project.id} className={`sx-entry-project ${activeProject === project.id ? "selected" : ""}`} onClick={() => { selectProject(project.id); document.getElementById("explorer")?.scrollIntoView({ behavior: "smooth" }); }}>
                   <span>{project.index}</span>{project.title}<ArrowUpRight size={14} />
@@ -248,26 +197,8 @@ export function SystemExplorer() {
         <div className="sx-skill-list">{skillGroups.map((group, i) => <div className="sx-skill-row" key={group.name}><span className="sx-skill-number">0{i + 1}</span><h3>{group.name}</h3><p>{group.items}</p><span className="sx-skill-cross">+</span></div>)}</div>
       </section>
 
-      <section className="sx-ambassador" id="ambassador">
-        <div className="sx-ambassador-head">
-          <div><p className="sx-kicker sx-kicker-dark">04 / ASK FROM THE EVIDENCE</p><h2>A guided<br /><em>technical review.</em></h2><p>Explore a few source-backed answers, without guessing what the resume doesn’t say.</p></div>
-          <div className="sx-preview-badge"><Sparkles size={15} /><span>DESIGN PREVIEW<br /><b>NOT CONNECTED TO AI</b></span></div>
-        </div>
-        <div className="sx-ambassador-panel">
-          <div className="sx-chat-top"><span className="sx-chat-avatar">SV</span><div><b>Portfolio guide</b><small>Example answers · resume-backed</small></div><span className="sx-static-label"><i /> STATIC PREVIEW</span></div>
-          <div className="sx-chat-content">
-            <p className="sx-chat-prompt">Choose a starter question</p>
-            <div className="sx-question-list">{questions.map((question, i) => <button key={question} className={`sx-question ${answerIndex === i ? "chosen" : ""}`} onClick={() => setAnswerIndex(i)}><span>0{i + 1}</span>{question}<ArrowUpRight size={14} /></button>)}</div>
-            {answerIndex !== null && <motion.div className="sx-answer" key={answerIndex} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-              <span className="sx-answer-label"><Check size={13} /> SOURCE-BACKED EXAMPLE</span><p>{answers[answerIndex].text}</p><div className="sx-source-list"><span>SOURCES</span>{answers[answerIndex].sources.map((source) => <a key={source} href={source === "Nanomindz Technologies" ? "#experience" : source === "Key skills" ? "#capabilities" : "#explorer"}>{source} <ArrowUpRight size={11} /></a>)}</div>
-            </motion.div>}
-            <p className="sx-preview-disclaimer">This is a static design preview, not an AI chat. Responses are hand-written examples based on the resume.</p>
-          </div>
-        </div>
-      </section>
-
       <section className="sx-background" id="about">
-        <div className="sx-background-heading"><p className="sx-kicker">05 / FOUNDATION</p><h2>Grounded in<br /><em>the fundamentals.</em></h2></div>
+        <div className="sx-background-heading"><p className="sx-kicker">04 / FOUNDATION</p><h2>Grounded in<br /><em>the fundamentals.</em></h2></div>
         <div className="sx-background-body">
           <div className="sx-education"><span className="sx-bg-label">EDUCATION</span><h3>Master’s in Applied Computer Science</h3><p>Fairleigh Dickinson University</p><span>Vancouver, BC, Canada <i>·</i> Sep 2021 – Apr 2023</span><div className="sx-focus"><b>FOCUS AREAS</b><p>Advanced Application Development, Web Architecture, Component Security & Secure Cryptographic Hashing</p></div></div>
           <div className="sx-profile-note"><span className="sx-bg-label">ENGINEERING APPROACH</span><p>Distributed architectures, cloud services, and high-performance backend systems—paired with a practical focus on how software changes day-to-day work.</p><span className="sx-profile-rule" /><span className="sx-location"><Circle size={7} fill="currentColor" /> Vancouver, BC, Canada</span></div>
@@ -276,7 +207,7 @@ export function SystemExplorer() {
 
       <footer className="sx-footer" id="contact">
         <div className="sx-footer-top"><p className="sx-kicker">LET’S TALK SYSTEMS</p><h2>Good engineering<br />starts with <em>the right problem.</em></h2><a className="sx-button sx-button-light" href="mailto:satyendrasatya447@gmail.com"><Mail size={16} /> Email Satyendra <ArrowUpRight size={15} /></a></div>
-        <div className="sx-footer-bottom"><a href="mailto:satyendrasatya447@gmail.com">satyendrasatya447@gmail.com</a><a href="https://www.linkedin.com/in/satyendra-varma-nadimpalli-56a199247" target="_blank" rel="noreferrer">LinkedIn <ExternalLink size={13} /></a><span>Vancouver, BC, Canada</span><span className="sx-footer-note">PUBLIC-SAFE PROFILE · RESUME PDF PENDING REVIEW</span><a className="sx-back-top" href="#top">BACK TO TOP ↑</a></div>
+        <div className="sx-footer-bottom"><a href="mailto:satyendrasatya447@gmail.com">satyendrasatya447@gmail.com</a><a href="https://www.linkedin.com/in/satyendra-varma-nadimpalli-56a199247" target="_blank" rel="noreferrer">LinkedIn <ExternalLink size={13} /></a><span>Vancouver, BC, Canada</span><a className="sx-back-top" href="#top">BACK TO TOP ↑</a></div>
       </footer>
     </main>
   );

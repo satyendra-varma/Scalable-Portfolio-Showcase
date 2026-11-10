@@ -4,22 +4,27 @@ import { describe, expect, it } from 'vitest';
 import { useState } from 'react';
 import { ContactContent, ProjectList, SkillsContent } from './RoomContent';
 import { RoomExplorer } from './RoomExplorer';
-import { crmFlow, projectEvidence } from '@/content/room-preview';
-import RoomDirections from '@/pages/room-directions';
+import { crmFlow, projectEvidence } from '@/content/room';
+import Room from '@/pages/room';
+import NotFound from '@/pages/not-found';
 
-describe('isolated room preview', () => {
-  it('presents the warm room as a homepage without comparison-only labeling', () => {
-    render(<RoomDirections homepage />);
-    expect(screen.getByTestId('page-room-warm')).toBeInTheDocument();
+describe('engineer room', () => {
+  it('is the homepage, with a single direction and no switcher', () => {
+    render(<Room />);
+    expect(screen.getByTestId('page-room')).toBeInTheDocument();
     expect(screen.getByText('Engineer’s Room')).toBeInTheDocument();
-    expect(screen.queryByText('Not the live site')).toBeNull();
+    expect(screen.queryByRole('navigation', { name: 'Direction switcher' })).toBeNull();
+    expect(screen.queryByText(/Warm workshop|Night blueprint|Not the live site/)).toBeNull();
     expect(document.title).toBe('Satyendra Varma Nadimpalli | Full Stack .NET Software Engineer');
     expect(screen.getByTestId('hotspot-explorer')).toBeInTheDocument();
+    expect(screen.getByTestId('link-header-email')).toHaveAttribute('href', 'mailto:satyendrasatya447@gmail.com');
   });
 
-  it('renders exactly two projects and noninteractive missing links', () => {
+  it('renders exactly two projects, no outcome placeholder, and noninteractive missing links', () => {
     render(<ProjectList activeSkill={null} />);
     expect(screen.getAllByRole('article')).toHaveLength(2);
+    expect(screen.queryByText('Outcome')).toBeNull();
+    expect(screen.queryByText(/not yet documented/i)).toBeNull();
     screen.getAllByText('Live link coming soon').forEach(el => {
       expect(el.tagName).toBe('SPAN');
       expect(el.closest('a,button')).toBeNull();
@@ -44,7 +49,7 @@ describe('isolated room preview', () => {
     expect(screen.queryAllByRole('article')).toHaveLength(0);
     await user.click(screen.getByRole('button', { name: 'Clear filter' }));
     expect(screen.getAllByRole('article')).toHaveLength(2);
-    expect(projectEvidence['AWS S3']).toBeUndefined();
+    expect(projectEvidence['Kubernetes (familiarity)']).toBeUndefined();
   });
   it('offers ten evidence-labeled stages and an equivalent numbered list', async () => {
     const user = userEvent.setup();
@@ -58,5 +63,12 @@ describe('isolated room preview', () => {
     await user.click(screen.getByTestId('button-explorer-list'));
     expect(screen.getByTestId('list-flow-nodes').children).toHaveLength(10);
     expect(crmFlow[8].source).toBe('Representative design (to confirm)');
+  });
+  it('gives unknown routes a 404 page with a single way home', () => {
+    render(<NotFound />);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('This page isn’t on the record.');
+    const links = screen.getAllByRole('link');
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveTextContent('Back to the room');
   });
 });

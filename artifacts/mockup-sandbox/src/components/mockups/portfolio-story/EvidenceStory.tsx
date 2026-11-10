@@ -1,29 +1,5 @@
-import { useState } from "react";
 import { ArrowUpRight, Plus, MapPin, Mail, Linkedin } from "lucide-react";
 import "./_group.css";
-
-const questions = [
-  {
-    question: "What is the strongest business outcome in the portfolio?",
-    answer: "The Business Operations & Auditing Engine automated complex balance calculations, shift scheduling, and role-restricted record management, reducing weekly reconciliation time by 15+ hours.",
-    source: "Business Operations & Auditing Engine · Resume",
-  },
-  {
-    question: "How does the CRM work demonstrate backend depth?",
-    answer: "The resume describes a .NET 8 multi-tenant enterprise CRM using Domain-Driven Design, JWT/RBAC authorization, EF Core Global Query Filters for automated soft deletes, Redis distributed caching, and MediatR CQRS handlers.",
-    source: "Enterprise CRM Platform · Resume",
-  },
-  {
-    question: "Which cloud and delivery technologies are listed?",
-    answer: "The Cloud E-Commerce Platform is described with C# .NET Core, MSSQL, and Docker on AWS EC2, alongside xUnit testing, NGINX reverse proxying, and Certbot SSL encryption. Jenkins CI/CD is listed for the earlier legacy-component delivery work.",
-    source: "Cloud E-Commerce Platform + Nanomindz Technologies · Resume",
-  },
-  {
-    question: "What are the candidate's experience and education?",
-    answer: "Satyendra's resume states 4+ years of software engineering experience. It lists a Master’s in Applied Computer Science from Fairleigh Dickinson University, Vancouver, BC, Canada, completed Sep 2021 – Apr 2023.",
-    source: "Professional Summary + Education · Resume",
-  },
-];
 
 const projects = [
   {
@@ -38,16 +14,6 @@ const projects = [
   },
   {
     id: "02",
-    title: "Business Operations & Auditing Engine",
-    type: "Business workflow · .NET Core Web API + React",
-    summary: "Architected and deployed a daily transactional auditing system. Its practical value comes through the work it automated: complex balance calculations, shift scheduling, and role-restricted record management.",
-    tech: [".NET Core Web API", "React"],
-    outcome: "15+ hours",
-    outcomeText: "of weekly reconciliation time reduced, as stated in the resume.",
-    note: "Internal tool. No public access or project link.",
-  },
-  {
-    id: "03",
     title: "Cloud E-Commerce Platform",
     type: "Full-stack delivery · AWS EC2",
     summary: "Developed and deployed a containerized full-stack e-commerce infrastructure on AWS EC2. The resume names the application stack, testing, reverse proxy, and SSL tooling without describing checkout or sales outcomes.",
@@ -69,8 +35,6 @@ const skillGroups = [
 ];
 
 export function EvidenceStory() {
-  const [activeQuestion, setActiveQuestion] = useState<number | null>(null);
-
   return (
     <main className="evidence-story" id="top">
       <div className="es-shell">
@@ -82,7 +46,6 @@ export function EvidenceStory() {
             <a href="#work">Selected work</a>
             <a href="#experience">Experience</a>
             <a href="#capabilities">Capabilities</a>
-            <a href="#ambassador">Ask the notes</a>
           </nav>
         </header>
 
@@ -103,19 +66,12 @@ export function EvidenceStory() {
         </section>
       </div>
 
-      <div className="es-band">
-        <div className="es-shell es-band-inner">
-          <div className="es-label">Working thesis</div>
-          <p>Good engineering is legible twice: in the choices made inside a system, and in the hours, workflows, or bottlenecks those choices change.</p>
-        </div>
-      </div>
-
       <section className="es-shell es-section" id="work">
         <div className="es-section-head">
           <div className="es-section-number">01 / Selected work</div>
           <div>
             <h2 className="es-section-title">Systems with a reason to exist.</h2>
-            <p className="es-section-dek">Three resume-backed projects, ordered from domain-rich backend work to end-to-end delivery. Open a case note to inspect the evidence; no demo links are implied.</p>
+            <p className="es-section-dek">Two resume-backed projects, ordered from domain-rich backend work to end-to-end delivery. Open a case note to inspect the evidence; no demo links are implied.</p>
           </div>
         </div>
         <div className="es-project-list">
@@ -157,7 +113,6 @@ export function EvidenceStory() {
               <div className="es-job-top"><h3>Software Engineer (Contract)</h3><time>Apr 2023 – Present</time></div>
               <div className="es-employer">Crescenza Consulting Group</div>
               <p>Delivered a .NET 8 multi-tenant enterprise CRM using Domain-Driven Design, with JWT/RBAC authorization, EF Core Global Query Filters for automated soft deletes, and Redis distributed caching paired with MediatR CQRS handlers.</p>
-              <p>Architected and deployed a daily transactional auditing system using .NET Core Web API and React. Automated balance calculations, shift scheduling, and role-restricted record management, reducing weekly reconciliation time by 15+ hours.</p>
               <p>Developed and deployed a containerized full-stack e-commerce infrastructure using C# .NET Core, MSSQL, Docker, AWS EC2, xUnit, NGINX, and Certbot SSL encryption.</p>
             </div>
             <div className="es-job">
@@ -190,38 +145,6 @@ export function EvidenceStory() {
           <div className="es-education-card">
             <div><h3>Master’s in Applied Computer Science</h3><p>Fairleigh Dickinson University · Vancouver, BC, Canada</p></div>
             <time>Sep 2021 – Apr 2023</time>
-          </div>
-        </div>
-      </section>
-
-      <section className="es-shell es-section" id="ambassador">
-        <div className="es-section-head">
-          <div className="es-section-number">05 / Guided reading</div>
-          <div>
-            <h2 className="es-section-title">Ask the portfolio.</h2>
-            <p className="es-section-dek">A small, source-grounded preview of how a recruiter could explore the evidence.</p>
-          </div>
-        </div>
-        <div className="es-ambassador">
-          <div>
-            <span className="es-preview-label">Design preview — not connected to AI</span>
-            <h3>Start with a question.<br />Stay with the facts.</h3>
-            <p className="es-ambassador-intro">Choose a starter question to reveal an example response and its source. This prototype is local and does not process or store messages.</p>
-          </div>
-          <div>
-            <div className="es-questions" role="group" aria-label="Recruiter starter questions">
-              {questions.map((item, index) => (
-                <button className="es-question" key={item.question} type="button" aria-pressed={activeQuestion === index} onClick={() => setActiveQuestion(index)}>
-                  <span>{item.question}</span><ArrowUpRight size={15} />
-                </button>
-              ))}
-            </div>
-            {activeQuestion !== null && (
-              <div className="es-answer" aria-live="polite">
-                <span className="es-source">Example response · Source: {questions[activeQuestion].source}</span>
-                <p>{questions[activeQuestion].answer}</p>
-              </div>
-            )}
           </div>
         </div>
       </section>
