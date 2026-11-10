@@ -1,0 +1,8 @@
+/* Variation 3 — Plan. Palette from docs/DESIGN-BRIEF.md; keep every selector scoped to this variant. */
+.rv[data-variant='plan'] {
+  --bg: #06140F; --surface: #0B2018; --chip: #0F2A20; --hot: #03100A;
+  --ink: #E8FFF2; --muted: #9FC8B3; --accent: #B6F25A; --accent-ink: #0C1A04; --evidence: #FFD166;
+  --line: #1F4B39; --grid: #1F4B3940;
+  --stage-ratio: 4 / 3; --stage-max: 900px;
+  background: var(--bg);
+}

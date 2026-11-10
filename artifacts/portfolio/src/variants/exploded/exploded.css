@@ -1,0 +1,8 @@
+/* Variation 4 — Exploded. Palette from docs/DESIGN-BRIEF.md; keep every selector scoped to this variant. */
+.rv[data-variant='exploded'] {
+  --bg: #0E0B20; --surface: #161132; --chip: #1D1742; --hot: #090717;
+  --ink: #F2EDFF; --muted: #B9B0DD; --accent: #C69CFF; --accent-ink: #170A2C; --evidence: #5EEAD4;
+  --line: #3B2F6E; --grid: #3B2F6E40;
+  --stage-ratio: 4 / 3; --stage-max: 900px;
+  background: var(--bg);
+}

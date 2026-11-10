@@ -8,7 +8,7 @@ export const hotspots: { id: HotspotId; label: string; object: string; x: number
   { id: 'contact', label: 'Contact', object: 'Mailbox', x: 22, y: 71 },
 ];
 
-function BlueprintRoom() {
+export function BlueprintRoom() {
   const line = { fill: 'none', stroke: '#6fc3d6', strokeWidth: 1.6 };
   return (
     <svg viewBox="0 0 800 600" className="room-svg" aria-hidden="true" focusable="false">

@@ -1,0 +1,8 @@
+/* Variation 1 — Isometric. Palette from docs/DESIGN-BRIEF.md; keep every selector scoped to this variant. */
+.rv[data-variant='isometric'] {
+  --bg: #0A2240; --surface: #0E2A4D; --chip: #11335B; --hot: #061A30;
+  --ink: #EAF4FF; --muted: #A8C3DE; --accent: #5CE1F2; --accent-ink: #04222E; --evidence: #FFD37A;
+  --line: #2C5C8A; --grid: #2C5C8A40;
+  --stage-ratio: 4 / 3; --stage-max: 900px;
+  background: var(--bg);
+}

@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { lazy, Suspense, type ReactNode } from 'react';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -11,6 +11,14 @@ import {
   Router as WouterRouter,
 } from 'wouter';
 
+// The owner's comparison page loads on demand, so the homepage bundle stays lean.
+const RoomVariants = lazy(() => import('@/pages/room-variants'));
+const variantsPage = (
+  <Suspense fallback={<div style={{ minHeight: '100dvh', background: '#05080c' }} />}>
+    <RoomVariants />
+  </Suspense>
+);
+
 function Router() {
   return (
     // Keep a shared shell (sidebar, navbar) outside the boundary so it
@@ -18,6 +26,8 @@ function Router() {
     <RoutedErrorBoundary>
       <Switch>
         <Route path="/" component={Room} />
+        <Route path="/room-variants">{variantsPage}</Route>
+        <Route path="/room-variants/:id">{variantsPage}</Route>
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>
