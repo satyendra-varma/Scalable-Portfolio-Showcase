@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { variants } from './registry';
 import { scenes } from './scenes';
@@ -80,6 +80,16 @@ describe('room variants', () => {
         }
         expect(screen.getByTestId('hotspot-explorer')).toHaveClass('is-focal');
         expect(screen.getByTestId('hotspot-explorer')).toHaveTextContent('System Explorer');
+      });
+
+      it('returns focus to the desk monitor as soon as the System Explorer closes', () => {
+        render(<VariantRoom variant={v} Scene={scenes[v.id]} />);
+        const monitor = screen.getByTestId('hotspot-explorer');
+        fireEvent.click(monitor);
+        expect(screen.getByTestId('panel-explorer')).toBeInTheDocument();
+        fireEvent.keyDown(document, { key: 'Escape' });
+        expect(screen.queryByTestId('panel-explorer')).toBeNull();
+        expect(monitor).toHaveFocus();
       });
     });
   }

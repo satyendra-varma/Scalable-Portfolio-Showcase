@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useDocumentMeta } from '@/hooks/use-document-meta';
 import { contact, hero } from '@/content/room';
 import { RoomScene, hotspots, type HotspotId } from '@/components/room/RoomScene';
@@ -15,10 +16,12 @@ export default function Room() {
 
   useDocumentMeta('Satyendra Varma Nadimpalli | Full Stack .NET Software Engineer', hero.positioning);
 
+  // Close the panel now, then hand focus back to the object that opened it. A deferred focus
+  // (requestAnimationFrame) never runs while the page is in the background, so focus would be lost.
   const close = () => {
-    setOpen(null);
     const el = opener.current;
-    requestAnimationFrame(() => el?.focus());
+    flushSync(() => setOpen(null));
+    el?.focus();
   };
 
   const body = (id: HotspotId) => {

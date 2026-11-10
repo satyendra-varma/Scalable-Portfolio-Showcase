@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { useState } from 'react';
@@ -80,6 +80,15 @@ describe('engineer room', () => {
     expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual(
       expect.arrayContaining(['Enterprise CRM Platform', 'Cloud E-Commerce Platform', 'Nanomindz Technologies']),
     );
+  });
+  it('returns focus to the object that opened a panel as soon as the panel closes', () => {
+    render(<Room />);
+    const monitor = screen.getByTestId('hotspot-explorer');
+    fireEvent.click(monitor);
+    expect(screen.getByTestId('panel-explorer')).toBeInTheDocument();
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByTestId('panel-explorer')).toBeNull();
+    expect(monitor).toHaveFocus();
   });
   it('gives unknown routes a 404 page with a single way home', () => {
     render(<NotFound />);

@@ -1,4 +1,5 @@
 import { useRef, useState, type ComponentType } from 'react';
+import { flushSync } from 'react-dom';
 import { contact, hero } from '@/content/room';
 import { hotspots, type HotspotId } from '@/components/room/RoomScene';
 import { RoomDialog } from '@/components/room/RoomDialog';
@@ -19,10 +20,12 @@ export function VariantRoom({ variant, Scene }: { variant: VariantMeta; Scene: C
   const [activeSkill, setActiveSkill] = useState<string | null>(null);
   const opener = useRef<HTMLElement | null>(null);
 
+  // Close the panel now, then hand focus back to the object that opened it. A deferred focus
+  // (requestAnimationFrame) never runs while the page is in the background, so focus would be lost.
   const close = () => {
-    setOpen(null);
     const el = opener.current;
-    requestAnimationFrame(() => el?.focus());
+    flushSync(() => setOpen(null));
+    el?.focus();
   };
 
   const body = (id: HotspotId) => {
