@@ -28,6 +28,7 @@ function Router() {
         <Route path="/" component={Room} />
         <Route path="/room-variants">{variantsPage}</Route>
         <Route path="/room-variants/:id">{variantsPage}</Route>
+        <Route path="/room-variants/:id/:accent">{variantsPage}</Route>
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>

@@ -248,3 +248,6 @@ export default function ElevationScene({ onOpen }: SceneProps) {
     </VariantStage>
   );
 }
+
+/** Optional aria-hidden decoration rendered inside the hero, behind the heading (see ../scenes.ts). */
+export const HeroDecor: import('react').ComponentType | null = null;

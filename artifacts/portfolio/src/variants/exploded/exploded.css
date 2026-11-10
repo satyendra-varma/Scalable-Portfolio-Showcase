@@ -1,9 +1,9 @@
 /* Variation 4 — Exploded. Palette from docs/DESIGN-BRIEF.md; keep every selector scoped to this variant. */
 .rv[data-variant='exploded'] {
-  --bg: #0E0B20; --surface: #161132; --chip: #1D1742; --hot: #090717;
-  --ink: #F2EDFF; --muted: #B9B0DD; --accent: #C69CFF; --accent-ink: #170A2C; --evidence: #5EEAD4;
-  --line: #3B2F6E; --grid: #3B2F6E40;
-  --lav: #8E80CF; --lav-dim: #6A5AA8;
+  --bg: #1A1918; --surface: #22211F; --chip: #2A2826; --hot: #121110;
+  --ink: #F4F1EB; --muted: #B8B2A8; /* accents come from registry.ts */
+  --line: #47443F; --grid: #47443F40;
+  --lav: #A39D93; --lav-dim: #77726A; /* neutral line greys until the concept is redrawn */
   --stage-ratio: 1000 / 960; --stage-max: 1040px;
   background: var(--bg);
 }

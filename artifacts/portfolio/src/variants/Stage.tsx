@@ -11,6 +11,8 @@ export type HotspotPositions = Record<HotspotId, HotspotPosition>;
  * Shared frame for every variant scene: the decorative drawing (children, an aria-hidden SVG),
  * the five hotspot buttons with visible labels, and the caption. Variants supply only the drawing
  * and the hotspot positions, so labels, order and accessibility stay identical across variants.
+ * Each button carries data-hotspot="<id>"; a drawing marks the matching object with
+ * data-object="<id>" and can respond with :has([data-hotspot=<id>]:is(:hover, :focus-visible)).
  */
 export function VariantStage({ onOpen, positions, children }: SceneProps & { positions: HotspotPositions; children: ReactNode }) {
   return (
@@ -32,6 +34,7 @@ export function VariantStage({ onOpen, positions, children }: SceneProps & { pos
                   type="button"
                   className={`rv-hotspot${h.id === 'explorer' ? ' is-focal' : ''}`}
                   data-testid={`hotspot-${h.id}`}
+                  data-hotspot={h.id}
                   aria-haspopup="dialog"
                   onClick={(e) => onOpen(h.id, e.currentTarget)}
                 >

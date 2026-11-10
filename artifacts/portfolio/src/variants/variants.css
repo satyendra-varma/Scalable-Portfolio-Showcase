@@ -7,7 +7,9 @@
 /* Layout: hero first, scene below, at every width. */
 .rv { --hot: var(--bg); --stage-ratio: 16 / 10; --stage-max: 1120px; background-color: var(--bg); }
 .rv .rv-main { padding: 8px clamp(16px, 4vw, 48px) 40px; max-width: 1360px; margin: 0 auto; }
-.rv .rv-hero { padding: clamp(14px, 3.2vw, 40px) 0 clamp(16px, 2.6vw, 30px); }
+.rv .rv-hero { position: relative; isolation: isolate; padding: clamp(14px, 3.2vw, 40px) 0 clamp(16px, 2.6vw, 30px); }
+/* Optional per-concept hero decoration (aria-hidden), painted behind the heading text. */
+.rv-hero-decor { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
 .rv .rv-pos { max-width: 23.25em; }
 
 /* Stage: the decorative drawing plus absolutely positioned hotspot buttons. */
@@ -53,20 +55,26 @@
 }
 
 /* Comparison dock (outside the themed room, so it looks the same for every variant). */
-.rv-page { min-height: 100dvh; padding-bottom: 104px; background: #05080c; }
-@media (max-width: 640px) { .rv-page { padding-bottom: 132px; } }
+.rv-page { min-height: 100dvh; padding-bottom: 168px; background: #05080c; }
 .rv-dock {
   position: fixed; z-index: 40; left: 50%; bottom: 12px; transform: translateX(-50%); width: min(1000px, calc(100% - 20px));
-  padding: 8px; border-radius: 14px; background: #05080c; border: 1px solid #ffffff38; box-shadow: 0 12px 32px #000a; color: #f2f5f8;
+  display: grid; gap: 6px; padding: 8px; border-radius: 14px; background: #05080c; border: 1px solid #ffffff38; box-shadow: 0 12px 32px #000a; color: #f2f5f8;
 }
-.rv-dock-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-@media (max-width: 640px) { .rv-dock-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Row 1: the concepts. Row 2: the current concept's accent options, one click each. */
+.rv-dock-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.rv-dock-accents { border-top: 1px solid #ffffff24; padding-top: 6px; }
 .rv-dock-link {
-  display: grid; grid-template-columns: 14px minmax(0, 1fr); column-gap: 9px; align-items: center; min-height: 44px; padding: 7px 10px;
+  display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 9px; align-items: center; min-height: 44px; padding: 7px 10px;
   border-radius: 10px; border: 1px solid transparent; color: #f2f5f8; text-decoration: none;
 }
 .rv-dock-link:hover { border-color: #ffffff38; }
-.rv-dock-link[aria-current='page'] { border-color: #f2f5f8; background: #1a2027; }
+.rv-dock-link[aria-current] { border-color: #f2f5f8; background: #1a2027; }
+.rv-dock-tri { grid-row: span 2; display: flex; gap: 2px; }
+.rv-dock-tri i { display: block; width: 6px; height: 16px; border-radius: 2px; box-shadow: 0 0 0 1px #ffffff40; }
+@media (max-width: 640px) {
+  .rv-dock-link { padding: 6px 7px; column-gap: 7px; }
+  .rv-dock-variants .rv-dock-meta { display: none; }
+}
 .rv-dock-link:focus-visible { outline: 3px solid #f2f5f8; outline-offset: 2px; }
 .rv-dock-swatch { grid-row: span 2; width: 14px; height: 14px; border-radius: 50%; background: var(--sw); box-shadow: 0 0 0 2px #05080c, 0 0 0 3px #ffffff59; }
 .rv-dock-name { font: 700 13px 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif; }

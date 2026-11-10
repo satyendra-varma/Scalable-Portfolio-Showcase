@@ -1,7 +1,7 @@
 /* Variation 2 — Elevation. Palette from docs/DESIGN-BRIEF.md; keep every selector scoped to this variant. */
 .rv[data-variant='elevation'] {
   --bg: #0F1114; --surface: #171A1F; --chip: #1F232A; --hot: #0A0B0D;
-  --ink: #F3EFE8; --muted: #B5ADA1; --accent: #FFB547; --accent-ink: #1C1203; --evidence: #7DD3FC;
+  --ink: #F3EFE8; --muted: #B5ADA1; /* accents come from registry.ts */
   --line: #3A414C; --grid: #3A414C40;
   --stage-ratio: 5 / 3; --stage-max: 1120px;
   --el-line: #5A6371; --el-obj: #13161A; --el-in: #0C0E10;
