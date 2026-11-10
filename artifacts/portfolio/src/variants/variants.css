@@ -1,5 +1,5 @@
 /*
- * Shared base for the four room variants (docs/DESIGN-BRIEF.md).
+ * Shared base for the room variants (docs/DESIGN-BRIEF.md).
  * Variants override tokens and draw their own scene in variants/<id>/; selectors there stay
  * scoped to .rv[data-variant='<id>']. Motion: transform and opacity only.
  */

@@ -6,12 +6,12 @@ import { findVariant, variants } from '@/variants/registry';
 import { scenes } from '@/variants/scenes';
 import { VariantRoom } from '@/variants/VariantRoom';
 
-/** Owner's comparison page: the four room variants, one click apart. Not for search engines. */
+/** Owner's comparison page: the room variants, one click apart. Not for search engines. */
 export default function RoomVariants() {
   const { id } = useParams<{ id?: string }>();
   const variant = id === undefined ? variants[0] : findVariant(id);
 
-  useDocumentMeta('Room variants | Satyendra Varma Nadimpalli', 'Four night-blueprint versions of the engineer’s room, side by side for comparison.');
+  useDocumentMeta('Room variants | Satyendra Varma Nadimpalli', 'Three night-room versions of the engineer’s room, side by side for comparison.');
   useEffect(() => {
     const robots = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
     const previous = robots?.content;

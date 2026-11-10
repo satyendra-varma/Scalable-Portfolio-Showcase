@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
-const VARIANTS = ['isometric', 'elevation', 'plan', 'exploded'];
+const VARIANTS = ['isometric', 'elevation', 'exploded'];
 const HOTSPOTS = ['explorer', 'skills', 'projects', 'experience', 'contact'];
 
 const axe = async (page: Page) => (await new AxeBuilder({ page }).withTags(WCAG).analyze()).violations;
@@ -86,7 +86,7 @@ test('comparison page switches variants with one click and stays out of search',
   await expect(page.getByTestId('variant-isometric')).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
   const dock = page.getByTestId('variant-dock');
-  await expect(dock.getByRole('link')).toHaveCount(4);
+  await expect(dock.getByRole('link')).toHaveCount(3);
   for (const id of [...VARIANTS].reverse()) {
     await page.getByTestId(`link-variant-${id}`).click();
     await expect(page.getByTestId(`variant-${id}`)).toBeVisible();
@@ -95,7 +95,9 @@ test('comparison page switches variants with one click and stays out of search',
   }
 });
 
-test('unknown variant shows the 404 page', async ({ page }) => {
-  await page.goto('/room-variants/warm');
-  await expect(page.getByTestId('page-not-found')).toBeVisible();
-});
+for (const gone of ['warm', 'plan']) {
+  test(`unknown or removed variant /room-variants/${gone} shows the 404 page`, async ({ page }) => {
+    await page.goto(`/room-variants/${gone}`);
+    await expect(page.getByTestId('page-not-found')).toBeVisible();
+  });
+}

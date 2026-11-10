@@ -36,12 +36,13 @@ const ALLOWED_DRAWING_TEXT = ['ROOM_01 / 4.20 m', '> dotnet run', '// scale 1:40
 const HOTSPOTS = ['explorer', 'skills', 'projects', 'experience', 'contact'];
 
 describe('room variants', () => {
-  it('are four genuinely different pairs of accent and idle style', () => {
-    expect(variants).toHaveLength(4);
+  it('are three genuinely different pairs of accent and idle style, with Plan removed', () => {
+    expect(variants).toHaveLength(3);
     for (const key of ['id', 'name', 'accentHex', 'idleStyle', 'drawing'] as const) {
-      expect(new Set(variants.map((v) => v[key])).size).toBe(4);
+      expect(new Set(variants.map((v) => v[key])).size).toBe(3);
     }
-    expect(variants.map((v) => v.number)).toEqual([1, 2, 3, 4]);
+    expect(variants.map((v) => v.number)).toEqual([1, 2, 4]);
+    expect(variants.map((v) => v.id)).not.toContain('plan');
     for (const v of variants) expect(v.accentHex).toMatch(/^#[0-9A-F]{6}$/);
   });
 
