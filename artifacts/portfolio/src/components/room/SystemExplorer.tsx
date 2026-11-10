@@ -1,7 +1,10 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { crmFlow, deferredFlows, flowSequenceNote } from '@/content/room';
+import { crmFlow, explorerFlows, flowSequenceNote } from '@/content/room';
 
-export function RoomExplorer({ initialAsList = false }: { initialAsList?: boolean }) {
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** Full-screen blueprint panel shared by the homepage and every room variant; only the theme tokens differ. */
+export function SystemExplorer({ initialAsList = false }: { initialAsList?: boolean }) {
   const [active, setActive] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [asList, setAsList] = useState(initialAsList);
@@ -14,23 +17,43 @@ export function RoomExplorer({ initialAsList = false }: { initialAsList?: boolea
     else if (e.key === 'End') { e.preventDefault(); move(crmFlow.length - 1); }
   };
   const shown = selected ?? active;
+  let number = 0;
+
   return (
     <div className="ex">
       <p className="ex-banner" data-testid="text-flow-status">One flow is mapped so far. The other nine are listed and not drawn yet.</p>
       <div className="ex-grid">
-        <nav className="ex-selector" aria-label="Flow selector">
-          <h3 className="ex-h">Enterprise CRM Platform</h3>
-          <div role="radiogroup" aria-label="Available flows">
-            <button type="button" role="radio" aria-checked="true" className="ex-flow is-on" data-testid="button-flow-crm-request">
-              CRM request lifecycle <span className="ex-count">10 nodes</span>
-            </button>
-          </div>
-          <h3 className="ex-h">Not drawn yet</h3>
-          {deferredFlows.map((g) => (
-            <div key={g.project} className="ex-deferred">
-              <p className="ex-proj">{g.project}</p>
-              <ul>{g.flows.map((f) => <li key={f}>{f} <span className="ex-tag">Planned</span></li>)}</ul>
-            </div>
+        <nav className="ex-rail" aria-label="Flow selector">
+          {explorerFlows.map((group) => (
+            <section key={group.project} className="ex-group">
+              <h3 className="ex-h">{group.project}</h3>
+              <ol className="ex-flows">
+                {group.flows.map((flow) => {
+                  number += 1;
+                  return flow.status === 'working' ? (
+                    <li key={flow.title} data-flow-status="working">
+                      <button
+                        type="button"
+                        aria-current="true"
+                        className="ex-flow is-on"
+                        onClick={() => (asList ? undefined : nodes.current[active]?.focus())}
+                        data-testid="button-flow-crm-request"
+                      >
+                        <span className="ex-flow-num" aria-hidden="true">{pad(number)}</span>
+                        <span className="ex-flow-name">{flow.title}</span>
+                        <span className="ex-count">{crmFlow.length} nodes</span>
+                      </button>
+                    </li>
+                  ) : (
+                    <li key={flow.title} className="ex-planned" data-flow-status="planned">
+                      <span className="ex-flow-num" aria-hidden="true">{pad(number)}</span>
+                      <span className="ex-flow-name">{flow.title}</span>
+                      <span className="ex-tag">Planned</span>
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
           ))}
         </nav>
         <section className="ex-main" aria-labelledby="ex-flow-title">
@@ -62,7 +85,7 @@ export function RoomExplorer({ initialAsList = false }: { initialAsList?: boolea
                       onClick={() => { setActive(i); setSelected(i); }}
                       data-testid={`button-node-${i + 1}`}
                     >
-                      <span className="ex-num">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="ex-num">{pad(i + 1)}</span>
                       <span className="ex-node-title">{n.title}</span>
                       <span className="ex-node-src">{n.source}</span>
                     </button>

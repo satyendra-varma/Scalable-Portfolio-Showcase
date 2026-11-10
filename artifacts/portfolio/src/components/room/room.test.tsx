@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { useState } from 'react';
 import { ContactContent, ProjectList, SkillsContent } from './RoomContent';
-import { RoomExplorer } from './RoomExplorer';
+import { SystemExplorer } from './SystemExplorer';
 import { crmFlow, projectEvidence } from '@/content/room';
 import Room from '@/pages/room';
 import NotFound from '@/pages/not-found';
@@ -53,7 +53,7 @@ describe('engineer room', () => {
   });
   it('offers ten evidence-labeled stages and an equivalent numbered list', async () => {
     const user = userEvent.setup();
-    render(<RoomExplorer />);
+    render(<SystemExplorer />);
     expect(crmFlow).toHaveLength(10);
     const first = screen.getByTestId('button-node-1');
     first.focus();
@@ -63,6 +63,23 @@ describe('engineer room', () => {
     await user.click(screen.getByTestId('button-explorer-list'));
     expect(screen.getByTestId('list-flow-nodes').children).toHaveLength(10);
     expect(crmFlow[8].source).toBe('Representative design (to confirm)');
+  });
+  it('lists ten numbered flows: only flow 01 opens, flows 02-10 are Planned and not interactive', () => {
+    const { container } = render(<SystemExplorer />);
+    const rows = Array.from(container.querySelectorAll('[data-flow-status]'));
+    expect(rows).toHaveLength(10);
+    expect(rows.map((r) => r.querySelector('.ex-flow-num')?.textContent)).toEqual(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10']);
+    expect(rows[0]).toHaveAttribute('data-flow-status', 'working');
+    expect(rows[0].querySelector('button')).toBe(screen.getByTestId('button-flow-crm-request'));
+    const planned = rows.slice(1);
+    for (const row of planned) {
+      expect(row).toHaveAttribute('data-flow-status', 'planned');
+      expect(row).toHaveTextContent('Planned');
+      expect(row.querySelector('a, button, [tabindex]')).toBeNull();
+    }
+    expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual(
+      expect.arrayContaining(['Enterprise CRM Platform', 'Cloud E-Commerce Platform', 'Nanomindz Technologies']),
+    );
   });
   it('gives unknown routes a 404 page with a single way home', () => {
     render(<NotFound />);

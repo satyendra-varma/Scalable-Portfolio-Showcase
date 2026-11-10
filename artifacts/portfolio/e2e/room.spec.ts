@@ -30,6 +30,10 @@ test('room: panels, filters, Explorer and accessible alternatives', async ({ pag
   await expect(page.getByText('Live link coming soon')).toHaveCount(2);
   await page.keyboard.press('Escape');
   await page.getByTestId('hotspot-explorer').click();
+  const planned = page.getByTestId('panel-explorer').locator('[data-flow-status="planned"]');
+  await expect(planned).toHaveCount(9);
+  await expect(planned.filter({ hasText: 'Planned' })).toHaveCount(9);
+  await expect(planned.locator('a, button, [tabindex]')).toHaveCount(0);
   await page.getByTestId('button-flow-crm-request').focus();
   await page.keyboard.press('Tab');
   await expect(page.getByTestId('button-explorer-list')).toBeFocused();

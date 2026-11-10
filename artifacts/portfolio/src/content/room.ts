@@ -132,10 +132,35 @@ export const crmFlow: { title: string; source: SourceLabel; note: string }[] = [
   { title: 'Response', source: 'Representative design (to confirm)', note: 'The result returns to the client. Response shape and status handling are not documented.' },
 ];
 
-export const deferredFlows: { project: string; flows: string[] }[] = [
-  { project: 'Enterprise CRM Platform', flows: ['CRM auth and RBAC', 'CRM read path with Redis', 'CRM write path', 'CRM soft delete'] },
-  { project: 'Cloud E-Commerce Platform', flows: ['E-commerce request path', 'E-commerce build and deploy'] },
-  { project: 'Nanomindz Technologies', flows: ['Legacy integration', 'Query tuning', 'Container CI/CD'] },
+export type FlowStatus = 'working' | 'planned';
+
+/** The System Explorer's ten flows, grouped by project and numbered 01-10 in this order. Only flow 01 has a diagram. */
+export const explorerFlows: { project: string; flows: { title: string; status: FlowStatus }[] }[] = [
+  {
+    project: 'Enterprise CRM Platform',
+    flows: [
+      { title: 'CRM request lifecycle', status: 'working' },
+      { title: 'CRM auth and RBAC', status: 'planned' },
+      { title: 'CRM read path with Redis', status: 'planned' },
+      { title: 'CRM write path', status: 'planned' },
+      { title: 'CRM soft delete', status: 'planned' },
+    ],
+  },
+  {
+    project: 'Cloud E-Commerce Platform',
+    flows: [
+      { title: 'E-commerce request path', status: 'planned' },
+      { title: 'E-commerce build and deploy', status: 'planned' },
+    ],
+  },
+  {
+    project: 'Nanomindz Technologies',
+    flows: [
+      { title: 'Legacy integration', status: 'planned' },
+      { title: 'Query tuning', status: 'planned' },
+      { title: 'Container CI/CD', status: 'planned' },
+    ],
+  },
 ];
 
 export const flowSequenceNote =

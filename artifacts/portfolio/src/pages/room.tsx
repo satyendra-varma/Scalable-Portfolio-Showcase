@@ -3,7 +3,7 @@ import { useDocumentMeta } from '@/hooks/use-document-meta';
 import { contact, hero } from '@/content/room';
 import { RoomScene, hotspots, type HotspotId } from '@/components/room/RoomScene';
 import { RoomDialog } from '@/components/room/RoomDialog';
-import { RoomExplorer } from '@/components/room/RoomExplorer';
+import { SystemExplorer } from '@/components/room/SystemExplorer';
 import { ContactContent, ExperienceContent, ProjectList, SkillsContent } from '@/components/room/RoomContent';
 import '@/styles/room.css';
 
@@ -23,7 +23,7 @@ export default function Room() {
 
   const body = (id: HotspotId) => {
     switch (id) {
-      case 'explorer': return <RoomExplorer initialAsList={listView && !open} />;
+      case 'explorer': return <SystemExplorer initialAsList={listView && !open} />;
       case 'skills': return <SkillsContent activeSkill={activeSkill} setActiveSkill={setActiveSkill} />;
       case 'experience': return <ExperienceContent />;
       case 'projects': return <ProjectList activeSkill={activeSkill} />;
