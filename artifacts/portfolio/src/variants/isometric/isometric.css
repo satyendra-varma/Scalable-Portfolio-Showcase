@@ -4,5 +4,111 @@
   --ink: #EAF4FF; --muted: #A8C3DE; --accent: #5CE1F2; --accent-ink: #04222E; --evidence: #FFD37A;
   --line: #2C5C8A; --grid: #2C5C8A40;
   --stage-ratio: 4 / 3; --stage-max: 900px;
-  background: var(--bg);
+  --iso-grid: #2C5C8A26;
+  --iso-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace;
+  background:
+    linear-gradient(var(--iso-grid) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(90deg, var(--iso-grid) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(#2C5C8A40 1px, transparent 1px) 0 0 / 120px 120px,
+    linear-gradient(90deg, #2C5C8A40 1px, transparent 1px) 0 0 / 120px 120px,
+    var(--bg);
+}
+
+/* ---- Hero: an engineering drawing title block ---- */
+.rv[data-variant='isometric'] .rv-hero {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr);
+  margin: clamp(14px, 2.4vw, 28px) 0 clamp(14px, 2vw, 24px); padding: 0;
+  background: var(--surface); border: 1px solid var(--line);
+}
+.rv[data-variant='isometric'] .rv-hero::before {
+  content: ''; position: absolute; inset: -4px; pointer-events: none;
+  background:
+    linear-gradient(var(--accent), var(--accent)) 0 0 / 18px 2px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 0 0 / 2px 18px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 0 / 18px 2px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 0 / 2px 18px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 0 100% / 18px 2px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 0 100% / 2px 18px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 100% / 18px 2px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 100% / 2px 18px no-repeat;
+}
+.rv[data-variant='isometric'] .rv-name {
+  margin: 0; padding: clamp(16px, 3vw, 28px) clamp(16px, 2.6vw, 30px);
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif; font-weight: 700;
+  font-size: clamp(32px, 5.2vw, 68px); line-height: .95; letter-spacing: -.04em; border-bottom: 1px solid var(--line);
+}
+.rv[data-variant='isometric'] .rv-role {
+  margin: 0; padding: 12px clamp(16px, 2.6vw, 30px); border-bottom: 1px solid var(--line);
+  font-family: var(--iso-mono); font-size: clamp(12px, 1.2vw, 15px);
+  text-transform: uppercase; letter-spacing: .1em; color: var(--accent); font-weight: 600;
+}
+.rv[data-variant='isometric'] .rv-pos {
+  margin: 0; padding: 14px clamp(16px, 2.6vw, 30px) 4px; max-width: none;
+  font-family: 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif; font-size: clamp(15px, 1.5vw, 19px); line-height: 1.45;
+}
+.rv[data-variant='isometric'] .rv-toggle {
+  justify-self: start; margin: 8px clamp(16px, 2.6vw, 30px) 16px; border-radius: 0; border: 1px solid var(--accent); color: var(--accent);
+  font-family: var(--iso-mono); letter-spacing: .04em; min-height: 36px;
+}
+.rv[data-variant='isometric'] .rv-toggle:hover { background: var(--accent); color: var(--accent-ink); }
+@media (min-width: 960px) {
+  .rv[data-variant='isometric'] .rv-hero { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); grid-template-rows: auto 1fr auto; }
+  .rv[data-variant='isometric'] .rv-name { grid-column: 1; grid-row: 1 / span 3; align-self: stretch; display: flex; align-items: center; border-bottom: 0; border-right: 1px solid var(--line); }
+  .rv[data-variant='isometric'] .rv-role { grid-column: 2; grid-row: 1; }
+  .rv[data-variant='isometric'] .rv-pos { grid-column: 2; grid-row: 2; padding-top: 18px; }
+  .rv[data-variant='isometric'] .rv-toggle { grid-column: 2; grid-row: 3; }
+}
+
+/* ---- Drawing ---- */
+.rv[data-variant='isometric'] .iso-wall { fill: #0C2849; stroke: none; }
+.rv[data-variant='isometric'] .iso-wall-r { fill: #0B2442; }
+.rv[data-variant='isometric'] .iso-floor { fill: #0D2C50; stroke: none; }
+.rv[data-variant='isometric'] .iso-grid { fill: none; stroke: #5B8DBD; stroke-opacity: .32; stroke-width: .8; }
+.rv[data-variant='isometric'] .iso-datum { fill: none; stroke: #5B8DBD; stroke-opacity: .4; stroke-width: .8; stroke-dasharray: 2 5; }
+.rv[data-variant='isometric'] .iso-l polygon, .rv[data-variant='isometric'] .iso-l polyline, .rv[data-variant='isometric'] .iso-l line,
+.rv[data-variant='isometric'] .iso-l rect, .rv[data-variant='isometric'] .iso-l path {
+  fill: none; stroke: #EAF4FF; stroke-opacity: .82; stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke;
+}
+.rv[data-variant='isometric'] .iso-edge polyline { stroke-width: 1.6; stroke-opacity: .9; }
+.rv[data-variant='isometric'] .iso-l .iso-body { fill: #0A2240; }
+.rv[data-variant='isometric'] .iso-l .iso-body-dim { fill: #081C36; }
+.rv[data-variant='isometric'] .iso-l .iso-top { fill: #123760; }
+.rv[data-variant='isometric'] .iso-l .iso-door { fill: #0A2240; }
+.rv[data-variant='isometric'] .iso-l .iso-mat { fill: #0F2D52; stroke-opacity: .6; }
+.rv[data-variant='isometric'] .iso-l .iso-thin { stroke-width: 1; stroke-opacity: .55; }
+.rv[data-variant='isometric'] .iso-l .iso-dash { stroke-width: 1; stroke-opacity: .6; stroke-dasharray: 4 4; }
+.rv[data-variant='isometric'] .iso-l .iso-book { fill: #0A2240; stroke-opacity: .7; stroke-width: 1; }
+.rv[data-variant='isometric'] .iso-l .iso-book-a { fill: #5CE1F2; fill-opacity: .8; stroke: #5CE1F2; stroke-opacity: 1; stroke-width: 1; }
+.rv[data-variant='isometric'] .iso-l .iso-a { stroke: #5CE1F2; stroke-opacity: 1; stroke-width: 1.4; }
+.rv[data-variant='isometric'] .iso-a { fill: none; stroke: #5CE1F2; stroke-width: 1.8; stroke-linecap: round; }
+.rv[data-variant='isometric'] .iso-fill-a { fill: #5CE1F2; stroke: none; }
+.rv[data-variant='isometric'] .iso-cut polygon { fill: url(#iso-hatch); stroke: #EAF4FF; stroke-opacity: .8; stroke-width: 1.2; }
+.rv[data-variant='isometric'] .iso-hatch-line { stroke: #EAF4FF; stroke-opacity: .6; stroke-width: 1; }
+.rv[data-variant='isometric'] .iso-centre line, .rv[data-variant='isometric'] .iso-centre circle { fill: none; stroke: #5CE1F2; stroke-opacity: .6; stroke-width: 1; }
+
+/* Monitor: the largest, brightest object. Accent frame, deep accent-tinted glass. */
+.rv[data-variant='isometric'] .iso-a-edge polygon { stroke: #5CE1F2; stroke-width: 1.6; stroke-linejoin: round; fill: #0A2240; }
+.rv[data-variant='isometric'] .iso-a-edge .iso-bezel { fill: #0F3A5C; stroke-width: 2.4; }
+.rv[data-variant='isometric'] .iso-screen { fill: #06324A; stroke: none; }
+.rv[data-variant='isometric'] .iso-screen-edge { fill: none; stroke: #5CE1F2; stroke-width: 1.2; stroke-opacity: .7; }
+.rv[data-variant='isometric'] .iso-bar { fill: #5CE1F2; stroke: none; }
+.rv[data-variant='isometric'] .iso-band { fill: #BFF6FF; stroke: none; }
+.rv[data-variant='isometric'] .iso-sweep { transform-box: fill-box; transform-origin: center; animation: isometric-sweep 3.2s linear infinite; }
+@keyframes isometric-sweep { from { transform: translateY(0); } to { transform: translateY(-84px); } }
+
+/* Dimensions and notes */
+.rv[data-variant='isometric'] .iso-dim line { stroke: #5CE1F2; stroke-opacity: .85; stroke-width: 1; }
+.rv[data-variant='isometric'] .iso-dim .iso-ext { stroke-opacity: .45; stroke-dasharray: 3 3; }
+.rv[data-variant='isometric'] .iso-text { fill: #A8C3DE; font: 500 11px var(--iso-mono); letter-spacing: .06em; }
+
+/* ---- Hotspots: drafting callout tags ---- */
+.rv[data-variant='isometric'] .rv-hotspot {
+  border-radius: 0; border: 1px solid var(--accent); box-shadow: 3px 3px 0 #2C5C8A; font-family: var(--iso-mono); letter-spacing: .02em;
+}
+.rv[data-variant='isometric'] .rv-hotspot-dot, .rv[data-variant='isometric'] .rv-hotspot-dot::after { border-radius: 0; }
+.rv[data-variant='isometric'] .rv-hotspot.is-focal { box-shadow: 3px 3px 0 #1C8CA0; }
+.rv[data-variant='isometric'] .rv-caption { font-family: var(--iso-mono); letter-spacing: .04em; }
+@media (max-width: 600px) {
+  .rv[data-variant='isometric'] .rv-hotspot { box-shadow: 2px 2px 0 #2C5C8A; }
+  .rv[data-variant='isometric'] .iso-text { font-size: 12px; }
 }
