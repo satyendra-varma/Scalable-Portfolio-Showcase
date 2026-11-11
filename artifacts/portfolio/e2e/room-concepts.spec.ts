@@ -11,7 +11,7 @@ for (const id of VARIANTS) {
   test(`${id}: hero above the scene, labelled hotspots, explorer, motion and contrast`, async ({ page, isMobile }) => {
     test.slow();
     if (!isMobile) await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto(`/room-variants/${id}`);
+    await page.goto(`/room-concepts/${id}`);
     await expect(page.getByTestId(`variant-${id}`)).toBeVisible();
 
     // Hero first: name, role and positioning are on screen and end above the scene.
@@ -85,7 +85,7 @@ for (const id of VARIANTS) {
   test(`${id}: every accent option switches with one click and keeps text contrast`, async ({ page, isMobile }) => {
     test.slow();
     if (!isMobile) await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto(`/room-variants/${id}`);
+    await page.goto(`/room-concepts/${id}`);
     const root = page.getByTestId(`variant-${id}`);
     await expect(root).toBeVisible(); // the comparison page loads on demand
     const links = page.getByTestId('accent-switcher').getByRole('link');
@@ -98,7 +98,7 @@ for (const id of VARIANTS) {
       const accent = (await link.getAttribute('data-testid'))!.replace('link-accent-', '');
       const hex = (await link.locator('.rv-dock-meta').innerText()).trim();
       await link.click();
-      await expect(page).toHaveURL(new RegExp(`/room-variants/${id}/${accent}$`));
+      await expect(page).toHaveURL(new RegExp(`/room-concepts/${id}/${accent}$`));
       await expect(root).toHaveAttribute('data-accent', accent);
       await expect(link).toHaveAttribute('aria-current', 'page');
       expect(await root.evaluate((el) => getComputedStyle(el).getPropertyValue('--accent').trim().toUpperCase())).toBe(hex);
@@ -111,7 +111,7 @@ for (const id of VARIANTS) {
 }
 
 test('comparison page switches concepts with one click and stays out of search', async ({ page }) => {
-  await page.goto('/room-variants');
+  await page.goto('/room-concepts');
   await expect(page.getByTestId('variant-isometric')).toBeVisible();
   await expect(page.getByTestId('variant-isometric')).toHaveAttribute('data-accent', 'amber');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
@@ -121,12 +121,12 @@ test('comparison page switches concepts with one click and stays out of search',
     await page.getByTestId(`link-variant-${id}`).click();
     await expect(page.getByTestId(`variant-${id}`)).toBeVisible();
     await expect(page.getByTestId(`link-variant-${id}`)).toHaveAttribute('aria-current', 'true');
-    await expect(page).toHaveURL(new RegExp(`/room-variants/${id}$`));
+    await expect(page).toHaveURL(new RegExp(`/room-concepts/${id}$`));
     await expect(page.getByTestId('accent-switcher').getByRole('link')).toHaveCount(3);
   }
 });
 
-for (const path of ['/room-variants/isometric/purple', '/room-variants/elevation/redline']) {
+for (const path of ['/room-concepts/isometric/purple', '/room-concepts/elevation/redline']) {
   test(`unknown accent ${path} shows the 404 page`, async ({ page }) => {
     await page.goto(path);
     await expect(page.getByTestId('page-not-found')).toBeVisible();
@@ -134,8 +134,8 @@ for (const path of ['/room-variants/isometric/purple', '/room-variants/elevation
 }
 
 for (const gone of ['warm', 'plan']) {
-  test(`unknown or removed variant /room-variants/${gone} shows the 404 page`, async ({ page }) => {
-    await page.goto(`/room-variants/${gone}`);
+  test(`unknown or removed concept /room-concepts/${gone} shows the 404 page`, async ({ page }) => {
+    await page.goto(`/room-concepts/${gone}`);
     await expect(page.getByTestId('page-not-found')).toBeVisible();
   });
 }

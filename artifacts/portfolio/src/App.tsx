@@ -12,10 +12,10 @@ import {
 } from 'wouter';
 
 // The owner's comparison page loads on demand, so the homepage bundle stays lean.
-const RoomVariants = lazy(() => import('@/pages/room-variants'));
-const variantsPage = (
+const RoomConcepts = lazy(() => import('@/pages/room-concepts'));
+const conceptsPage = (
   <Suspense fallback={<div style={{ minHeight: '100dvh', background: '#05080c' }} />}>
-    <RoomVariants />
+    <RoomConcepts />
   </Suspense>
 );
 
@@ -26,9 +26,9 @@ function Router() {
     <RoutedErrorBoundary>
       <Switch>
         <Route path="/" component={Room} />
-        <Route path="/room-variants">{variantsPage}</Route>
-        <Route path="/room-variants/:id">{variantsPage}</Route>
-        <Route path="/room-variants/:id/:accent">{variantsPage}</Route>
+        <Route path="/room-concepts">{conceptsPage}</Route>
+        <Route path="/room-concepts/:id">{conceptsPage}</Route>
+        <Route path="/room-concepts/:id/:accent">{conceptsPage}</Route>
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>

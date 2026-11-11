@@ -80,7 +80,7 @@ test('no resume PDF is published until the clean copy exists', async ({ page }) 
   expect((await res.body()).subarray(0, 4).toString()).not.toBe('%PDF');
 });
 
-for (const path of ['/room-directions', '/room-directions/warm', '/projects/crm', '/no-such-page']) {
+for (const path of ['/room-directions', '/room-directions/warm', '/room-variants', '/room-variants/isometric', '/projects/crm', '/no-such-page']) {
   test(`retired or unknown route ${path} shows the 404 page`, async ({ page }) => {
     await page.goto(path);
     await expect(page.getByTestId('page-not-found')).toBeVisible();

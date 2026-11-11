@@ -6,15 +6,15 @@ import { findAccent, findVariant, variants } from '@/variants/registry';
 import { scenes } from '@/variants/scenes';
 import { VariantRoom } from '@/variants/VariantRoom';
 
-const BASE = '/room-variants';
+const BASE = '/room-concepts';
 
 /** Owner's comparison page: the room concepts and their accent options, one click apart. Not for search engines. */
-export default function RoomVariants() {
+export default function RoomConcepts() {
   const { id, accent: accentId } = useParams<{ id?: string; accent?: string }>();
   const variant = id === undefined ? variants[0] : findVariant(id);
   const accent = variant && findAccent(variant, accentId);
 
-  useDocumentMeta('Room variants | Satyendra Varma Nadimpalli', 'Three night-room versions of the engineer’s room, side by side for comparison.');
+  useDocumentMeta('Room concepts | Satyendra Varma Nadimpalli', 'Three concepts of the engineer’s room, each in three accent options, side by side for comparison.');
   useEffect(() => {
     const robots = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
     const previous = robots?.content;
