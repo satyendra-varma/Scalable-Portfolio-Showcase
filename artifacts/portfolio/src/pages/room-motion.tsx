@@ -41,7 +41,8 @@ export default function RoomMotionPage() {
 
   return (
     <div className="rms-page" data-switcher={collapsed ? 'collapsed' : 'open'}>
-      <MotionRoom motion={shownMotion} />
+      {/* Keyed by motion: choosing a motion starts it afresh. */}
+      <MotionRoom key={shownMotion} motion={shownMotion} />
       <MotionSwitcher
         shownMotion={shownMotion}
         reducedMotion={reduced}

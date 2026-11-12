@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { skillGroups } from '@/content/room';
 import type { HotspotId } from '@/components/room/RoomScene';
+import { Blooms, Flows, FloorWiring, WallWiring } from './wiring';
 import type { HotspotPositions } from '../Stage';
 
 /**
@@ -18,8 +19,8 @@ const FU = 480; // floor plate edges
 const FV = 340;
 
 export type LayerId =
-  | 'light' | 'floor' | 'traces' | 'shadows' | 'guides' | 'wall' | 'shelf' | 'frame'
-  | 'cabinet' | 'mailbox' | 'desk' | 'monitor' | 'packets';
+  | 'light' | 'floor' | 'traces' | 'shadows' | 'guides' | 'wall' | 'wallwire' | 'bloom'
+  | 'shelf' | 'frame' | 'cabinet' | 'mailbox' | 'desk' | 'monitor' | 'flows';
 export type RoomLayer = { id: LayerId; object?: HotspotId; art: ReactNode };
 
 type V3 = [number, number, number];
@@ -80,14 +81,6 @@ const bookLayout = [bookSkills.slice(0, 9), bookSkills.slice(9, 18)].map((names,
     return out;
   });
 });
-
-// Packet routes: down from the desk onto the plate, then along the traces.
-const HUB: V3 = [330, 240, 0];
-const routes: Record<'a' | 'b' | 'c', V3[]> = {
-  a: [[330, 240, 128], HUB, [445, 240, 0], [445, 70, 0]],
-  b: [[330, 240, 128], HUB, [330, 295, 0], [70, 295, 0]],
-  c: [[330, 240, 128], HUB, [330, 336, 0]],
-};
 
 const pct = (p: [number, number]) => ({ x: +((p[0] / W) * 100).toFixed(1), y: +((p[1] / H) * 100).toFixed(1) });
 
@@ -186,17 +179,12 @@ const layers: RoomLayer[] = [
     ),
   },
   {
-    // Traces on the floor plate
+    // Traces on the floor plate: an unpowered decorative run, then the room's wiring (./wiring.tsx)
     id: 'traces',
     art: (
       <g className="rm-l rm-l-traces">
-        <path className="rm-trace" d={d(routes.a.slice(1))} />
-        <path className="rm-trace" d={d(routes.b.slice(1))} />
-        <path className="rm-trace" d={d(routes.c.slice(1))} />
         <path className="rm-trace rm-trace-dim" d={seg([60, 200, 0], [60, 120, 0]) + seg([60, 120, 0], [400, 120, 0]) + seg([400, 120, 0], [400, 20, 0]) + seg([100, 330, 0], [260, 330, 0])} />
-        {[routes.a[3], routes.b[3], routes.c[2], HUB].map((p, i) => (
-          <circle key={i} className="rm-pad" cx={P(...p)[0]} cy={P(...p)[1]} r="4.5" />
-        ))}
+        <FloorWiring />
       </g>
     ),
   },
@@ -236,6 +224,9 @@ const layers: RoomLayer[] = [
       </g>
     ),
   },
+  // The wiring on the wall, and a glow behind each object (./wiring.tsx)
+  { id: 'wallwire', art: <WallWiring /> },
+  { id: 'bloom', art: <Blooms /> },
   {
     id: 'shelf',
     object: 'skills',
@@ -362,18 +353,8 @@ const layers: RoomLayer[] = [
       </g>
     ),
   },
-  {
-    // Packets: resting hidden in this step
-    id: 'packets',
-    art: (
-      <g className="rm-l rm-l-packets">
-        <g className="rm-pk rm-pk-a1"><circle className="rm-halo" r="9" /><circle className="rm-core" r="4" /></g>
-        <g className="rm-pk rm-pk-b1"><circle className="rm-halo" r="9" /><circle className="rm-core" r="4" /></g>
-        <g className="rm-pk rm-pk-c1"><circle className="rm-halo" r="9" /><circle className="rm-core" r="4" /></g>
-        <g className="rm-pk rm-pk-a2"><circle className="rm-halo" r="9" /><circle className="rm-core" r="4" /></g>
-      </g>
-    ),
-  },
+  // Packets and pulses travelling on the wiring (./wiring.tsx)
+  { id: 'flows', art: <Flows /> },
 ];
 
-export { defs, layers, positions, P, HUB, routes };
+export { defs, layers, positions, P };

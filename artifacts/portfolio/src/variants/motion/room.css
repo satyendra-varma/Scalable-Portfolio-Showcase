@@ -48,7 +48,6 @@
 /* traces */
 .rm .rm-trace { fill: none; stroke: var(--accent); stroke-opacity: .34; stroke-width: 1.8; stroke-linejoin: miter; }
 .rm .rm-trace-dim { stroke-opacity: .13; }
-.rm .rm-pad { fill: #1F1D1B; stroke: var(--accent); stroke-opacity: .75; stroke-width: 1.6; }
 
 /* contact shadows */
 .rm .rm-sh { transform-box: fill-box; transform-origin: center; pointer-events: none; }
@@ -111,10 +110,22 @@
 .rm .rm-code-b { stroke: var(--accent); stroke-opacity: .9; }
 .rm .rm-code-t { stroke: var(--evidence); stroke-opacity: .85; }
 
-/* packets: hidden at rest (fills kept for the motion steps) */
-.rm .rm-pk { opacity: 0; }
-.rm .rm-core { fill: var(--accent); }
-.rm .rm-halo { fill: var(--accent); fill-opacity: .25; }
+/* ---------- Wiring (wiring.tsx, Feed.tsx): not in Exploded ----------
+   A trace is three strokes on one path: dim copper that is always there, and a glow and a lit core.
+   At rest the room is powered, so all three show. --len is the path's length, for the motion that draws it. */
+.rm :is(.rm-w-base, .rm-w-glow, .rm-w-lit) { fill: none; stroke: var(--accent); stroke-linejoin: miter; }
+.rm .rm-w-base { stroke-opacity: .2; stroke-width: 1.8; stroke-linecap: butt; }
+.rm .rm-w-glow { stroke-opacity: .13; stroke-width: 7; stroke-linecap: round; stroke-dasharray: var(--len) calc(var(--len) + 20); }
+.rm .rm-w-lit { stroke-opacity: .78; stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: var(--len) calc(var(--len) + 20); }
+.rm .rm-pad { fill: var(--accent); stroke: #1F1D1B; stroke-opacity: 1; stroke-width: 1.4; }
+/* The feed from the header's loading bar to the top of the wall: a line over the page, drawn at the room's scale (--sw). */
+.rm .rv-main { position: relative; }
+.rm .rm-feed { position: absolute; inset: 0; display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.rm .rm-feed .rm-w-base, .rm .rm-feed .rm-w-lit { stroke-width: calc(1.8px * var(--sw, 1)); }
+.rm .rm-feed .rm-w-glow { stroke-width: calc(7px * var(--sw, 1)); }
+/* A glow behind each object, and the packets and pulses on the wiring: only a motion concept shows them. */
+.rm .rm-bloom { opacity: 0; pointer-events: none; }
+.rm .rm-flow { fill: none; stroke: none; }
 
 /* ---------- Hotspots ---------- */
 .rm .rv-hotspot { border-radius: 8px; border: 1px solid var(--accent); box-shadow: none; }
