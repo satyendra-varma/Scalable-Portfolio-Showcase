@@ -1,46 +1,66 @@
 # Status — room motion (round 4)
 
-Updated on 2026-11-12, after Step 2. The brief and the owner's decisions are in `docs/BRIEF-room-motion.md`.
+Updated on 2026-11-12, when work on Step 3 (Motion B) was stopped part-way at the owner's request (usage limit). The brief and the owner's decisions are in `docs/BRIEF-room-motion.md`.
 
 ## Where things are
 
 - **Branch**: `feature/room-motion`, created from `feature/room-concepts` at `5ee726b`. It is **not pushed**, and nothing is merged.
-- **Route**: `/room-motion`. The choices live in the address: `?motion=a|b|c|off&header=led|own&accent=amber|copper`. The defaults (Off, Amber LED header, Kapton amber) are left out.
-- **Other branches are untouched**: `main`, `feature/room-concepts` and `feature/room-rotation`. The round 2 concepts still work at `/room-concepts`.
+- **Route**: `/room-motion`, and `/room-motion?motion=a|b|c|off`. Off is the default.
+- **Other branches are untouched**: `main`, `feature/room-concepts` and `feature/room-rotation`.
 
 | Step | What | State |
 | --- | --- | --- |
 | 1 | Read the code, propose tooling | Done. Approved by the owner. |
-| 2 | Static hybrid with the switcher and the header toggle | Done, commit `611bbfd`. Build passes, unit tests 90 of 90. |
-| 3 | Motion B, "Power-on" | **Next.** Waiting for the owner's go-ahead. |
+| 2 | Static hybrid with the switcher | Done, commit `611bbfd`. |
+| — | Kapton amber and the Amber LED header only | Done, commit `1093a57`. The Copper accent, Exploded's own header and their switcher options are removed. |
+| 3 | Motion B, "Power-on" | **Work in progress**, commit `b557bef`. Desktop motion is built; see below for what is left. |
 | 4 | Motion C, "Depth focus" | Not started. |
 | 5 | Motion A, "Assembly" | Not started. |
 
-The owner changed the build order after Step 1: B, then C, then A. The letters in the switcher stay A, B, C.
+**State of the WIP commit**: typecheck passes and the build passes. **Unit tests: 91 of 94.** The three failures are expected and are listed under "Left".
 
-## What Step 2 built
+## Motion B: what is built (desktop)
 
-- `src/variants/motion/`: the hybrid room. `MotionRoom` joins `MotionHeader` (Elevation's Amber LED header, or Exploded's own) and `MotionStage` (Exploded's room).
-- The room is Exploded's drawing cut into **13 svg layers**, back to front: light, floor, traces, shadows, guides, wall, shelf, frame, cabinet, mailbox, desk, monitor, packets. Each object has a layer of its own (the desk and the monitor both belong to the System Explorer). A unit test checks that the layers draw exactly what Exploded draws, in the same paint order.
-- The LED header's loading bar is a real element that shows `--rm-progress` (0 to 1, set on the room's root). It rests at 1, a full bar.
-- The LED header keeps Amber LED whichever accent the room wears.
-- `src/pages/room-motion.tsx` and `MotionSwitcher`: the page and its switcher (motion, header, accent). The switcher collapses to one bar and starts collapsed on a phone. With reduced motion the page always shows Off, and A, B and C cannot be chosen.
-- Nothing moves yet. A, B and C show the same room as Off, except for the shared pulse on the hotspot dots and the panel's short slide, which Off switches off.
+Seen working in the browser at 1280 px wide. Files are in `src/variants/motion/`.
 
-## Before starting Step 3
+- **Wiring** (`wiring.tsx`): the room has a new tree of traces. Power enters at the top of the wall's corner, runs along the foot of both slabs to the bookshelf and the project frame, down the left slab's end to the floor, then to the filing cabinet, the desk and monitor, and the mailbox. Each segment knows its distance from the entry point, so the stylesheet lights the whole tree at one speed.
+- **Feed** (`Feed.tsx`): the trace from the end of the header's loading bar down to the top of the wall, measured from the page and re-measured on resize.
+- **Opening** (`power.css`, `usePowerOn.ts`), about 2.9 s: the room draws itself as linework while the loading bar charges; power then runs down the feed and along the traces; each object lights, with a slight overshoot and a flash, when its trace arrives; the room's own light comes up with the monitor.
+- **Skip and return**: any click, tap or key finishes the opening at once. After the first visit in a browser session (sessionStorage `rm-b-seen`), a short power-only opening plays.
+- **Idle**: packets travel from the loading bar to each object in turn; the monitor's cursor, the header's status light and caret blink.
+- **Hover and focus**: a pulse runs the last stretch of that object's trace, then the object rises a little and glows. Leaving reverses it.
+- **Open and close** (`MotionPanel.tsx`, `panel.css`): the object's box is traced, ties run to the panel's corners, the panel's frame is traced, and the sheet unfolds. Everything is a function of one number moved by a spring from Motion, so closing part-way turns it round. Motion loads as its own chunk after first paint (22 kB gzipped, `motionLib.ts`).
 
-- **Tooling is approved**: the browser's Web Animations API for the openings, and Motion's non-React `animate` and springs (`framer-motion`, already installed) for hover, focus, open and close, loaded after first paint. No new dependency, no WebGL. The table is at the end of the brief.
-- **Motion B needs a feed trace** from the header's loading bar down into the room. The owner approved adding it.
-- **The transform-and-opacity unit test** (`src/styles/motion.test.ts`) must not be loosened for the site. Motion B's line drawing needs a narrow, named exception for `/room-motion` only. It is not added yet; add it with B and report it.
-- **Performance**: one scripted trace per finished motion, not during iteration. Report frame-time numbers and long-frame counts only, and delete the trace files afterwards (S: is low on space).
-- After the desktop motion is finished, Sonnet sub-agents build the reduced-motion state, the simpler mobile version and the test updates.
+## Motion B: not tested
+
+- Mobile and touch: not looked at, at any size. The feed line probably sits too close to the header's corner bracket on a phone.
+- The full-screen System Explorer panel (it unfolds out of the monitor's box): written, not looked at.
+- Closing a panel part-way, and switching from one hotspot to another while a panel closes: written, not looked at.
+- Keyboard focus pulses, and the list view with Motion B on.
+- Any browser other than Chrome.
+- No performance trace has been run. Line drawing and the packets animate `stroke-dashoffset`, which repaints on the main thread.
+
+## Motion B: left
+
+1. **Tests and the test exception.** Three unit tests fail:
+   - `src/styles/motion.test.ts` rejects `power.css`, because the keyframes `rm-b-draw` animate `stroke-dashoffset`. Add the narrow, named exception the owner asked for: that one keyframe name, in that one file. Do not loosen the rule for the site.
+   - Two tests in `motion-room.test.tsx` still expect the old 13 layers and an exact match with Exploded. There are now 15 layers (`wallwire` and `bloom` are new, `packets` became `flows`) and the `traces` layer has the new wiring, so the comparison must leave those layers out.
+   - Nothing yet tests the wiring, the opening's phases, or the panel in Motion B.
+2. **Simpler mobile and touch version**: shorter opening without the linework, no hover effects, tap to focus, a simpler panel.
+3. **Reduced-motion state**: with reduced motion the page already shows Off, which is the powered room with the feed and an instant panel. It needs checking and a test.
+4. **One performance trace** of the finished motion: frame-time numbers and long-frame counts only, then delete the trace file.
+5. The report for Step 3, then the owner's go-ahead for Motion C.
+
+Steps 2 to 4 were meant for Sonnet sub-agents once the desktop motion was done. None was started.
 
 ## Working in this copy
 
 - Dependencies are installed in this working copy and match the lockfile. `pnpm` is not on the PATH, so run the tools directly from `artifacts/portfolio`: `node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit`, `node node_modules/vitest/vitest.mjs run`, `node node_modules/vite/bin/vite.js build --config vite.config.ts`.
 - In Git Bash, do not set `BASE_PATH=/`: the shell rewrites it into a Windows path and the built site will not load.
-- `.claude/launch.json` (not committed) starts the built site on port 5173 for a look in the browser.
-- `artifacts/mockup-sandbox/src/.generated/mockup-components.ts` shows as modified but has no content change (line endings). Leave it out of commits.
+- `.claude/launch.json` (not committed, by the owner's decision) starts the built site on port 5173 for a look in the browser. Build first.
+- The browser pane slows a page to about one frame a second when it is in the background. Motion's spring then looks stalled; CSS animations do not. Check the pane is showing before judging smoothness.
+- `artifacts/mockup-sandbox/src/.generated/mockup-components.ts` shows as modified but has no content change (line endings). Keep it out of commits, by the owner's decision.
+- The phone-size overlap of the "ROOM_01 / 4.20 m" tag and the ruler is left for later, by the owner's decision.
 
 ---
 
