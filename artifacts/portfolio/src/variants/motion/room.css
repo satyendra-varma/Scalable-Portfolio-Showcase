@@ -1,0 +1,143 @@
+/*
+ * Room-motion hybrid: the Exploded room drawn as one <svg> per depth layer (see layers.tsx, MotionStage.tsx).
+ * Ported from variants/exploded/exploded.css, re-scoped to .rm (root: .rp.rv.rm). Accents are set inline by the page.
+ * This step has no motion; later steps add it per layer. Header rules are owned elsewhere and are not ported.
+ */
+.rv.rm {
+  --bg: #1A1918; --surface: #22211F; --chip: #2A2826; --hot: #121110;
+  --ink: #F4F1EB; --muted: #B8B2A8;
+  --line: #47443F; --grid: #47443F40;
+  --ln: #A39D93; --ln-dim: #77726A; /* warm neutral line greys */
+  --stage-ratio: 3 / 2; --stage-max: 1120px;
+  background: var(--bg);
+}
+
+/* ---------- Page chrome ---------- */
+.rm .rp-bar { border-bottom-color: var(--line); }
+.rm .rp-pill { background: var(--accent); color: var(--accent-ink); }
+.rm .rp-bar-link { border-radius: 8px; border-color: var(--ln-dim); }
+
+/* ---------- Stage: light sweep behind the layer stack ---------- */
+.rm .rm-stage { position: relative; width: 100%; max-width: var(--stage-max); margin: 0 auto; aspect-ratio: var(--stage-ratio); }
+.rm .rm-stage::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 50% 54% at 50% 46%, #46423C 0%, #34312C 40%, #24221F 72%, transparent 100%);
+  opacity: .8;
+}
+.rm .rm-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.rm .rm-canvas { position: absolute; inset: 0; pointer-events: none; }
+.rm .rm-layer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; overflow: visible; }
+.rm .rm-layer { font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace; }
+.rm .rm-layer path,
+.rm .rm-layer polygon,
+.rm .rm-layer polyline,
+.rm .rm-layer rect { stroke-linejoin: round; stroke-linecap: round; }
+.rm .rm-spot, .rm .rm-lit, .rm .rm-glow, .rm .rm-aura { pointer-events: none; }
+.rm .rm-aura { opacity: .45; }
+
+/* floor plate */
+.rm .rm-plate { fill: #2B2926; stroke: var(--ln-dim); stroke-width: 1.4; }
+.rm .rm-plate-side { fill: #201E1C; stroke: var(--ln-dim); stroke-width: 1.2; }
+.rm .rm-plate-side-r { fill: #171615; }
+.rm .rm-plate-edge { fill: none; stroke: var(--ln); stroke-width: 1.6; }
+.rm .rm-grid { fill: none; stroke: #D8D2C6; stroke-opacity: .07; stroke-width: 1; }
+.rm .rm-fp { fill: #fff; fill-opacity: .03; stroke: var(--ln); stroke-opacity: .4; stroke-width: 1.2; }
+.rm .rm-dim { fill: none; stroke: var(--ln); stroke-opacity: .6; stroke-width: 1.2; }
+.rm .rm-label { font-size: 17px; fill: var(--muted); letter-spacing: .08em; }
+
+/* traces */
+.rm .rm-trace { fill: none; stroke: var(--accent); stroke-opacity: .34; stroke-width: 1.8; stroke-linejoin: miter; }
+.rm .rm-trace-dim { stroke-opacity: .13; }
+.rm .rm-pad { fill: #1F1D1B; stroke: var(--accent); stroke-opacity: .75; stroke-width: 1.6; }
+
+/* contact shadows */
+.rm .rm-sh { transform-box: fill-box; transform-origin: center; pointer-events: none; }
+.rm .rm-sh-wall { opacity: .8; }
+
+/* guides */
+.rm .rm-l-guides path { fill: none; stroke: var(--ln); stroke-opacity: .42; stroke-width: 1.2; stroke-dasharray: 3 6; }
+
+/* shaded volumes: top lightest, left mid, right darkest */
+.rm .rm-box polygon { stroke: #0F0E0D; stroke-opacity: .55; stroke-width: 1; }
+.rm .rm-top { fill: url(#rm-g-top); }
+.rm .rm-fv { fill: url(#rm-g-left); }
+.rm .rm-fu { fill: url(#rm-g-right); }
+.rm .rm-hl { fill: none; stroke: #E2DCD0; stroke-opacity: .5; stroke-width: 1.2; }
+.rm .rm-edge-active { fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-opacity: .9; }
+.rm .rm-leg { fill: none; stroke: var(--ln); stroke-width: 4; stroke-opacity: .7; }
+
+/* wall slabs */
+.rm .rm-slab .rm-fu { fill: url(#rm-g-wall); }
+.rm .rm-slab-b .rm-fv { fill: url(#rm-g-wall); }
+.rm .rm-slab-b .rm-fu { fill: #262422; }
+.rm .rm-frame { fill: #3A3733; stroke: var(--ln); stroke-width: 1.5; }
+.rm .rm-frame-in { fill: #151413; stroke: var(--ln-dim); stroke-width: 1; }
+.rm .rm-node { fill: #2D2B28; stroke: var(--ln); stroke-width: 1.4; }
+.rm .rm-node-a { stroke: var(--accent); }
+.rm .rm-link { fill: none; stroke: var(--accent); stroke-opacity: .7; stroke-width: 1.6; stroke-linejoin: miter; }
+
+/* shelf: wood grain, with skill-name book spines */
+.rm .rm-wood-base { fill: #6A5C4E; stroke: #2A241E; stroke-width: 1; }
+.rm .rm-wood-grain { stroke: none; }
+.rm .rm-shelf-in { fill: #14110E; fill-opacity: .66; }
+.rm .rm-board { fill: none; stroke: #7E6E5D; stroke-width: 5; stroke-linecap: butt; }
+.rm .rm-bk rect { fill: #3F3B36; stroke: var(--ln); stroke-opacity: .4; stroke-width: .8; }
+.rm .rm-bk text { font-size: 8.5px; font-weight: 500; fill: var(--ink); letter-spacing: .02em; }
+.rm .rm-bk-l rect { fill: #57524B; }
+.rm .rm-bk-a rect { fill: var(--accent); stroke: none; }
+.rm .rm-bk-a text { fill: var(--accent-ink); font-weight: 600; }
+
+/* cabinet and mailbox: matte, with highlight edges */
+.rm .rm-drawer { fill: #3F3C38; stroke: #A39D93; stroke-opacity: .42; stroke-width: .9; }
+.rm .rm-handle { fill: #C4BDB0; fill-opacity: .8; }
+.rm .rm-slot { fill: #0E0D0C; }
+.rm .rm-flag { fill: var(--accent); stroke: #0F0E0D; stroke-opacity: .5; stroke-width: .8; }
+
+/* desk: brushed metal; monitor: glass */
+.rm .rm-desk .rm-top { fill: url(#rm-g-desk-top); }
+.rm .rm-brushed { stroke: none; pointer-events: none; }
+.rm .rm-monitor .rm-fv { fill: #1B1A19; }
+.rm .rm-monitor .rm-fu { fill: #0F0E0D; }
+.rm .rm-monitor .rm-top { fill: #403C37; }
+.rm .rm-key .rm-top { fill: #55504A; }
+.rm .rm-screen { fill: url(#rm-g-glass); stroke: #000; stroke-opacity: .6; stroke-width: 1; }
+.rm .rm-screen-bar { stroke: var(--accent); stroke-opacity: .45; stroke-width: 1; fill: none; }
+.rm .rm-dot { fill: var(--ln); }
+.rm .rm-dot-t { fill: var(--accent); }
+.rm .rm-prompt { font-size: 15px; font-weight: 600; fill: var(--ink); }
+.rm .rm-cursor { fill: var(--accent); }
+.rm .rm-code { fill: none; stroke-width: 5; stroke-linecap: round; }
+.rm .rm-code-a { stroke: var(--ln); stroke-opacity: .75; }
+.rm .rm-code-b { stroke: var(--accent); stroke-opacity: .9; }
+.rm .rm-code-t { stroke: var(--evidence); stroke-opacity: .85; }
+
+/* packets: hidden at rest (fills kept for the motion steps) */
+.rm .rm-pk { opacity: 0; }
+.rm .rm-core { fill: var(--accent); }
+.rm .rm-halo { fill: var(--accent); fill-opacity: .25; }
+
+/* ---------- Hotspots ---------- */
+.rm .rv-hotspot { border-radius: 8px; border: 1px solid var(--accent); box-shadow: none; }
+.rm .rv-hotspot-dot { border-radius: 50%; }
+.rm .rv-hotspot-dot::after { border-radius: 50%; }
+.rm .rv-hotspot.is-focal { border-radius: 10px; }
+
+/* ---------- Static highlight ----------
+   This is the still state's highlight, in place of Exploded's hover lift. The motion concepts replace it. */
+.rm .rm-stage:has([data-hotspot='explorer']:is(:hover, :focus-visible)) .rm-layer[data-object='explorer'] { filter: brightness(1.22); }
+.rm .rm-stage:has([data-hotspot='skills']:is(:hover, :focus-visible)) .rm-layer[data-object='skills'] { filter: brightness(1.22); }
+.rm .rm-stage:has([data-hotspot='projects']:is(:hover, :focus-visible)) .rm-layer[data-object='projects'] { filter: brightness(1.22); }
+.rm .rm-stage:has([data-hotspot='experience']:is(:hover, :focus-visible)) .rm-layer[data-object='experience'] { filter: brightness(1.22); }
+.rm .rm-stage:has([data-hotspot='contact']:is(:hover, :focus-visible)) .rm-layer[data-object='contact'] { filter: brightness(1.22); }
+
+/* ---------- Phone: the same drawing, cropped in to the middle so the monitor reads ---------- */
+@media (max-width: 600px) {
+  .rv.rm { --stage-ratio: 6 / 5; }
+  .rm .rm-stage { overflow: hidden; }
+  .rm .rm-canvas { inset: auto; left: -15%; top: -2%; width: 130%; height: 104%; }
+  .rm .rm-label { font-size: 19px; }
+}
+
+/* ---------- Off ----------
+   Off is the reduced-motion state: nothing may move in it. */
+.rv.rm[data-motion='off'] *, .rv.rm[data-motion='off'] *::before, .rv.rm[data-motion='off'] *::after { animation: none !important; transition: none !important; }

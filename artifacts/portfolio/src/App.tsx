@@ -19,6 +19,13 @@ const conceptsPage = (
   </Suspense>
 );
 
+const RoomMotion = lazy(() => import('@/pages/room-motion'));
+const motionPage = (
+  <Suspense fallback={<div style={{ minHeight: '100dvh', background: '#05080c' }} />}>
+    <RoomMotion />
+  </Suspense>
+);
+
 function Router() {
   return (
     // Keep a shared shell (sidebar, navbar) outside the boundary so it
@@ -29,6 +36,7 @@ function Router() {
         <Route path="/room-concepts">{conceptsPage}</Route>
         <Route path="/room-concepts/:id">{conceptsPage}</Route>
         <Route path="/room-concepts/:id/:accent">{conceptsPage}</Route>
+        <Route path="/room-motion">{motionPage}</Route>
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>
