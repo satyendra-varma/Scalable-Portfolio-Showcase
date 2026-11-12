@@ -1,101 +1,57 @@
 /*
-  Hero headers of the hybrid room-motion page (MotionHeader.tsx). No motion here.
-  - data-header='led': copied from the Elevation concept (src/variants/elevation/elevation.css, "Hero: mission-control
-    header block" and the max-width: 600px role block), re-scoped. The loading bar is a real element (.rmh-bar), and
-    the two idle animations (status dot, caret) are left out.
-  - data-header='own': copied from the Exploded concept (src/variants/exploded/exploded.css, "Page chrome and hero"
-    hero rules, "Hero typography: the name, exploded" and the .rv-name line of its max-width: 600px block), re-scoped.
-    xd-hd* classes are rmh-own*.
-  Page tokens (--bg, --ink, --muted, --ln, --mono, ...) come from the page, not from here.
+  The header of the hybrid room-motion page (MotionHeader.tsx): Elevation's Amber LED block, copied from
+  src/variants/elevation/elevation.css ("Hero: mission-control header block" and the max-width: 600px role block)
+  and re-scoped. The loading bar is a real element (.rmh-bar). Page tokens (--ink, --muted, --mono, --accent, ...)
+  come from the page, not from here.
 */
 
-/* ================= LED header (from Elevation) ================= */
-.rm .rmh[data-header='led'] {
-  /* The LED header keeps Elevation's Amber LED whichever accent the room wears. */
-  --accent: #FFB547; --accent-ink: #1F1404; --evidence: #FFDDA8;
+.rm .rmh {
   position: relative; margin: 8px 0 clamp(14px, 2vw, 24px); padding: clamp(22px, 3.4vw, 44px) clamp(18px, 3vw, 40px) clamp(14px, 1.8vw, 22px);
   text-align: left;
 }
-.rm .rmh[data-header='led']::before,
-.rm .rmh[data-header='led']::after { content: ''; position: absolute; width: 22px; height: 22px; border: 0 solid var(--accent); pointer-events: none; }
-.rm .rmh[data-header='led']::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
-.rm .rmh[data-header='led']::after { right: 0; bottom: 0; border-width: 0 2px 2px 0; }
-.rm .rmh[data-header='led'] .rv-name {
+.rm .rmh::before,
+.rm .rmh::after { content: ''; position: absolute; width: 22px; height: 22px; border: 0 solid var(--accent); pointer-events: none; }
+.rm .rmh::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
+.rm .rmh::after { right: 0; bottom: 0; border-width: 0 2px 2px 0; }
+.rm .rmh .rv-name {
   font-family: var(--mono); font-weight: 800; text-transform: uppercase; letter-spacing: -.06em; line-height: .96;
   font-size: clamp(30px, 6.4vw, 84px); overflow-wrap: anywhere;
 }
-.rm .rmh[data-header='led'] .rv-role { margin-top: 14px; letter-spacing: .14em; font-size: clamp(12px, 1.3vw, 16px); }
-.rm .rmh[data-header='led'] .rv-pos { font-family: 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif; margin-top: 12px; color: var(--ink); }
-.rm .rmh[data-header='led'] .rv-toggle {
+.rm .rmh .rv-role { margin-top: 14px; letter-spacing: .14em; font-size: clamp(12px, 1.3vw, 16px); }
+.rm .rmh .rv-pos { font-family: 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif; margin-top: 12px; color: var(--ink); }
+.rm .rmh .rv-toggle {
   margin-top: 20px; border-radius: 0; border: 1.5px solid var(--accent); color: var(--accent); text-transform: uppercase; letter-spacing: .1em;
   font-size: 12px; background: transparent;
 }
-.rm .rmh[data-header='led'] .rv-toggle:hover { background: var(--accent); color: var(--accent-ink); }
-.rm .rmh[data-header='led'] .rv-toggle:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.rm .rmh .rv-toggle:hover { background: var(--accent); color: var(--accent-ink); }
+.rm .rmh .rv-toggle:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
 /* Instrument readout: status dot before the role, block caret after it (both static), segmented LED bar under the name. */
-.rm .rmh[data-header='led'] .rv-role::before {
+.rm .rmh .rv-role::before {
   content: ''; display: inline-block; width: .62em; height: .62em; margin-right: .85em; border-radius: 50%; vertical-align: .02em;
   background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 10px color-mix(in srgb, var(--accent) 70%, transparent);
 }
-.rm .rmh[data-header='led'] .rv-role::after {
+.rm .rmh .rv-role::after {
   content: ''; display: inline-block; width: .55em; height: 1.05em; margin-left: .6em; vertical-align: -.2em; background: var(--accent);
 }
-.rm .rmh[data-header='led'] .rmh-bar {
+.rm .rmh .rmh-bar {
   height: 10px; margin-top: clamp(14px, 1.6vw, 22px); width: min(100%, 560px); overflow: hidden;
   background: color-mix(in srgb, var(--accent) 15%, transparent);
   -webkit-mask: repeating-linear-gradient(90deg, #000 0 12px, transparent 12px 16px);
   mask: repeating-linear-gradient(90deg, #000 0 12px, transparent 12px 16px);
 }
-.rm .rmh[data-header='led'] .rmh-bar-fill {
+.rm .rmh .rmh-bar-fill {
   display: block; height: 100%;
   background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, transparent));
   /* --rm-progress runs 0 to 1 and is set on the room's root by the motion concepts; at rest the bar is full. */
   transform: translateX(calc((var(--rm-progress, 1) - 1) * 100%));
 }
-.rm .rmh[data-header='led'] .rmh-led { display: block; overflow: visible; font-family: var(--mono); }
-.rm .rmh[data-header='led'] .rmh-led-tick { stroke: var(--evidence); stroke-opacity: .4; stroke-width: 1; fill: none; }
-.rm .rmh[data-header='led'] .rmh-led-txt { fill: var(--muted); font-size: 10px; letter-spacing: .14em; }
+.rm .rmh .rmh-led { display: block; overflow: visible; font-family: var(--mono); }
+.rm .rmh .rmh-led-tick { stroke: var(--evidence); stroke-opacity: .4; stroke-width: 1; fill: none; }
+.rm .rmh .rmh-led-txt { fill: var(--muted); font-size: 10px; letter-spacing: .14em; }
 
 @media (max-width: 600px) {
-  .rm .rmh[data-header='led'] .rv-role { letter-spacing: .04em; font-size: 11px; }
-  .rm .rmh[data-header='led'] .rv-role::before { margin-right: .6em; }
-  .rm .rmh[data-header='led'] .rv-role::after { margin-left: .4em; }
-}
-
-/* ================= Own header (from Exploded) ================= */
-.rm .rmh[data-header='own'] { padding: clamp(28px, 5.5vw, 76px) 0 clamp(4px, 1vw, 12px); position: relative; }
-.rm .rmh[data-header='own'] .rv-name {
-  font-family: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif;
-  font-weight: 700; font-size: clamp(40px, 7.2vw, 104px); line-height: .92; letter-spacing: -.055em;
-  max-width: none; text-wrap: balance; color: var(--ink);
-}
-.rm .rmh[data-header='own'] .rv-role {
-  font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace;
-  margin-top: clamp(12px, 1.6vw, 20px); color: var(--accent); font-size: clamp(12px, 1.3vw, 16px); letter-spacing: .12em;
-}
-.rm .rmh[data-header='own'] .rv-pos { color: var(--muted); margin-top: 10px; font-size: clamp(15px, 1.4vw, 18px); }
-.rm .rmh[data-header='own'] .rv-toggle { border-radius: 8px; border-color: var(--ln-dim); margin-top: 14px; }
-.rm .rmh[data-header='own'] .rv-toggle:hover { border-color: var(--accent); }
-
-/* The name, exploded */
-.rm .rmh[data-header='own'] .rmh-own {
-  --N: clamp(40px, 7.2vw, 104px);
-  --top: clamp(28px, 5.5vw, 76px);
-  position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible;
-}
-.rm .rmh[data-header='own'] .rmh-own-text {
-  font-family: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif; font-weight: 700; letter-spacing: -.045em;
-  font-size: clamp(20px, 5vw, 76px); fill: none; stroke: var(--ln); stroke-opacity: .42; stroke-width: 1.2px; stroke-linejoin: round;
-  transform: translate(clamp(-16px, -1.4vw, -5px), calc(var(--top) - var(--N) * .12));
-}
-.rm .rmh[data-header='own'] .rmh-own-g {
-  y: calc(var(--top) - var(--N) * .12); height: calc(var(--N) * .3); fill: none; stroke: var(--ln); stroke-opacity: .5; stroke-width: 1.2px; stroke-dasharray: 3 5;
-}
-.rm .rmh[data-header='own'] .rmh-own-g1 { x: 3px; }
-.rm .rmh[data-header='own'] .rmh-own-g2 { x: 22%; }
-.rm .rmh[data-header='own'] .rmh-own-g3 { x: 47%; }
-
-@media (max-width: 600px) {
-  .rm .rmh[data-header='own'] .rv-name { letter-spacing: -.05em; }
+  .rm .rmh .rv-role { letter-spacing: .04em; font-size: 11px; }
+  .rm .rmh .rv-role::before { margin-right: .6em; }
+  .rm .rmh .rv-role::after { margin-left: .4em; }
 }

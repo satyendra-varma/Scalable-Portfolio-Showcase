@@ -3,7 +3,7 @@ import { useSearch } from 'wouter';
 import { useDocumentMeta } from '@/hooks/use-document-meta';
 import { MotionRoom } from '@/variants/motion/MotionRoom';
 import { MotionSwitcher } from '@/variants/motion/MotionSwitcher';
-import { parseOptions, type MotionId } from '@/variants/motion/options';
+import { parseMotion, type MotionId } from '@/variants/motion/options';
 
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
 
@@ -21,11 +21,11 @@ let switcherCollapsed: boolean | undefined;
 const startsCollapsed = () =>
   switcherCollapsed ?? (typeof window !== 'undefined' && (window.matchMedia?.('(max-width: 640px)').matches ?? false));
 
-/** Owner's comparison page: the room with three motion concepts, header and accent options. Not for search engines. */
+/** Owner's comparison page: the room with three motion concepts. Not for search engines. */
 export default function RoomMotionPage() {
-  const options = parseOptions(useSearch());
+  const motion = parseMotion(useSearch());
   const reduced = useSyncExternalStore(subscribeReduced, reducedSnapshot, reducedServerSnapshot);
-  const shownMotion: MotionId = reduced ? 'off' : options.motion;
+  const shownMotion: MotionId = reduced ? 'off' : motion;
   const [collapsed, setCollapsedState] = useState(startsCollapsed);
   const setCollapsed = (next: boolean) => { switcherCollapsed = next; setCollapsedState(next); };
 
@@ -41,9 +41,8 @@ export default function RoomMotionPage() {
 
   return (
     <div className="rms-page" data-switcher={collapsed ? 'collapsed' : 'open'}>
-      <MotionRoom motion={shownMotion} header={options.header} accent={options.accent} />
+      <MotionRoom motion={shownMotion} />
       <MotionSwitcher
-        options={options}
         shownMotion={shownMotion}
         reducedMotion={reduced}
         collapsed={collapsed}

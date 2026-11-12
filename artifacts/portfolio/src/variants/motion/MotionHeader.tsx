@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { hero } from '@/content/room';
-import type { HeaderId } from './options';
 import './header.css';
 
 /**
@@ -22,31 +21,15 @@ function LedDecor() {
   );
 }
 
-/**
- * The name, exploded: an outline copy lifted up and to the left behind the solid name, joined to it by short
- * dashed guides. Copied from the Exploded concept's ExplodedHeroDecor (classes xd-hd* are rmh-own*).
- */
-function OwnDecor() {
+/** The room's header: Elevation's Amber LED block, with the loading bar as a real element. */
+export function MotionHeader({ children }: { children?: ReactNode }) {
   return (
-    <svg className="rmh-own" aria-hidden="true" focusable="false">
-      <text className="rmh-own-text" x="0" y="0">{hero.name}</text>
-      <rect className="rmh-own-g rmh-own-g1" width="0.01" />
-      <rect className="rmh-own-g rmh-own-g2" width="0.01" />
-      <rect className="rmh-own-g rmh-own-g3" width="0.01" />
-    </svg>
-  );
-}
-
-export function MotionHeader({ header, children }: { header: HeaderId; children?: ReactNode }) {
-  return (
-    <section className="rv-hero rmh" data-header={header} aria-labelledby="rv-name" data-testid="variant-hero">
+    <section className="rv-hero rmh" aria-labelledby="rv-name" data-testid="variant-hero">
       <div className="rv-hero-decor" aria-hidden="true" data-testid="hero-decor">
-        {header === 'led' ? <LedDecor /> : <OwnDecor />}
+        <LedDecor />
       </div>
       <h1 id="rv-name" className="rp-name rv-name" data-testid="text-name">{hero.name}</h1>
-      {header === 'led' && (
-        <div className="rmh-bar" aria-hidden="true" data-testid="header-bar"><span className="rmh-bar-fill" /></div>
-      )}
+      <div className="rmh-bar" aria-hidden="true" data-testid="header-bar"><span className="rmh-bar-fill" /></div>
       <p className="rp-role rv-role" data-testid="text-role">{hero.role}</p>
       <p className="rp-pos rv-pos" data-testid="text-positioning">{hero.positioning}</p>
       {children}

@@ -8,7 +8,7 @@ import { layers } from './layers';
 import { MotionRoom } from './MotionRoom';
 import { MotionStage } from './MotionStage';
 import { MotionSwitcher } from './MotionSwitcher';
-import { ACCENTS, DEFAULTS, LED_ACCENT, MOTIONS, optionsHref, parseOptions } from './options';
+import { ACCENT, DEFAULT_MOTION, MOTIONS, motionHref, parseMotion } from './options';
 
 const SHAPES = 'polygon, polyline, path, rect, circle, ellipse, text, stop';
 /** The hybrid renames Exploded's xd- classes and ids to rm-; undo that so the two drawings can be compared. */
@@ -58,7 +58,7 @@ describe('the hybrid room', () => {
   });
 
   it('keeps the five hotspots as labelled buttons that open their panels and hand focus back', () => {
-    render(<MotionRoom motion="off" header="led" accent={ACCENTS[0]} />);
+    render(<MotionRoom motion="off" />);
     const buttons = within(screen.getByRole('list', { name: 'Room objects' })).getAllByRole('button');
     expect(buttons.map((b) => b.dataset.hotspot)).toEqual(['explorer', 'skills', 'projects', 'experience', 'contact']);
     for (const id of ['skills', 'projects', 'experience', 'contact', 'explorer']) {
@@ -71,26 +71,20 @@ describe('the hybrid room', () => {
     }
   });
 
-  it('shows the LED header with its loading bar, or Exploded\'s own header, with the same name, role and summary', () => {
-    const { rerender } = render(<MotionRoom motion="off" header="led" accent={ACCENTS[1]} />);
+  it('shows the Amber LED header with its loading bar, in Kapton amber', () => {
+    render(<MotionRoom motion="off" />);
     const root = screen.getByTestId('room-motion');
-    expect(root).toHaveAttribute('data-header', 'led');
-    expect(root).toHaveAttribute('data-accent', 'copper');
-    expect(root.style.getPropertyValue('--accent')).toBe(ACCENTS[1].hex);
+    expect(root.style.getPropertyValue('--accent')).toBe('#FFB547');
     expect(root.style.getPropertyValue('--rm-progress')).toBe('1'); // at rest the bar is full
+    expect(root).not.toHaveAttribute('data-header');
+    expect(root).not.toHaveAttribute('data-accent');
     expect(screen.getByTestId('header-bar')).toHaveAttribute('aria-hidden', 'true');
     expect(screen.getByTestId('hero-decor')).toHaveTextContent('ROOM_01 / 4.20 m');
-    for (const text of [hero.name, hero.role, hero.positioning]) expect(screen.getByTestId('variant-hero')).toHaveTextContent(text);
-
-    rerender(<MotionRoom motion="off" header="own" accent={ACCENTS[1]} />);
-    expect(root).toHaveAttribute('data-header', 'own');
-    expect(screen.queryByTestId('header-bar')).toBeNull();
-    expect(screen.getByTestId('hero-decor')).toHaveTextContent(hero.name); // the outline copy of the name
     for (const text of [hero.name, hero.role, hero.positioning]) expect(screen.getByTestId('variant-hero')).toHaveTextContent(text);
   });
 
   it('keeps the list view, with every section and no room', () => {
-    render(<MotionRoom motion="off" header="led" accent={ACCENTS[0]} />);
+    render(<MotionRoom motion="off" />);
     fireEvent.click(screen.getByTestId('button-list-view'));
     expect(screen.queryByTestId('variant-scene')).toBeNull();
     expect(within(screen.getByTestId('list-sections')).getAllByRole('heading', { level: 2 }).map((h) => h.textContent))
@@ -98,55 +92,47 @@ describe('the hybrid room', () => {
   });
 
   it('carries the chosen motion on the root, for the concepts to style', () => {
-    const { rerender } = render(<MotionRoom motion="off" header="led" accent={ACCENTS[0]} />);
+    const { rerender } = render(<MotionRoom motion="off" />);
     for (const { id } of MOTIONS) {
-      rerender(<MotionRoom motion={id} header="led" accent={ACCENTS[0]} />);
+      rerender(<MotionRoom motion={id} />);
       expect(screen.getByTestId('room-motion')).toHaveAttribute('data-motion', id);
     }
   });
 });
 
 describe('the options', () => {
-  it('offers A, B, C and Off, two headers, and Kapton amber and Copper', () => {
+  it('offers A, B, C and Off, in Kapton amber only', () => {
     expect(MOTIONS.map((m) => m.code)).toEqual(['A', 'B', 'C', 'Off']);
-    expect(ACCENTS.map((a) => [a.name, a.hex])).toEqual([['Kapton amber', '#FFB547'], ['Copper', '#E8957A']]);
-    expect([LED_ACCENT.name, LED_ACCENT.hex]).toEqual(['Amber LED', '#FFB547']);
+    expect([ACCENT.name, ACCENT.hex]).toEqual(['Kapton amber', '#FFB547']);
   });
 
-  it('reads the choices from the address and falls back to the defaults', () => {
-    expect(parseOptions('')).toEqual(DEFAULTS);
-    expect(parseOptions('?motion=b&header=own&accent=copper')).toEqual({ motion: 'b', header: 'own', accent: ACCENTS[1] });
-    expect(parseOptions('motion=c')).toEqual({ ...DEFAULTS, motion: 'c' });
-    expect(parseOptions('?motion=spin&header=big&accent=steel')).toEqual(DEFAULTS);
+  it('reads the motion from the address and falls back to the default', () => {
+    expect(parseMotion('')).toBe(DEFAULT_MOTION);
+    expect(parseMotion('?motion=b')).toBe('b');
+    expect(parseMotion('motion=c&header=own&accent=copper')).toBe('c'); // options that no longer exist are ignored
+    expect(parseMotion('?motion=spin')).toBe(DEFAULT_MOTION);
   });
 
-  it('builds links that keep the other choices and leave defaults out', () => {
-    expect(optionsHref(DEFAULTS)).toBe('/room-motion');
-    expect(optionsHref(DEFAULTS, { motion: 'b' })).toBe('/room-motion?motion=b');
-    const chosen = parseOptions('?motion=b&header=own&accent=copper');
-    expect(optionsHref(chosen, { motion: 'a' })).toBe('/room-motion?motion=a&header=own&accent=copper');
-    expect(parseOptions(optionsHref(chosen).split('?')[1])).toEqual(chosen);
+  it('builds a link to each motion and leaves the default out', () => {
+    expect(motionHref(DEFAULT_MOTION)).toBe('/room-motion');
+    expect(motionHref('b')).toBe('/room-motion?motion=b');
+    for (const { id } of MOTIONS) expect(parseMotion(motionHref(id).split('?')[1] ?? '')).toBe(id);
   });
 });
 
 describe('the switcher', () => {
-  const show = (reducedMotion: boolean, collapsed = false) => {
-    const options = parseOptions('?motion=b&accent=copper');
-    return render(
-      <MotionSwitcher options={options} shownMotion={reducedMotion ? 'off' : options.motion} reducedMotion={reducedMotion} collapsed={collapsed} onToggle={() => {}} />,
-    );
-  };
+  const show = (reducedMotion: boolean, collapsed = false) =>
+    render(<MotionSwitcher shownMotion={reducedMotion ? 'off' : 'b'} reducedMotion={reducedMotion} collapsed={collapsed} onToggle={() => {}} />);
 
-  it('marks the current motion, header and accent, and links to every other choice', () => {
+  it('marks the current motion and links to every other one, and offers nothing else', () => {
     show(false);
     expect(screen.getByTestId('link-motion-b')).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByTestId('link-header-led')).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByTestId('link-accent-copper')).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByTestId('link-motion-off')).toHaveAttribute('href', '/room-motion?accent=copper');
-    expect(screen.getByTestId('link-header-own')).toHaveAttribute('href', '/room-motion?motion=b&header=own&accent=copper');
-    expect(screen.getByTestId('link-accent-amber')).toHaveAttribute('href', '/room-motion?motion=b');
-    expect(screen.getByTestId('button-switcher-toggle')).toHaveTextContent('B · Power-on · Amber LED header · Copper');
+    expect(screen.getByTestId('link-motion-off')).toHaveAttribute('href', '/room-motion');
+    expect(screen.getByTestId('link-motion-a')).toHaveAttribute('href', '/room-motion?motion=a');
+    expect(screen.getByTestId('button-switcher-toggle')).toHaveTextContent('B · Power-on');
     expect(screen.queryByTestId('note-reduced-motion')).toBeNull();
+    expect(screen.getByTestId('motion-switcher').querySelectorAll('[data-testid^="link-"]')).toHaveLength(4);
+    expect(screen.getByTestId('motion-switcher')).not.toHaveTextContent(/Copper|header/i);
   });
 
   it('with reduced motion shows Off, says why, and offers no motion to switch to', () => {
@@ -180,7 +166,7 @@ describe('the still state', () => {
   });
 
   it('keeps every rule inside the hybrid, so no other room can change', () => {
-    for (const [file, prefix] of [['room.css', /^(\.rm |\.rv\.rm)/], ['header.css', /^\.rm \.rmh\[data-header='(led|own)'\]/], ['switcher.css', /^\.rms-/]] as const) {
+    for (const [file, prefix] of [['room.css', /^(\.rm |\.rv\.rm)/], ['header.css', /^\.rm \.rmh\b/], ['switcher.css', /^\.rms-/]] as const) {
       const body = css(file).replace(/@media[^{]*\{/g, '').replace(/\{[^{}]*\}/g, '\n');
       // Split on new lines and on the commas between selectors, not the commas inside :is(...).
       const selectors = body.split(/\n|,(?![^()]*\))/).map((s) => s.trim()).filter((s) => s && s !== '}');

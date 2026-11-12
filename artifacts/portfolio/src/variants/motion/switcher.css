@@ -1,11 +1,11 @@
-/* Comparison switcher for /room-motion (outside the room, so it looks the same for every option). It collapses to one bar. */
-.rms-page { min-height: 100dvh; padding-bottom: 200px; background: #05080c; }
+/* Comparison switcher for /room-motion (outside the room, so it looks the same for every motion). It collapses to one bar. */
+.rms-page { min-height: 100dvh; padding-bottom: 150px; background: #05080c; }
 .rms-page[data-switcher='collapsed'] { padding-bottom: 76px; }
 .rms-dock {
-  position: fixed; z-index: 40; left: 50%; bottom: 12px; transform: translateX(-50%); width: min(1100px, calc(100% - 20px));
+  position: fixed; z-index: 40; left: 50%; bottom: 12px; transform: translateX(-50%); width: min(880px, calc(100% - 20px));
   display: grid; gap: 6px; padding: 8px; border-radius: 14px; background: #05080c; border: 1px solid #ffffff38; box-shadow: 0 12px 32px #000a; color: #f2f5f8;
 }
-.rms-page[data-switcher='collapsed'] .rms-dock { width: min(520px, calc(100% - 20px)); }
+.rms-page[data-switcher='collapsed'] .rms-dock { width: min(360px, calc(100% - 20px)); }
 .rms-toggle {
   display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; column-gap: 10px; width: 100%; min-height: 36px; padding: 4px 10px;
   border-radius: 10px; border: 1px solid #ffffff38; background: #11161c; color: #f2f5f8; cursor: pointer; text-align: left;
@@ -18,33 +18,24 @@
 .rms-body { display: grid; gap: 6px; }
 .rms-body[hidden] { display: none; }
 .rms-note { margin: 0; padding: 4px 10px; font: 400 12px 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif; color: #b4bec9; }
-.rms-groups { display: grid; grid-template-columns: 1.7fr 1.2fr 1fr; gap: 10px; }
-.rms-group { min-width: 0; display: grid; gap: 4px; align-content: start; }
-.rms-label { padding-left: 4px; font: 600 10px 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #b4bec9; }
-.rms-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.rms-list-motion { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.rms-label { font: 600 10px 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #b4bec9; }
+.rms-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
 .rms-link {
   display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; min-height: 36px; padding: 5px 10px; box-sizing: border-box;
   border-radius: 10px; border: 1px solid transparent; color: #f2f5f8; text-decoration: none;
 }
-.rms-link-accent { grid-template-columns: auto minmax(0, 1fr); column-gap: 9px; }
-.rms-link-accent .rms-swatch { grid-row: span 2; }
 .rms-link:hover { border-color: #ffffff38; }
 .rms-link[aria-current] { border-color: #f2f5f8; background: #1a2027; }
 .rms-link:focus-visible { outline: 3px solid #f2f5f8; outline-offset: 2px; }
 .rms-link[aria-disabled='true'] { opacity: 0.45; cursor: not-allowed; }
 .rms-link[aria-disabled='true']:hover { border-color: transparent; }
-.rms-swatch { width: 14px; height: 14px; border-radius: 50%; background: var(--sw); box-shadow: 0 0 0 2px #05080c, 0 0 0 3px #ffffff59; }
-.rms-toggle .rms-swatch { grid-row: auto; }
 .rms-name { font: 700 13px 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rms-code { font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace; }
 .rms-meta { font: 400 11px 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace; color: #b4bec9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 760px) {
-  .rms-page { padding-bottom: 360px; }
+  .rms-page { padding-bottom: 190px; }
   .rms-page[data-switcher='collapsed'] { padding-bottom: 76px; }
-  .rms-dock { max-height: calc(100dvh - 24px); overflow-y: auto; }
-  .rms-groups { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-  /* Two options per row in every group, so no name is cut short on a phone. */
+  /* Two options per row, so no name is cut short on a phone. */
   .rms-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .rms-list-motion .rms-summary { display: none; }
+  .rms-meta { display: none; }
 }
