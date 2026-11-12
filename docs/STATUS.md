@@ -1,4 +1,52 @@
+# Status — room motion (round 4)
+
+Updated on 2026-11-12, after Step 2. The brief and the owner's decisions are in `docs/BRIEF-room-motion.md`.
+
+## Where things are
+
+- **Branch**: `feature/room-motion`, created from `feature/room-concepts` at `5ee726b`. It is **not pushed**, and nothing is merged.
+- **Route**: `/room-motion`. The choices live in the address: `?motion=a|b|c|off&header=led|own&accent=amber|copper`. The defaults (Off, Amber LED header, Kapton amber) are left out.
+- **Other branches are untouched**: `main`, `feature/room-concepts` and `feature/room-rotation`. The round 2 concepts still work at `/room-concepts`.
+
+| Step | What | State |
+| --- | --- | --- |
+| 1 | Read the code, propose tooling | Done. Approved by the owner. |
+| 2 | Static hybrid with the switcher and the header toggle | Done, commit `611bbfd`. Build passes, unit tests 90 of 90. |
+| 3 | Motion B, "Power-on" | **Next.** Waiting for the owner's go-ahead. |
+| 4 | Motion C, "Depth focus" | Not started. |
+| 5 | Motion A, "Assembly" | Not started. |
+
+The owner changed the build order after Step 1: B, then C, then A. The letters in the switcher stay A, B, C.
+
+## What Step 2 built
+
+- `src/variants/motion/`: the hybrid room. `MotionRoom` joins `MotionHeader` (Elevation's Amber LED header, or Exploded's own) and `MotionStage` (Exploded's room).
+- The room is Exploded's drawing cut into **13 svg layers**, back to front: light, floor, traces, shadows, guides, wall, shelf, frame, cabinet, mailbox, desk, monitor, packets. Each object has a layer of its own (the desk and the monitor both belong to the System Explorer). A unit test checks that the layers draw exactly what Exploded draws, in the same paint order.
+- The LED header's loading bar is a real element that shows `--rm-progress` (0 to 1, set on the room's root). It rests at 1, a full bar.
+- The LED header keeps Amber LED whichever accent the room wears.
+- `src/pages/room-motion.tsx` and `MotionSwitcher`: the page and its switcher (motion, header, accent). The switcher collapses to one bar and starts collapsed on a phone. With reduced motion the page always shows Off, and A, B and C cannot be chosen.
+- Nothing moves yet. A, B and C show the same room as Off, except for the shared pulse on the hotspot dots and the panel's short slide, which Off switches off.
+
+## Before starting Step 3
+
+- **Tooling is approved**: the browser's Web Animations API for the openings, and Motion's non-React `animate` and springs (`framer-motion`, already installed) for hover, focus, open and close, loaded after first paint. No new dependency, no WebGL. The table is at the end of the brief.
+- **Motion B needs a feed trace** from the header's loading bar down into the room. The owner approved adding it.
+- **The transform-and-opacity unit test** (`src/styles/motion.test.ts`) must not be loosened for the site. Motion B's line drawing needs a narrow, named exception for `/room-motion` only. It is not added yet; add it with B and report it.
+- **Performance**: one scripted trace per finished motion, not during iteration. Report frame-time numbers and long-frame counts only, and delete the trace files afterwards (S: is low on space).
+- After the desktop motion is finished, Sonnet sub-agents build the reduced-motion state, the simpler mobile version and the test updates.
+
+## Working in this copy
+
+- Dependencies are installed in this working copy and match the lockfile. `pnpm` is not on the PATH, so run the tools directly from `artifacts/portfolio`: `node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit`, `node node_modules/vitest/vitest.mjs run`, `node node_modules/vite/bin/vite.js build --config vite.config.ts`.
+- In Git Bash, do not set `BASE_PATH=/`: the shell rewrites it into a Windows path and the built site will not load.
+- `.claude/launch.json` (not committed) starts the built site on port 5173 for a look in the browser.
+- `artifacts/mockup-sandbox/src/.generated/mockup-components.ts` shows as modified but has no content change (line endings). Leave it out of commits.
+
+---
+
 # Status — rotating room (round 3)
+
+*Carried over unchanged from `feature/room-rotation`. Everything below describes that branch, not this one.*
 
 Written on 2026-11-11, when work was paused at the owner's request. Updated on 2026-11-12, after Concept B was finished. The design is in `docs/DESIGN-BRIEF.md`.
 
