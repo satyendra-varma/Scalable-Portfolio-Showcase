@@ -109,3 +109,15 @@ No new dependency.
 | C: "soften" | Cross-fade to a pre-blurred copy, not an animated blur. |
 
 Not used: GSAP, WebGL, the browser's View Transitions (they cannot be interrupted), Motion's React layout animations.
+
+## Working rules from 13 November
+
+The owner's rules for every later session on this job, written after the usage limit was reached on 12 November. They override anything above that says otherwise, including the earlier rules to check each motion in the browser performance panel and to run a trace after each motion step.
+
+- The main model writes motion design only: timing, easing, choreography, visual detail. Reason: that is the only part that needs the strongest model.
+- Tests, the test exception, typecheck and build fixes, the mobile version, and the reduced-motion state go to sub-agents on Sonnet or Haiku, or to a session running on Sonnet. Reason: usage limits.
+- No model opens a browser, takes screenshots, or records traces unless the owner asks. The owner checks the page and reports what they see. Reason: browser checks used a large share of the last limit.
+- Sub-agents return under 150 words plus file paths, never file contents. Show only the last 20 lines of command output. Reason: context size.
+- No performance trace until the owner has chosen a motion. Reason: no point measuring options that may be rejected.
+- Commit locally after each finished piece, before starting the next. Reason: a limit can hit at any time.
+- No push or merge. Reason: the owner approves every push.

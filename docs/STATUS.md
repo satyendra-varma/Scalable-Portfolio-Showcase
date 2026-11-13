@@ -1,6 +1,8 @@
 # Status — room motion (round 4)
 
-Updated on 2026-11-12, when work on Step 3 (Motion B) was stopped part-way at the owner's request (usage limit). The brief and the owner's decisions are in `docs/BRIEF-room-motion.md`.
+Updated on 2026-11-13, after a recovery check. Work on Step 3 (Motion B) was stopped part-way on 2026-11-12 (usage limit). The brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
+
+**Recovery check, 13 November**: nothing was lost. Motion B was already committed (`b557bef`) and so was the earlier status update; the working tree held only the two files that stay out of commits (see the end of this file). Typecheck and build pass on the tip. Unit tests were not run again; the count below is from the last run.
 
 ## Where things are
 
@@ -42,24 +44,24 @@ Seen working in the browser at 1280 px wide. Files are in `src/variants/motion/`
 
 ## Motion B: left
 
+Items 1 to 3 go to Sonnet or Haiku sub-agents, or to a session running on Sonnet (working rules). None has been started.
+
 1. **Tests and the test exception.** Three unit tests fail:
-   - `src/styles/motion.test.ts` rejects `power.css`, because the keyframes `rm-b-draw` animate `stroke-dashoffset`. Add the narrow, named exception the owner asked for: that one keyframe name, in that one file. Do not loosen the rule for the site.
+   - `src/styles/motion.test.ts` rejects `power.css`, because the keyframes `rm-b-draw` animate `stroke-dashoffset`. Add the narrow, named exception the owner asked for, for `/room-motion` only: that one keyframe name, in that one file. Do not loosen the rule for the site, and report the exception.
    - Two tests in `motion-room.test.tsx` still expect the old 13 layers and an exact match with Exploded. There are now 15 layers (`wallwire` and `bloom` are new, `packets` became `flows`) and the `traces` layer has the new wiring, so the comparison must leave those layers out.
    - Nothing yet tests the wiring, the opening's phases, or the panel in Motion B.
 2. **Simpler mobile and touch version**: shorter opening without the linework, no hover effects, tap to focus, a simpler panel.
 3. **Reduced-motion state**: with reduced motion the page already shows Off, which is the powered room with the feed and an instant panel. It needs checking and a test.
-4. **One performance trace** of the finished motion: frame-time numbers and long-frame counts only, then delete the trace file.
-5. The report for Step 3, then the owner's go-ahead for Motion C.
-
-Steps 2 to 4 were meant for Sonnet sub-agents once the desktop motion was done. None was started.
+4. **Performance trace**: **not yet, and not by a model unless the owner asks.** The owner chooses a motion first; only then is one trace worth running (frame-time numbers and long-frame counts only, then delete the trace file).
+5. **Looking at it**: the owner checks the page and reports what they see. No model opens a browser or takes screenshots unless asked. Open `/room-motion?motion=b` after building and starting the preview (see below).
+6. The report for Step 3, then the owner's go-ahead for Motion C.
 
 ## Working in this copy
 
 - Dependencies are installed in this working copy and match the lockfile. `pnpm` is not on the PATH, so run the tools directly from `artifacts/portfolio`: `node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit`, `node node_modules/vitest/vitest.mjs run`, `node node_modules/vite/bin/vite.js build --config vite.config.ts`.
 - In Git Bash, do not set `BASE_PATH=/`: the shell rewrites it into a Windows path and the built site will not load.
 - `.claude/launch.json` (not committed, by the owner's decision) starts the built site on port 5173 for a look in the browser. Build first.
-- The browser pane slows a page to about one frame a second when it is in the background. Motion's spring then looks stalled; CSS animations do not. Check the pane is showing before judging smoothness.
-- `artifacts/mockup-sandbox/src/.generated/mockup-components.ts` shows as modified but has no content change (line endings). Keep it out of commits, by the owner's decision.
+- If the page is open in a browser that is in the background, it may slow to about one frame a second. Motion's spring then looks stalled; CSS animations do not. Bring the window to the front before judging smoothness.- `artifacts/mockup-sandbox/src/.generated/mockup-components.ts` shows as modified but has no content change (line endings). Keep it out of commits, by the owner's decision.
 - The phone-size overlap of the "ROOM_01 / 4.20 m" tag and the ruler is left for later, by the owner's decision.
 
 ---
