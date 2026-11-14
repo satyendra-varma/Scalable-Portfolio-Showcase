@@ -1,16 +1,17 @@
 import { useEffect, useLayoutEffect, useState, type RefObject } from 'react';
 import type { HotspotId } from '@/components/room/RoomScene';
+import { markOpeningSeen, type OpeningKind } from './opening';
 import { routes } from './wiring';
 
 /** 'dark': unpowered, waiting to be seen. 'opening': power is travelling in. 'on': running. */
 export type PowerPhase = 'dark' | 'opening' | 'on';
 
-/** The loading bar charges and the linework is drawn in this long (power.css): power never leaves earlier. */
-const CHARGE_MS = 1350;
+/** The loading bar charges in this long (power.css, lite.css), by kind of opening: power never leaves earlier. */
+const CHARGE_MS: Record<OpeningKind, number> = { full: 1350, mobile: 600, return: 150 };
 /** "Most of the room is on screen": this share of the stage, or of the window where the stage is the taller. */
 const IN_VIEW = 0.6;
-/** If an animation never reports its end, the opening is over after this long anyway. */
-const GIVE_UP_MS = 14000;
+/** If an animation never reports its end, the opening is over after this long anyway, by kind of opening. */
+const GIVE_UP_MS: Record<OpeningKind, number> = { full: 14000, mobile: 6000, return: 3000 };
 const STEPS = Array.from({ length: 21 }, (_, i) => i / 20);
 const MODIFIERS = ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'OS'];
 
@@ -31,11 +32,20 @@ const finite = (a: Animation) => a.effect?.getComputedTiming().iterations !== In
  *    has charged, most of the room is on screen and the tab is in front. Then the opening runs once, on time.
  *    It is a one-time start: nothing follows the scroll position.
  *  - Skipping finishes every animation where it would have ended, so nothing jumps to a different picture.
+ *  - `opening` is the kind of opening ('full', 'mobile' or 'return'): it sets only how long the room waits before
+ *    power may leave and when a stuck opening is given up on. The animations themselves are CSS (power.css, lite.css).
+ *    Whenever the room reaches 'on' (finished, skipped, or without animation support) the session is marked as
+ *    having seen the opening (opening.ts).
  *  - Packets and pulses are a short dash moved along a path (stroke-dashoffset), from script, so each can be
  *    started and cancelled on its own. They start only once the opening has powered the traces.
  */
-export function usePowerOn(root: RefObject<HTMLElement | null>, active: boolean): PowerPhase | undefined {
+export function usePowerOn(root: RefObject<HTMLElement | null>, active: boolean, opening: OpeningKind = 'full'): PowerPhase | undefined {
   const [phase, setPhase] = useState<PowerPhase>('dark');
+
+  // The session has seen the opening once the room is on, however it got there.
+  useEffect(() => {
+    if (active && phase === 'on') markOpeningSeen();
+  }, [active, phase]);
 
   // Before the first paint: give every line of the wire copy its own length and its place in the drawing order.
   useLayoutEffect(() => {
@@ -59,7 +69,7 @@ export function usePowerOn(root: RefObject<HTMLElement | null>, active: boolean)
     let charged = false;
     let inView = !stage || typeof IntersectionObserver === 'undefined';
     const go = () => { if (charged && inView && document.visibilityState !== 'hidden') setPhase('opening'); };
-    const timer = window.setTimeout(() => { charged = true; go(); }, CHARGE_MS);
+    const timer = window.setTimeout(() => { charged = true; go(); }, CHARGE_MS[opening]);
     const observer = inView || !stage ? null : new IntersectionObserver(([entry]) => {
       const all = entry.boundingClientRect.height, win = entry.rootBounds?.height ?? window.innerHeight;
       inView = all > 0 && entry.intersectionRect.height >= Math.min(all, win) * IN_VIEW;
@@ -68,7 +78,7 @@ export function usePowerOn(root: RefObject<HTMLElement | null>, active: boolean)
     if (observer && stage) observer.observe(stage);
     document.addEventListener('visibilitychange', go);
     return () => { clearTimeout(timer); observer?.disconnect(); document.removeEventListener('visibilitychange', go); };
-  }, [active, phase, root]);
+  }, [active, phase, root, opening]);
 
   // The opening ends by itself, or at once on any click, tap or key. While the room is still dark only a click on
   // the room itself, or keyboard focus reaching one of its labels, powers it at once: scrolling to it must not.
@@ -90,7 +100,7 @@ export function usePowerOn(root: RefObject<HTMLElement | null>, active: boolean)
         if (!all.length) end();
         else void Promise.all(all.map((a) => a.finished)).then(end, () => {});
       });
-      giveUp = window.setTimeout(skip, GIVE_UP_MS);
+      giveUp = window.setTimeout(skip, GIVE_UP_MS[opening]);
     }
     window.addEventListener('pointerdown', onPointer, true);
     window.addEventListener('keydown', onKey, true);
@@ -102,7 +112,7 @@ export function usePowerOn(root: RefObject<HTMLElement | null>, active: boolean)
       window.removeEventListener('keydown', onKey, true);
       el.removeEventListener('focusin', onFocus);
     };
-  }, [active, phase, root]);
+  }, [active, phase, root, opening]);
 
   // Running: packets travel from the loading bar to each object in turn, and a pulse answers hover and focus.
   useEffect(() => {

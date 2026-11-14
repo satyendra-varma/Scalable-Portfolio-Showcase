@@ -3,6 +3,7 @@ import { useSearch } from 'wouter';
 import { useDocumentMeta } from '@/hooks/use-document-meta';
 import { MotionRoom } from '@/variants/motion/MotionRoom';
 import { MotionSwitcher } from '@/variants/motion/MotionSwitcher';
+import { forgetOpeningSeen } from '@/variants/motion/opening';
 import { parseMotion, type MotionId } from '@/variants/motion/options';
 
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
@@ -50,7 +51,7 @@ export default function RoomMotionPage() {
         reducedMotion={reduced}
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
-        onReplay={() => setReplay((n) => n + 1)}
+        onReplay={() => { forgetOpeningSeen(); setReplay((n) => n + 1); }}
       />
     </div>
   );

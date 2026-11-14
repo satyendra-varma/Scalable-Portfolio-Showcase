@@ -1,0 +1,36 @@
+/**
+ * Which opening Power-on plays (docs/BRIEF-room-motion.md): the full 4-second one on the first visit in a browser
+ * session, a shorter one on later visits ('return', about 1 second) and, on a phone, a middle one ('mobile').
+ * "Session" is sessionStorage: it survives a reload and in-app navigation in the tab, and a new tab starts afresh.
+ */
+export type OpeningKind = 'full' | 'mobile' | 'return';
+
+const KEY = 'rm-power-on-seen';
+
+/** Has this session already seen the opening? Storage can throw (private modes, blocked cookies): then, not seen. */
+export const openingSeen = (): boolean => {
+  try {
+    return window.sessionStorage.getItem(KEY) === '1';
+  } catch {
+    return false;
+  }
+};
+
+export const markOpeningSeen = (): void => {
+  try {
+    window.sessionStorage.setItem(KEY, '1');
+  } catch {
+    /* storage unavailable: the next visit plays the full opening again */
+  }
+};
+
+export const forgetOpeningSeen = (): void => {
+  try {
+    window.sessionStorage.removeItem(KEY);
+  } catch {
+    /* storage unavailable: nothing to forget */
+  }
+};
+
+export const pickOpening = ({ seen, mobile }: { seen: boolean; mobile: boolean }): OpeningKind =>
+  seen ? 'return' : mobile ? 'mobile' : 'full';
