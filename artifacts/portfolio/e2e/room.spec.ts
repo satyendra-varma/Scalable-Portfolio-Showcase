@@ -27,7 +27,8 @@ test('room: panels, filters, Explorer and accessible alternatives', async ({ pag
   await page.getByTestId('chip-skill-react').click();
   await expect(page.getByTestId('list-projects').getByRole('article')).toHaveCount(0);
   await page.getByTestId('button-clear-filter').click();
-  await expect(page.getByText('Live link coming soon')).toHaveCount(2);
+  await expect(page.getByTestId('list-projects').getByRole('article')).toHaveCount(2);
+  await expect(page.getByText('Live link coming soon')).toHaveCount(0);
   await page.keyboard.press('Escape');
   await page.getByTestId('hotspot-explorer').click();
   const planned = page.getByTestId('panel-explorer').locator('[data-flow-status="planned"]');

@@ -21,7 +21,7 @@ Full Stack .NET Software Engineer with 4+ years of software engineering experien
 ## Skills
 - Backend: C#, .NET 8, ASP.NET Core, Web API, MVC, Entity Framework Core, LINQ, REST APIs
 - Frontend: React, TypeScript, JavaScript, HTML5/CSS3, Bootstrap
-- Databases: SQL Server (MSSQL), PostgreSQL, SQLite, Oracle DB [TO CONFIRM: which DB the CRM uses]
+- Databases: SQL Server (MSSQL), PostgreSQL, SQLite, Oracle DB
 - Security: JWT auth, RBAC
 - Cloud and DevOps: AWS (EC2, S3), Docker, Kubernetes (familiarity), GitHub Actions, Jenkins, NGINX, Certbot, Git, CI/CD
 - Architecture and testing: Domain-Driven Design (DDD), MediatR, MassTransit, Redis, xUnit, Serilog, EF Core Global Query Filters
@@ -31,7 +31,7 @@ Full Stack .NET Software Engineer with 4+ years of software engineering experien
 ### Enterprise CRM Platform (Crescenza Consulting Group, Apr 2023 to present)
 - Multi-tenant enterprise CRM built with .NET 8 and Domain-Driven Design
 - Secure JWT and RBAC authorization
-- EF Core Global Query Filters for automated soft deletes [TO CONFIRM: "applies to every read"]
+- EF Core Global Query Filters for automated soft deletes
 - Redis distributed caching with MediatR CQRS handlers
 - Link: CRM_LINK (placeholder)
 
@@ -53,6 +53,37 @@ See the CRM and E-Commerce projects above.
 ## Education
 Master's in Applied Computer Science, Fairleigh Dickinson University, Vancouver, BC, Canada, Sep 2021 to Apr 2023
 Focus: Advanced Application Development, Web Architecture, Component Security & Secure Cryptographic Hashing.
+
+## Confirmed by the owner, 13 November 2026
+The owner went through the open questions about the Enterprise CRM Platform with their lead. These facts replace the earlier [TO CONFIRM] notes on the CRM's database and on soft-delete query filters.
+
+### Facts
+- A React front end calls the API.
+- It is deployed and served over HTTPS.
+- Endpoints are controllers.
+- JWT validation and role checks run before the controller, through ASP.NET Core authentication and authorization.
+- Every request goes through MediatR.
+- The database is PostgreSQL.
+- Soft-delete query filters apply only to entities that can be soft-deleted.
+- The API returns DTOs with HTTP status codes.
+- Not confirmed: the error format, and where the Redis check sits.
+
+### Project links
+- Both projects were contract work at Crescenza, so there are no repo or live links. The link line is hidden on both project cards. CRM_LINK and ECOMMERCE_LINK stay in the site config so a link can be added later.
+
+### System Explorer wording, flow 01 (CRM request lifecycle)
+Stage titles, source labels and notes exactly as the site shows them.
+1. Client request (Confirmed): A React front end calls the CRM API.
+2. HTTPS (Confirmed): The CRM is deployed and served over HTTPS.
+3. JWT validation (Confirmed): Runs in the ASP.NET Core authentication pipeline, before the request reaches the controller.
+4. RBAC authorization (Confirmed): Role checks run through ASP.NET Core authorization, before the controller code.
+5. API endpoint (Confirmed): A .NET 8 controller receives the request.
+6. MediatR dispatch (Confirmed): The controller sends a command or query through MediatR. Every request goes this way.
+7. Handler (Confirmed): A command or query handler runs the domain logic.
+8. Redis check (From resume): Component from resume: Redis distributed caching. The cache-check step and its order are representative.
+9. EF Core query on PostgreSQL (Confirmed): The CRM database is PostgreSQL. Soft-delete query filters apply to the entities that can be soft-deleted.
+10. Response (Confirmed): Returns DTOs with HTTP status codes. Error response format is not documented.
+Flow note: The sequence is confirmed except the position of the Redis check.
 
 ## Excluded (do not use anywhere on the site)
 - Phone number

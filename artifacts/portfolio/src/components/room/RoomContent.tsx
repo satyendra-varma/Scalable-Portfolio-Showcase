@@ -19,9 +19,7 @@ export function ProjectList({ activeSkill, headingLevel = 3 }: { activeSkill: st
           <ul className="rp-bullets rp-card-points">{p.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
           {p.link ? (
             <a className="rp-link" href={p.link} target="_blank" rel="noreferrer" data-testid={`link-project-${p.id}`}>Visit live project</a>
-          ) : (
-            <span className="rp-placeholder" data-testid={`text-link-placeholder-${p.id}`}>Live link coming soon</span>
-          )}
+          ) : null}
         </article>
       ))}
     </div>

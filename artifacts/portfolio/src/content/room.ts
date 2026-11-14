@@ -1,6 +1,6 @@
 /**
  * Allowlisted content for the Engineer's Room.
- * Sourced only from docs/CONTENT.md (checked against the resume).
+ * Content comes from docs/RESUME-SOURCE.md, including its "Confirmed by the owner, 13 November 2026" section.
  */
 import { validateUrl } from '@/lib/project-links';
 import { CRM_LINK, ECOMMERCE_LINK } from './site';
@@ -14,7 +14,7 @@ export const hero = {
 
 export type ProjectId = 'crm' | 'ecommerce';
 
-// Every string below is copied verbatim from docs/RESUME-SOURCE.md (room.test.tsx checks this).
+// Every string below is copied verbatim from docs/RESUME-SOURCE.md (room.source.test.ts checks this).
 export const projects: {
   id: ProjectId;
   name: string;
@@ -117,19 +117,19 @@ export const contact = {
   location: 'Vancouver, BC, Canada',
 };
 
-export type SourceLabel = 'From resume' | 'Representative design (to confirm)';
+export type SourceLabel = 'From resume' | 'Representative design (to confirm)' | 'Confirmed';
 
 export const crmFlow: { title: string; source: SourceLabel; note: string }[] = [
-  { title: 'Client request', source: 'Representative design (to confirm)', note: 'A client calls the CRM API. Client type and entry point are not stated in the resume.' },
-  { title: 'HTTPS', source: 'Representative design (to confirm)', note: 'Transport security for the CRM is assumed here; the CRM deployment topology is not documented.' },
-  { title: 'JWT validation', source: 'From resume', note: 'Component from resume: the CRM uses JWT authorization. Its position in this sequence is representative.' },
-  { title: 'RBAC authorization', source: 'From resume', note: 'Component from resume: RBAC authorization in the CRM. Where and when checks run is representative.' },
-  { title: 'API endpoint', source: 'Representative design (to confirm)', note: 'A .NET 8 endpoint receives the request. Endpoint style and routing are not specified.' },
-  { title: 'MediatR dispatch', source: 'From resume', note: 'Component from resume: MediatR CQRS. Its position in this sequence is representative.' },
-  { title: 'Handler', source: 'Representative design (to confirm)', note: 'A query or command handler runs domain logic shaped by Domain-Driven Design. Handler structure is representative.' },
+  { title: 'Client request', source: 'Confirmed', note: 'A React front end calls the CRM API.' },
+  { title: 'HTTPS', source: 'Confirmed', note: 'The CRM is deployed and served over HTTPS.' },
+  { title: 'JWT validation', source: 'Confirmed', note: 'Runs in the ASP.NET Core authentication pipeline, before the request reaches the controller.' },
+  { title: 'RBAC authorization', source: 'Confirmed', note: 'Role checks run through ASP.NET Core authorization, before the controller code.' },
+  { title: 'API endpoint', source: 'Confirmed', note: 'A .NET 8 controller receives the request.' },
+  { title: 'MediatR dispatch', source: 'Confirmed', note: 'The controller sends a command or query through MediatR. Every request goes this way.' },
+  { title: 'Handler', source: 'Confirmed', note: 'A command or query handler runs the domain logic.' },
   { title: 'Redis check', source: 'From resume', note: 'Component from resume: Redis distributed caching. The cache-check step and its order are representative.' },
-  { title: 'EF Core query on SQL Server', source: 'Representative design (to confirm)', note: 'EF Core global query filters for soft deletes are from the resume. The CRM database engine (SQL Server) and whether filters apply to every read are unconfirmed.' },
-  { title: 'Response', source: 'Representative design (to confirm)', note: 'The result returns to the client. Response shape and status handling are not documented.' },
+  { title: 'EF Core query on PostgreSQL', source: 'Confirmed', note: 'The CRM database is PostgreSQL. Soft-delete query filters apply to the entities that can be soft-deleted.' },
+  { title: 'Response', source: 'Confirmed', note: 'Returns DTOs with HTTP status codes. Error response format is not documented.' },
 ];
 
 export type FlowStatus = 'working' | 'planned';
@@ -164,4 +164,4 @@ export const explorerFlows: { project: string; flows: { title: string; status: F
 ];
 
 export const flowSequenceNote =
-  'Sequence, ordering and topology are representative design (to confirm). "From resume" means only that the component is used in the project; it does not confirm its position in this flow.';
+  'The sequence is confirmed except the position of the Redis check.';

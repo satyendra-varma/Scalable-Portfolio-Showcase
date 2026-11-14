@@ -151,6 +151,7 @@
 .ex-node { position: relative; width: 100%; height: 100%; text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 11px 12px 12px; border-radius: var(--radius); border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; font-family: var(--body);
   transition: transform .18s ease; animation: ex-rise .45s ease backwards; animation-delay: calc(var(--i) * 60ms); }
 .ex-node.is-resume { border-color: var(--evidence); }
+.ex-node.is-confirmed { border-color: var(--accent); }
 .ex-node:hover, .ex-node:focus-visible, .ex-node.is-sel { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); transform: translateY(-2px); }
 @keyframes ex-rise { from { opacity: 0; transform: translateY(8px); } }
 .ex-num { font: 600 11px var(--mono); }
@@ -161,6 +162,7 @@
 .ex-detail-t { font-family: var(--display); font-size: 20px; margin: 4px 0; }
 .ex-src { display: inline-block; font: 600 11px var(--mono); padding: 2px 6px; border: 1px solid var(--muted); border-radius: 3px; margin: 2px 0; }
 .ex-src.is-resume { border-color: var(--evidence); }
+.ex-src.is-confirmed { border-color: var(--accent); }
 .ex-list { padding-left: 22px; line-height: 1.6; font-size: 14px; list-style: decimal; }
 
 .rp-404 { min-height: 100dvh; display: grid; align-content: center; justify-items: start; gap: 4px; padding: 48px clamp(16px, 8vw, 120px); max-width: 960px; }

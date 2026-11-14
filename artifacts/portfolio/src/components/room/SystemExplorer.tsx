@@ -1,5 +1,7 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { crmFlow, explorerFlows, flowSequenceNote } from '@/content/room';
+import { crmFlow, explorerFlows, flowSequenceNote, type SourceLabel } from '@/content/room';
+
+const srcClass = (s: SourceLabel) => (s === 'From resume' ? 'is-resume' : s === 'Confirmed' ? 'is-confirmed' : '');
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -67,7 +69,7 @@ export function SystemExplorer({ initialAsList = false }: { initialAsList?: bool
           {asList ? (
             <ol className="ex-list" data-testid="list-flow-nodes">
               {crmFlow.map((n) => (
-                <li key={n.title}><strong>{n.title}</strong> <span className={`ex-src ${n.source === 'From resume' ? 'is-resume' : ''}`}>{n.source}</span><br />{n.note}</li>
+                <li key={n.title}><strong>{n.title}</strong> <span className={`ex-src ${srcClass(n.source)}`}>{n.source}</span><br />{n.note}</li>
               ))}
             </ol>
           ) : (
@@ -80,7 +82,7 @@ export function SystemExplorer({ initialAsList = false }: { initialAsList?: bool
                       type="button"
                       tabIndex={i === active ? 0 : -1}
                       aria-pressed={selected === i}
-                      className={`ex-node${selected === i ? ' is-sel' : ''}${n.source === 'From resume' ? ' is-resume' : ''}`}
+                      className={`ex-node${selected === i ? ' is-sel' : ''}${srcClass(n.source) ? ' ' + srcClass(n.source) : ''}`}
                       onFocus={() => setActive(i)}
                       onClick={() => { setActive(i); setSelected(i); }}
                       data-testid={`button-node-${i + 1}`}
@@ -95,7 +97,7 @@ export function SystemExplorer({ initialAsList = false }: { initialAsList?: bool
               <div className="ex-detail" aria-live="polite" data-testid="panel-node-detail">
                 <p className="ex-detail-k">Node {shown + 1} of {crmFlow.length}</p>
                 <h4 className="ex-detail-t">{crmFlow[shown].title}</h4>
-                <p className={`ex-src ${crmFlow[shown].source === 'From resume' ? 'is-resume' : ''}`}>{crmFlow[shown].source}</p>
+                <p className={`ex-src ${srcClass(crmFlow[shown].source)}`}>{crmFlow[shown].source}</p>
                 <p>{crmFlow[shown].note}</p>
               </div>
             </>

@@ -4,7 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { useState } from 'react';
 import { ContactContent, ProjectList, SkillsContent } from './RoomContent';
 import { SystemExplorer } from './SystemExplorer';
-import { crmFlow, projectEvidence } from '@/content/room';
+import { crmFlow, flowSequenceNote, projectEvidence, projects } from '@/content/room';
+import { CRM_LINK, ECOMMERCE_LINK } from '@/content/site';
 import Room from '@/pages/room';
 import NotFound from '@/pages/not-found';
 
@@ -20,15 +21,23 @@ describe('engineer room', () => {
     expect(screen.getByTestId('link-header-email')).toHaveAttribute('href', 'mailto:satyendrasatya447@gmail.com');
   });
 
-  it('renders exactly two projects, no outcome placeholder, and noninteractive missing links', () => {
-    render(<ProjectList activeSkill={null} />);
-    expect(screen.getAllByRole('article')).toHaveLength(2);
+  it('renders exactly two projects, no outcome placeholder, and hides the link line', () => {
+    const { container } = render(<ProjectList activeSkill={null} />);
+    const articles = screen.getAllByRole('article');
+    expect(articles).toHaveLength(2);
     expect(screen.queryByText('Outcome')).toBeNull();
     expect(screen.queryByText(/not yet documented/i)).toBeNull();
-    screen.getAllByText('Live link coming soon').forEach(el => {
-      expect(el.tagName).toBe('SPAN');
-      expect(el.closest('a,button')).toBeNull();
-    });
+    expect(screen.queryByText('Live link coming soon')).toBeNull();
+    expect(container.querySelector('[data-testid^="text-link-placeholder-"], [data-testid^="link-project-"]')).toBeNull();
+    for (const a of articles) {
+      expect(a.querySelector('a, button')).toBeNull();
+      expect(Array.from(a.children).map((c) => c.tagName)).toEqual([expect.stringMatching(/^H[1-6]$/), 'UL']);
+    }
+  });
+  it('keeps the project link config exported, with both links empty today', () => {
+    expect(typeof CRM_LINK).toBe('string');
+    expect(typeof ECOMMERCE_LINK).toBe('string');
+    expect(projects.map((p) => p.link)).toEqual([null, null]);
   });
   it('keeps the resume unavailable', () => {
     render(<ContactContent />);
@@ -60,9 +69,15 @@ describe('engineer room', () => {
     await user.keyboard('{ArrowRight}{Enter}');
     expect(screen.getByTestId('button-node-2')).toHaveFocus();
     expect(screen.getByTestId('button-node-2')).toHaveAttribute('aria-pressed', 'true');
+    expect(crmFlow[8].source).toBe('Confirmed');
+    expect(crmFlow[8].title).toBe('EF Core query on PostgreSQL');
+    expect(screen.getByTestId('button-node-9')).toHaveClass('is-confirmed');
+    expect(screen.getByTestId('button-node-8')).toHaveClass('is-resume');
+    expect(screen.getByTestId('button-node-8')).not.toHaveClass('is-confirmed');
+    expect(screen.getByText('The sequence is confirmed except the position of the Redis check.')).toBeInTheDocument();
+    expect(flowSequenceNote).toBe('The sequence is confirmed except the position of the Redis check.');
     await user.click(screen.getByTestId('button-explorer-list'));
     expect(screen.getByTestId('list-flow-nodes').children).toHaveLength(10);
-    expect(crmFlow[8].source).toBe('Representative design (to confirm)');
   });
   it('lists ten numbered flows: only flow 01 opens, flows 02-10 are Planned and not interactive', () => {
     const { container } = render(<SystemExplorer />);
