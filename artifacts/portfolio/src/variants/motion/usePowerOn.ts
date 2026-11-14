@@ -2,12 +2,17 @@ import { useEffect, useLayoutEffect, useState, type RefObject } from 'react';
 import type { HotspotId } from '@/components/room/RoomScene';
 import { routes } from './wiring';
 
-/** 'opening': the first visit's full opening. 'quick': a return, power only. 'on': running. */
-export type PowerPhase = 'opening' | 'quick' | 'on';
+/** 'dark': unpowered, waiting to be seen. 'opening': power is travelling in. 'on': running. */
+export type PowerPhase = 'dark' | 'opening' | 'on';
 
-const SEEN = 'rm-b-seen';
-const seen = () => { try { return sessionStorage.getItem(SEEN) === '1'; } catch { return false; } };
-const remember = () => { try { sessionStorage.setItem(SEEN, '1'); } catch { /* private mode: the opening simply plays again */ } };
+/** The loading bar charges and the linework is drawn in this long (power.css): power never leaves earlier. */
+const CHARGE_MS = 1350;
+/** "Most of the room is on screen": this share of the stage, or of the window where the stage is the taller. */
+const IN_VIEW = 0.6;
+/** If an animation never reports its end, the opening is over after this long anyway. */
+const GIVE_UP_MS = 14000;
+const STEPS = Array.from({ length: 21 }, (_, i) => i / 20);
+const MODIFIERS = ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'OS'];
 
 /** Idle packets: drawing units a second, the pause between two packets to the same object, and how they are staggered. */
 const PACKET = { speed: 330, rest: 7.5, stagger: 1.9, fade: 0.14 };
@@ -19,20 +24,22 @@ const finite = (a: Animation) => a.effect?.getComputedTiming().iterations !== In
 
 /**
  * Runs Motion B, "Power-on", on the room at `root` (docs/BRIEF-room-motion.md). The opening itself is CSS
- * (power.css); this hook decides which opening plays, prepares the linework, lets any click, tap or key skip it,
- * and then runs the idle packets and the hover and focus pulses.
+ * (power.css); this hook decides when it starts, lets a click, tap or key skip it, and then runs the idle packets
+ * and the hover and focus pulses.
  *
- *  - The first visit of a browser session gets the full opening; after that, a short one (sessionStorage).
+ *  - The room waits dark, with every animation of the opening paused on its first frame, until the loading bar
+ *    has charged, most of the room is on screen and the tab is in front. Then the opening runs once, on time.
+ *    It is a one-time start: nothing follows the scroll position.
  *  - Skipping finishes every animation where it would have ended, so nothing jumps to a different picture.
  *  - Packets and pulses are a short dash moved along a path (stroke-dashoffset), from script, so each can be
- *    started and cancelled on its own.
+ *    started and cancelled on its own. They start only once the opening has powered the traces.
  */
 export function usePowerOn(root: RefObject<HTMLElement | null>, active: boolean): PowerPhase | undefined {
-  const [phase, setPhase] = useState<PowerPhase>(() => (seen() ? 'quick' : 'opening'));
+  const [phase, setPhase] = useState<PowerPhase>('dark');
 
   // Before the first paint: give every line of the wire copy its own length and its place in the drawing order.
   useLayoutEffect(() => {
-    if (!active || phase !== 'opening') return;
+    if (!active || phase !== 'dark') return;
     root.current?.querySelectorAll('.rm-wire [data-wire]').forEach((group) => {
       let place = 0;
       group.querySelectorAll<SVGGeometryElement>('path, polygon, polyline, rect, circle').forEach((shape) => {
@@ -43,26 +50,57 @@ export function usePowerOn(root: RefObject<HTMLElement | null>, active: boolean)
     });
   }, [active, phase, root]);
 
-  // The opening ends by itself, or at once on any click, tap or key.
+  // Dark: wait for the charge, for the room to be seen, and for the tab to be in front. Then start, once.
   useEffect(() => {
     const el = root.current;
-    if (!active || phase === 'on' || !el) return;
+    if (!active || phase !== 'dark' || !el) return;
+    if (typeof el.getAnimations !== 'function') { setPhase('on'); return; }
+    const stage = el.querySelector('.rm-stage');
+    let charged = false;
+    let inView = !stage || typeof IntersectionObserver === 'undefined';
+    const go = () => { if (charged && inView && document.visibilityState !== 'hidden') setPhase('opening'); };
+    const timer = window.setTimeout(() => { charged = true; go(); }, CHARGE_MS);
+    const observer = inView || !stage ? null : new IntersectionObserver(([entry]) => {
+      const all = entry.boundingClientRect.height, win = entry.rootBounds?.height ?? window.innerHeight;
+      inView = all > 0 && entry.intersectionRect.height >= Math.min(all, win) * IN_VIEW;
+      go();
+    }, { threshold: STEPS });
+    if (observer && stage) observer.observe(stage);
+    document.addEventListener('visibilitychange', go);
+    return () => { clearTimeout(timer); observer?.disconnect(); document.removeEventListener('visibilitychange', go); };
+  }, [active, phase, root]);
+
+  // The opening ends by itself, or at once on any click, tap or key. While the room is still dark only a click on
+  // the room itself, or keyboard focus reaching one of its labels, powers it at once: scrolling to it must not.
+  useEffect(() => {
+    const el = root.current;
+    if (!active || phase === 'on' || !el || typeof el.getAnimations !== 'function') return;
     let over = false;
-    const end = () => { if (over) return; over = true; remember(); setPhase('on'); };
-    if (typeof el.getAnimations !== 'function') { end(); return; }
+    const end = () => { if (over) return; over = true; setPhase('on'); };
     const running = () => el.getAnimations({ subtree: true }).filter(finite);
     const skip = () => { for (const a of running()) a.finish(); end(); };
-    const frame = requestAnimationFrame(() => {
-      const all = running();
-      if (!all.length) end();
-      else void Promise.all(all.map((a) => a.finished)).then(end, () => {});
-    });
-    window.addEventListener('pointerdown', skip, true);
-    window.addEventListener('keydown', skip, true);
+    const inRoom = (e: Event) => !!(e.target as Element | null)?.closest?.('.rm-stage');
+    const onPointer = (e: Event) => { if (phase === 'opening' || inRoom(e)) skip(); };
+    const onKey = (e: KeyboardEvent) => { if (phase === 'opening' && !MODIFIERS.includes(e.key)) skip(); };
+    const onFocus = (e: Event) => { if (inRoom(e)) skip(); };
+    let frame = 0, giveUp = 0;
+    if (phase === 'opening') {
+      frame = requestAnimationFrame(() => {
+        const all = running();
+        if (!all.length) end();
+        else void Promise.all(all.map((a) => a.finished)).then(end, () => {});
+      });
+      giveUp = window.setTimeout(skip, GIVE_UP_MS);
+    }
+    window.addEventListener('pointerdown', onPointer, true);
+    window.addEventListener('keydown', onKey, true);
+    el.addEventListener('focusin', onFocus);
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener('pointerdown', skip, true);
-      window.removeEventListener('keydown', skip, true);
+      clearTimeout(giveUp);
+      window.removeEventListener('pointerdown', onPointer, true);
+      window.removeEventListener('keydown', onKey, true);
+      el.removeEventListener('focusin', onFocus);
     };
   }, [active, phase, root]);
 

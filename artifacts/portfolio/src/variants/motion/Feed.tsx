@@ -19,13 +19,19 @@ function trace(main: HTMLElement): Shape | null {
   const scale = canvas.width / VIEW.w;
   const end: XY = [canvas.left - m.left + ENTRY[0] * scale, canvas.top - m.top + ENTRY[1] * (canvas.height / VIEW.h)];
   const start: XY = [bar.right - m.left, bar.top - m.top + bar.height / 2];
-  // Out of the bar's end, down past the header, across in the gap above the room, then down onto the wall.
-  const x1 = start[0] + 14;
-  const across = hero.bottom - m.top + Math.max(4, (stage.top - hero.bottom) / 2);
+  // Header above the room: out of the bar's end, down past the header, across in the gap, then down onto the wall.
+  // Header beside the room (the bar is lower than the top of the wall): out past the header's edge, up beside it,
+  // across over the top of the wall, then down into the corner.
+  const beside = start[1] > end[1] - 24;
+  const x1 = beside ? Math.max(start[0] + 14, hero.right - m.left + 12) : start[0] + 14;
+  const across = beside
+    ? Math.max(3, end[1] - Math.max(14, 22 * scale))
+    : hero.bottom - m.top + Math.max(4, (stage.top - hero.bottom) / 2);
   const dx = end[0] - x1, side = Math.sign(dx) || 1, cut = Math.min(CUT, Math.abs(dx) / 2);
+  const up = beside ? -1 : 1; // which way the line leaves the bar's level
   const points: XY[] = [
-    start, [x1 - CUT, start[1]], [x1, start[1] + CUT],
-    [x1, across - cut], [x1 + side * cut, across], [end[0] - side * cut, across], [end[0], across + cut],
+    start, [x1 - CUT, start[1]], [x1, start[1] + up * CUT],
+    [x1, across - up * cut], [x1 + side * cut, across], [end[0] - side * cut, across], [end[0], across + cut],
     end,
   ];
   const px = points.slice(1).reduce((sum, p, i) => sum + Math.hypot(p[0] - points[i][0], p[1] - points[i][1]), 0);

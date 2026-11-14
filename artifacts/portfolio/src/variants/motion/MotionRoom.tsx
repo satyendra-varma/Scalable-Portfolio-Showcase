@@ -7,11 +7,12 @@ import { Feed } from './Feed';
 import { MotionHeader } from './MotionHeader';
 import { MotionPanel } from './MotionPanel';
 import { MotionStage } from './MotionStage';
-import { ACCENT, type MotionId } from './options';
+import { ACCENT, type MotionId, type SpeedId } from './options';
 import { usePowerOn } from './usePowerOn';
 import '@/styles/room.css';
 import '../variants.css';
 import './room.css';
+import './fit.css';
 import './power.css';
 
 /**
@@ -20,11 +21,12 @@ import './power.css';
  *
  * `motion` picks the motion concept: 'a' Assembly, 'b' Power-on, 'c' Depth focus, or 'off', the still state that
  * reduced motion also gets. Power-on is built (usePowerOn, power.css); A and C show the still room for now.
+ * `speed` is how long Power-on's opening runs, in seconds (4, 6 or 8): the owner compares the three.
  * The page keys this component by motion, so choosing a motion starts it afresh.
  * The root carries the choice as data-motion and the accent as custom properties. --rm-progress (0 to 1) is what
  * the header's loading bar shows; it rests at 1, a full bar.
  */
-export function MotionRoom({ motion }: { motion: MotionId }) {
+export function MotionRoom({ motion, speed }: { motion: MotionId; speed?: SpeedId }) {
   const [open, setOpen] = useState<HotspotId | null>(null);
   const [listView, setListView] = useState(false);
   const [activeSkill, setActiveSkill] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export function MotionRoom({ motion }: { motion: MotionId }) {
   const style = { '--accent': ACCENT.hex, '--accent-ink': ACCENT.ink, '--evidence': ACCENT.support, '--rm-progress': 1 } as CSSProperties;
 
   return (
-    <div ref={root} className="rp rv rm" data-variant="room-motion" data-motion={motion} data-b={power} data-testid="room-motion" style={style}>
+    <div ref={root} className="rp rv rm" data-variant="room-motion" data-motion={motion} data-speed={motion === 'b' ? speed : undefined} data-b={power} data-testid="room-motion" style={style}>
       <a href="#rv-main" className="rp-skip">Skip to content</a>
       <header className="rp-bar rv-bar">
         <p className="rp-bar-tag">
@@ -83,7 +85,7 @@ export function MotionRoom({ motion }: { motion: MotionId }) {
           </div>
         ) : (
           <>
-            <MotionStage onOpen={onOpen} wire={power === 'opening'} />
+            <MotionStage onOpen={onOpen} wire={power === 'dark' || power === 'opening'} />
             <Feed />
           </>
         )}

@@ -1,28 +1,38 @@
 /*
  * Motion B, "Power-on" (docs/BRIEF-room-motion.md). Scoped to .rm[data-motion='b'].
  *
- * The room's root carries data-b: 'opening' (first visit), 'quick' (a return: power only, fast) or 'on' (running).
- * At rest the room is powered: every rule below only delays that picture. Each animation fills backwards, so its
- * first keyframe is what is on screen before it starts, and its last keyframe is the resting state.
+ * The room's root carries data-b (usePowerOn):
+ *   'dark'     the room is unpowered: dim linework, a charged loading bar, and every animation of the opening
+ *              held on its first frame (--rm-play: paused) until most of the room is on screen;
+ *   'opening'  the same animations, running: power leaves the bar, travels the feed and the traces, and each
+ *              object comes on as its trace arrives;
+ *   'on'       running. At rest the room is powered: every rule below only delays that picture.
+ * Each animation fills backwards, so its first keyframe is the dark room and its last is the resting state.
+ * "PRE" in the comments below means dark or opening:  .rm[data-b]:not([data-b='on']).
  *
  * Timing is geometry. Every trace segment carries --at (how far it starts from the room's entry point) and
  * --len (its length), in drawing units; every object carries the --at where its trace arrives (wiring.tsx).
- * With one speed, --rm-speed, the stylesheet lights the whole tree at a constant rate and lights each object
- * the moment its trace reaches it:  arrival = t0 + (feed + at) / speed.
+ * Power covers the feed and the furthest trace in --rm-travel seconds, at one constant speed, so each object
+ * comes on the moment its trace reaches it:  arrival = t0 + (feed + at) / speed.
  *
  * Motion budget: transform and opacity, plus one named exception, rm-b-draw, which animates stroke-dashoffset
  * to draw lines (allowed for this file only by src/styles/motion.test.ts).
  */
 .rv.rm[data-motion='b'] {
-  --rm-t0: 1s;         /* power leaves the loading bar: the linework is drawn by then */
-  --rm-speed: 1700;    /* drawing units a second along the traces: the furthest object lights at about 2.1s */
+  --rm-travel: 3.7;    /* seconds from the loading bar to the furthest object: the 6-second opening */
+  --rm-k: 1;           /* how long each object takes to come on, against the 6-second opening */
+  --rm-t0: calc(.45s * var(--rm-k)); /* the bar releases its charge, then power leaves it */
   --rm-feed: 320;      /* the feed's length from the loading bar to the room, in drawing units (Feed measures it) */
+  --rm-speed: calc((var(--rm-feed) + var(--rm-reach, 1442.5)) / var(--rm-travel)); /* drawing units a second */
+  /* The monitor is the last thing to finish coming on; the room's own light comes up with it. */
+  --rm-live: calc(var(--rm-t0) + (var(--rm-feed) + var(--rm-at-x, 1239.8)) / var(--rm-speed) * 1s + 1.45s * var(--rm-k));
+  --rm-play: running;
   --rm-spring: linear(0, .3 7%, .7 16%, .99 26%, 1.085 36%, 1.06 46%, 1.012 60%, .995 76%, 1);
   --rm-out: cubic-bezier(.2, .8, .2, 1);
 }
-.rv.rm[data-motion='b'][data-b='quick'] { --rm-t0: .1s; --rm-speed: 4600; }
+.rv.rm[data-b='dark'] { --rm-play: paused; }
 /* When this element's trace arrives. Declared on each element, because it depends on the element's own --at. */
-.rm[data-motion='b'] :is(.rm-stage, .rm-stage *) { --rm-arrive: calc(var(--rm-t0) + (var(--rm-feed) + var(--at, 0)) / var(--rm-speed) * 1s); }
+.rm[data-motion='b'] :is(.rm-stage, .rm-stage *, .rm-feed, .rm-feed *) { --rm-arrive: calc(var(--rm-t0) + (var(--rm-feed) + var(--at, 0)) / var(--rm-speed) * 1s); }
 
 @keyframes rm-b-draw { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
 @keyframes rm-b-fade-in { from { opacity: 0; } }
@@ -33,59 +43,75 @@
 @keyframes rm-b-tag { from { opacity: .42; } }
 @keyframes rm-b-dot { from { opacity: .3; transform: scale(.5); } }
 @keyframes rm-b-charge { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-@keyframes rm-b-discharge { 12% { opacity: .35; } 30% { opacity: 1; } 46% { opacity: .6; } }
-@keyframes rm-b-standby { from { opacity: .22; } }
+@keyframes rm-b-armed { to { opacity: .68; } }
+@keyframes rm-b-sweep { from { transform: translateX(-100%); } 94% { opacity: 1; } to { opacity: 0; transform: translateX(234%); } }
+@keyframes rm-b-discharge { 12% { opacity: .3; } 30% { opacity: 1; } 46% { opacity: .55; } }
+@keyframes rm-b-standby { 0%, 100% { opacity: .22; } 50% { opacity: .7; } }
+@keyframes rm-b-status-on { from { opacity: .22; transform: scale(.6); } 40% { opacity: 1; transform: scale(1.5); } to { opacity: 1; transform: none; } }
 @keyframes rm-b-blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
 @keyframes rm-b-status { 0%, 72% { opacity: 1; } 72.1%, 80% { opacity: .2; } 80.1%, 90% { opacity: 1; } 90.1%, 96% { opacity: .2; } 96.1%, 100% { opacity: 1; } }
 
-/* ============ Opening, part 1: the room draws itself as linework (the .rm-wire copy, strokes only) ============ */
+/* ============ Dark: the room is dim linework (the .rm-wire copy, strokes only), drawn once at page load ============ */
 .rm .rm-wire { position: absolute; inset: 0; display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.rm .rm-wire * { fill: none !important; stroke: var(--ln) !important; stroke-width: 1.1 !important; stroke-opacity: .78 !important; stroke-linecap: round; stroke-linejoin: round; }
+.rm .rm-wire * { fill: none !important; stroke: var(--ln) !important; stroke-width: 1.1 !important; stroke-opacity: .44 !important; stroke-linecap: round; stroke-linejoin: round; }
 .rm .rm-wire :is(ellipse, text, [fill^='url'], .rm-shelf-in, .rm-wood-grain, .rm-brushed) { display: none; }
-.rm .rm-wire .rm-label { display: block; fill: var(--muted) !important; stroke: none !important; }
+.rm .rm-wire .rm-label { display: block; fill: var(--muted) !important; fill-opacity: .55; stroke: none !important; }
 /* --len is each shape's own length, --wi its layer's place in the order and --wj its place in the layer (usePowerOn). */
-.rm[data-b='opening'] .rm-wire :is(path, polygon, polyline, rect, circle) {
-  stroke-dasharray: var(--len, 2000) calc(var(--len, 2000) + 4) !important;
+.rm[data-b]:not([data-b='on']) .rm-wire :is(path, polygon, polyline, rect, circle) { stroke-dasharray: var(--len, 2000) calc(var(--len, 2000) + 4) !important; }
+.rm[data-b='dark'] .rm-wire :is(path, polygon, polyline, rect, circle) {
   animation: rm-b-draw .58s cubic-bezier(.45, 0, .2, 1) calc(var(--wi, 0) * 50ms + var(--wj, 0) * 5ms) both;
 }
-.rm[data-b='opening'] .rm-wire .rm-label { animation: rm-b-fade-in .5s ease-out .45s both; }
-/* Each outline goes as its object lights; the floor's and the wall's go when the room's light comes up. */
-.rm[data-b='opening'] .rm-wire [data-wire] { animation: rm-b-fade-out .38s ease-out var(--rm-arrive) both; }
-.rm[data-b='opening'] .rm-wire [data-wire]:not([data-object]) { animation-duration: .7s; }
+.rm[data-b='dark'] .rm-wire .rm-label { animation: rm-b-fade-in .5s ease-out .45s both; }
+/* Each outline goes as its object comes on; the floor's and the wall's go when the room's light comes up. */
+.rm[data-b]:not([data-b='on']) .rm-wire [data-wire] { animation: rm-b-fade-out .38s ease-out var(--rm-arrive) both var(--rm-play); }
+.rm[data-b]:not([data-b='on']) .rm-wire [data-wire]:not([data-object]) { animation-duration: .7s; }
 
 /* The unpowered copper is part of the drawing: it is traced in with the linework, outward from the entry point. */
-.rm[data-b='opening'] :is(.rm-stage, .rm-feed) .rm-w-base {
+.rm[data-b='dark'] :is(.rm-stage, .rm-feed) .rm-w-base {
   stroke-dasharray: var(--len) calc(var(--len) + 4);
   animation: rm-b-draw .5s var(--rm-out) calc(.28s + var(--at, 0) * .28ms) both;
 }
-.rm[data-b='opening'] .rm-trace-dim { animation: rm-b-fade-in .6s ease-out .5s both; }
+.rm[data-b='dark'] .rm-trace-dim { animation: rm-b-fade-in .6s ease-out .5s both; }
 
-/* The loading bar charges while the room is drawn, and dips as the charge leaves it. The status light waits for it. */
-.rm[data-b='opening'] .rmh-bar-fill { animation: rm-b-charge var(--rm-t0) cubic-bezier(.3, 0, .35, 1) both; }
-.rm[data-b='opening'] .rmh-bar { animation: rm-b-discharge .8s ease-out var(--rm-t0) both; }
-.rm[data-b='opening'] .rmh .rv-role::before { animation: rm-b-standby .3s var(--rm-out) var(--rm-t0) both; }
+/* The loading bar charges at page load, then waits, breathing, until the room is seen. */
+.rm[data-motion='b'] .rmh-bar { position: relative; }
+.rm[data-b='dark'] .rmh-bar-fill { animation: rm-b-charge 1.1s cubic-bezier(.3, 0, .35, 1) both; }
+.rm[data-b='dark'] .rmh-bar { animation: rm-b-armed 1.4s ease-in-out 1.2s infinite alternate; }
+/* The status light stands by until the room is live. */
+.rm[data-b]:not([data-b='on']) .rmh .rv-role::before {
+  animation: rm-b-standby 1.3s step-end infinite, rm-b-status-on .6s var(--rm-out) var(--rm-live) forwards var(--rm-play);
+}
+
+/* ============ Opening, part 1: the bar releases its charge ============
+   A bright block runs along the bar's segments and leaves by its end, where the feed begins; the bar dips after it. */
+.rm[data-b]:not([data-b='on']) .rmh-bar::after {
+  content: ''; position: absolute; inset: 0 auto 0 0; width: 30%;
+  background: linear-gradient(90deg, transparent, #FFF3D6 62%, #fff);
+  animation: rm-b-sweep var(--rm-t0) cubic-bezier(.55, 0, .9, .55) both var(--rm-play);
+}
+.rm[data-b='opening'] .rmh-bar { animation: rm-b-discharge .9s ease-out var(--rm-t0) both; }
 
 /* ============ Opening, part 2: power runs down the feed and along the traces ============ */
-.rm:is([data-b='opening'], [data-b='quick']) .rm-feed :is(.rm-w-lit, .rm-w-glow) {
-  animation: rm-b-draw calc(var(--rm-feed) / var(--rm-speed) * 1s) linear var(--rm-t0) both;
+.rm[data-b]:not([data-b='on']) .rm-feed :is(.rm-w-lit, .rm-w-glow) {
+  animation: rm-b-draw calc(var(--rm-feed) / var(--rm-speed) * 1s) linear var(--rm-t0) both var(--rm-play);
 }
-.rm:is([data-b='opening'], [data-b='quick']) .rm-stage :is(.rm-w-lit, .rm-w-glow) {
-  animation: rm-b-draw calc(var(--len) / var(--rm-speed) * 1s) linear var(--rm-arrive) both;
+.rm[data-b]:not([data-b='on']) .rm-stage :is(.rm-w-lit, .rm-w-glow) {
+  animation: rm-b-draw calc(var(--len) / var(--rm-speed) * 1s) linear var(--rm-arrive) both var(--rm-play);
 }
 .rm[data-motion='b'] .rm-pad { transform-box: fill-box; transform-origin: center; }
-.rm:is([data-b='opening'], [data-b='quick']) .rm-pad { animation: rm-b-pad .5s var(--rm-spring) var(--rm-arrive) both; }
+.rm[data-b]:not([data-b='on']) .rm-pad { animation: rm-b-pad .5s var(--rm-spring) var(--rm-arrive) both var(--rm-play); }
 
-/* ...and each object lights as its trace arrives: it lands with a slight overshoot, and its glow flashes. */
-.rm[data-b='opening'] .rm-layer[data-object] { animation: rm-b-light .66s var(--rm-spring) var(--rm-arrive) both; }
-.rm:is([data-b='opening'], [data-b='quick']) .rm-bloom { animation: rm-b-bloom .8s ease-out var(--rm-arrive) both; }
+/* ============ Opening, part 3: each object comes on as its trace arrives ============ */
+.rm[data-b]:not([data-b='on']) .rm-layer[data-object] { animation: rm-b-light .66s var(--rm-spring) var(--rm-arrive) both var(--rm-play); }
+.rm[data-b]:not([data-b='on']) .rm-bloom { animation: rm-b-bloom .8s ease-out var(--rm-arrive) both var(--rm-play); }
 /* The room's own light comes up when the monitor does. */
-.rm[data-b='opening'] .rm-layer:is([data-layer='light'], [data-layer='floor'], [data-layer='shadows'], [data-layer='guides'], [data-layer='wall']) {
-  animation: rm-b-fade-in .7s ease-out var(--rm-arrive) both;
+.rm[data-b]:not([data-b='on']) .rm-layer:is([data-layer='light'], [data-layer='floor'], [data-layer='shadows'], [data-layer='guides'], [data-layer='wall']) {
+  animation: rm-b-fade-in .7s ease-out var(--rm-arrive) both var(--rm-play);
 }
 /* Labels are usable from the first frame, but read as unpowered until their object is. */
-.rm:is([data-b='opening'], [data-b='quick']) .rv-hotspots > li { animation: rm-b-tag .4s ease-out var(--rm-arrive) both; }
-.rm:is([data-b='opening'], [data-b='quick']) .rv-hotspot-dot { animation: rm-b-dot .55s var(--rm-spring) var(--rm-arrive) both; }
-.rm:is([data-b='opening'], [data-b='quick']) .rv-hotspot-dot::after { animation: none; }
+.rm[data-b]:not([data-b='on']) .rv-hotspots > li { animation: rm-b-tag .4s ease-out var(--rm-arrive) both var(--rm-play); }
+.rm[data-b]:not([data-b='on']) .rv-hotspot-dot { animation: rm-b-dot .55s var(--rm-spring) var(--rm-arrive) both var(--rm-play); }
+.rm[data-b]:not([data-b='on']) .rv-hotspot-dot::after { animation: none; }
 
 /* ============ Idle (data-b='on'): packets are run from script (usePowerOn); these are the small signs of life ============ */
 .rm[data-b='on'] .rm-cursor { animation: rm-b-blink 3.2s step-end infinite; }

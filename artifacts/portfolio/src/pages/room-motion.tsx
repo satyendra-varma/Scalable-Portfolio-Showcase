@@ -3,7 +3,7 @@ import { useSearch } from 'wouter';
 import { useDocumentMeta } from '@/hooks/use-document-meta';
 import { MotionRoom } from '@/variants/motion/MotionRoom';
 import { MotionSwitcher } from '@/variants/motion/MotionSwitcher';
-import { parseMotion, type MotionId } from '@/variants/motion/options';
+import { parseMotion, parseSpeed, type MotionId } from '@/variants/motion/options';
 
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
 
@@ -23,7 +23,10 @@ const startsCollapsed = () =>
 
 /** Owner's comparison page: the room with three motion concepts. Not for search engines. */
 export default function RoomMotionPage() {
-  const motion = parseMotion(useSearch());
+  const search = useSearch();
+  const motion = parseMotion(search);
+  const speed = parseSpeed(search);
+  const [replay, setReplay] = useState(0);
   const reduced = useSyncExternalStore(subscribeReduced, reducedSnapshot, reducedServerSnapshot);
   const shownMotion: MotionId = reduced ? 'off' : motion;
   const [collapsed, setCollapsedState] = useState(startsCollapsed);
@@ -41,13 +44,15 @@ export default function RoomMotionPage() {
 
   return (
     <div className="rms-page" data-switcher={collapsed ? 'collapsed' : 'open'}>
-      {/* Keyed by motion: choosing a motion starts it afresh. */}
-      <MotionRoom key={shownMotion} motion={shownMotion} />
+      {/* Keyed by motion, speed and replay count: choosing any of them starts the room afresh. */}
+      <MotionRoom key={`${shownMotion}-${speed}-${replay}`} motion={shownMotion} speed={speed} />
       <MotionSwitcher
         shownMotion={shownMotion}
         reducedMotion={reduced}
+        speed={speed}
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
+        onReplay={() => setReplay((n) => n + 1)}
       />
     </div>
   );
