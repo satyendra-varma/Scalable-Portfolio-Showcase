@@ -1,0 +1,85 @@
+/*
+ * Shared base for the room variants (docs/DESIGN-BRIEF.md).
+ * Variants override tokens and draw their own scene in variants/<id>/; selectors there stay
+ * scoped to .rv[data-variant='<id>']. Motion: transform and opacity only.
+ */
+
+/* Layout: hero first, scene below, at every width. */
+.rv { --hot: var(--bg); --stage-ratio: 16 / 10; --stage-max: 1120px; background-color: var(--bg); }
+.rv .rv-main { padding: 8px clamp(16px, 4vw, 48px) 40px; max-width: 1360px; margin: 0 auto; }
+.rv .rv-hero { position: relative; isolation: isolate; padding: clamp(14px, 3.2vw, 40px) 0 clamp(16px, 2.6vw, 30px); }
+/* Optional per-concept hero decoration (aria-hidden), painted behind the heading text. */
+.rv-hero-decor { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.rv .rv-pos { max-width: 23.25em; }
+
+/* Stage: the decorative drawing plus absolutely positioned hotspot buttons. */
+.rv-figure { margin: 0; }
+.rv-stage { position: relative; width: 100%; max-width: var(--stage-max); margin: 0 auto; aspect-ratio: var(--stage-ratio); }
+.rv-stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+.rv-caption { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; }
+
+.rv-hotspots { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; }
+.rv-hotspots li { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); }
+@media (max-width: 600px) { .rv-hotspots li { left: var(--mx, var(--x)); top: var(--my, var(--y)); } }
+
+/* Hotspots: real buttons, visible labels, opaque background, at least 28px tall. */
+.rv-hotspot {
+  display: flex; align-items: center; gap: 7px; min-height: 28px; padding: 4px 10px 4px 7px; cursor: pointer; text-align: left; white-space: nowrap;
+  font: 600 12px/1.15 var(--mono); color: var(--ink); background: var(--hot); border: 1px solid var(--accent); border-radius: var(--radius);
+  transition: transform .2s ease;
+}
+.rv-hotspot-label { display: block; }
+.rv-hotspot-object { display: block; font-weight: 400; font-size: 10px; color: var(--muted); }
+.rv-hotspot-dot { position: relative; flex: none; width: 9px; height: 9px; border-radius: 2px; background: var(--accent); }
+.rv-hotspot-dot::after {
+  content: ''; position: absolute; inset: -4px; border-radius: 3px; border: 2px solid var(--accent); opacity: 0;
+  animation: rv-pulse 2.6s ease-out infinite; animation-delay: calc(var(--i) * .4s);
+}
+@keyframes rv-pulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.1); opacity: 0; } }
+.rv-hotspot:hover { transform: translateY(-2px); background: var(--accent); color: var(--accent-ink); }
+.rv-hotspot:hover .rv-hotspot-object { color: var(--accent-ink); }
+/* Focus: a static outline (no motion needed to see it). */
+.rv-hotspot:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+/* The desk monitor is the focal point: filled accent label. */
+.rv-hotspot.is-focal { background: var(--accent); color: var(--accent-ink); font-size: 13px; min-height: 34px; padding: 6px 13px 6px 9px; }
+.rv-hotspot.is-focal .rv-hotspot-object { color: var(--accent-ink); }
+.rv-hotspot.is-focal .rv-hotspot-dot { background: var(--accent-ink); }
+.rv-hotspot.is-focal .rv-hotspot-dot::after { border-color: var(--accent-ink); }
+.rv-hotspot.is-focal:focus-visible { outline-color: var(--ink); }
+
+@media (max-width: 600px) {
+  .rv-hotspot { font-size: 11px; padding: 3px 8px 3px 6px; }
+  .rv-hotspot .rv-hotspot-object { display: none; }
+  .rv-hotspot.is-focal { font-size: 12px; min-height: 30px; }
+}
+
+/* Comparison dock (outside the themed room, so it looks the same for every variant). */
+.rv-page { min-height: 100dvh; padding-bottom: 168px; background: #05080c; }
+.rv-dock {
+  position: fixed; z-index: 40; left: 50%; bottom: 12px; transform: translateX(-50%); width: min(1000px, calc(100% - 20px));
+  display: grid; gap: 6px; padding: 8px; border-radius: 14px; background: #05080c; border: 1px solid #ffffff38; box-shadow: 0 12px 32px #000a; color: #f2f5f8;
+}
+/* Row 1: the concepts. Row 2: the current concept's accent options, one click each. */
+.rv-dock-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.rv-dock-accents { border-top: 1px solid #ffffff24; padding-top: 6px; }
+.rv-dock-link {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 9px; align-items: center; min-height: 44px; padding: 7px 10px;
+  border-radius: 10px; border: 1px solid transparent; color: #f2f5f8; text-decoration: none;
+}
+.rv-dock-link:hover { border-color: #ffffff38; }
+.rv-dock-link[aria-current] { border-color: #f2f5f8; background: #1a2027; }
+.rv-dock-tri { grid-row: span 2; display: flex; gap: 2px; }
+.rv-dock-tri i { display: block; width: 6px; height: 16px; border-radius: 2px; box-shadow: 0 0 0 1px #ffffff40; }
+@media (max-width: 640px) {
+  .rv-dock-link { padding: 6px 7px; column-gap: 7px; }
+  .rv-dock-variants .rv-dock-meta { display: none; }
+}
+.rv-dock-link:focus-visible { outline: 3px solid #f2f5f8; outline-offset: 2px; }
+.rv-dock-swatch { grid-row: span 2; width: 14px; height: 14px; border-radius: 50%; background: var(--sw); box-shadow: 0 0 0 2px #05080c, 0 0 0 3px #ffffff59; }
+.rv-dock-name { font: 700 13px 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif; }
+.rv-dock-meta { font: 400 11px 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace; color: #b4bec9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rv-dock, .rv-dock * { transition: none !important; animation: none !important; }
+}

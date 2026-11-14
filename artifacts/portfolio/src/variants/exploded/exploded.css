@@ -1,0 +1,228 @@
+/* Variation 4 — Exploded: a teardown under studio light. Palette from docs/DESIGN-BRIEF.md; keep every selector scoped to this variant. */
+.rv[data-variant='exploded'] {
+  --bg: #1A1918; --surface: #22211F; --chip: #2A2826; --hot: #121110;
+  --ink: #F4F1EB; --muted: #B8B2A8; /* accents come from registry.ts */
+  --line: #47443F; --grid: #47443F40;
+  --ln: #A39D93; --ln-dim: #77726A; /* warm neutral line greys */
+  --stage-ratio: 3 / 2; --stage-max: 1120px;
+  background: var(--bg);
+}
+
+/* ---------- Page chrome and hero ---------- */
+.rv[data-variant='exploded'] .rp-bar { border-bottom-color: var(--line); }
+.rv[data-variant='exploded'] .rp-pill { background: var(--accent); color: var(--accent-ink); }
+.rv[data-variant='exploded'] .rp-bar-link { border-radius: 8px; border-color: var(--ln-dim); }
+
+.rv[data-variant='exploded'] .rv-hero { padding: clamp(28px, 5.5vw, 76px) 0 clamp(4px, 1vw, 12px); position: relative; }
+.rv[data-variant='exploded'] .rv-name {
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif;
+  font-weight: 700; font-size: clamp(40px, 7.2vw, 104px); line-height: .92; letter-spacing: -.055em;
+  max-width: none; text-wrap: balance; color: var(--ink);
+}
+.rv[data-variant='exploded'] .rv-role {
+  font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace;
+  margin-top: clamp(12px, 1.6vw, 20px); color: var(--accent); font-size: clamp(12px, 1.3vw, 16px); letter-spacing: .12em;
+}
+.rv[data-variant='exploded'] .rv-pos { color: var(--muted); margin-top: 10px; font-size: clamp(15px, 1.4vw, 18px); }
+.rv[data-variant='exploded'] .rv-toggle { border-radius: 8px; border-color: var(--ln-dim); margin-top: 14px; }
+.rv[data-variant='exploded'] .rv-toggle:hover { border-color: var(--accent); }
+
+/* ---------- Hero typography: the name, exploded ---------- */
+.rv[data-variant='exploded'] .xd-hd {
+  --N: clamp(40px, 7.2vw, 104px);
+  --top: clamp(28px, 5.5vw, 76px);
+  position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible;
+}
+.rv[data-variant='exploded'] .xd-hd-text {
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif; font-weight: 700; letter-spacing: -.045em;
+  font-size: clamp(20px, 5vw, 76px); fill: none; stroke: var(--ln); stroke-opacity: .42; stroke-width: 1.2px; stroke-linejoin: round;
+  transform: translate(clamp(-16px, -1.4vw, -5px), calc(var(--top) - var(--N) * .12));
+}
+.rv[data-variant='exploded'] .xd-hd-g {
+  y: calc(var(--top) - var(--N) * .12); height: calc(var(--N) * .3); fill: none; stroke: var(--ln); stroke-opacity: .5; stroke-width: 1.2px; stroke-dasharray: 3 5;
+}
+.rv[data-variant='exploded'] .xd-hd-g1 { x: 3px; }
+.rv[data-variant='exploded'] .xd-hd-g2 { x: 22%; }
+.rv[data-variant='exploded'] .xd-hd-g3 { x: 47%; }
+
+/* ---------- Light: the studio sweep behind the drawing ---------- */
+.rv[data-variant='exploded'] .rv-stage { margin-top: 0; }
+.rv[data-variant='exploded'] .rv-stage::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 50% 54% at 50% 46%, #46423C 0%, #34312C 40%, #24221F 72%, transparent 100%);
+  opacity: .8;
+}
+.rv[data-variant='exploded'] .xd-svg { font-family: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace; }
+.rv[data-variant='exploded'] .xd-svg path,
+.rv[data-variant='exploded'] .xd-svg polygon,
+.rv[data-variant='exploded'] .xd-svg polyline,
+.rv[data-variant='exploded'] .xd-svg rect { stroke-linejoin: round; stroke-linecap: round; }
+.rv[data-variant='exploded'] .xd-spot, .rv[data-variant='exploded'] .xd-lit, .rv[data-variant='exploded'] .xd-glow, .rv[data-variant='exploded'] .xd-aura { pointer-events: none; }
+.rv[data-variant='exploded'] .xd-aura { opacity: .45; }
+
+/* floor plate */
+.rv[data-variant='exploded'] .xd-plate { fill: #2B2926; stroke: var(--ln-dim); stroke-width: 1.4; }
+.rv[data-variant='exploded'] .xd-plate-side { fill: #201E1C; stroke: var(--ln-dim); stroke-width: 1.2; }
+.rv[data-variant='exploded'] .xd-plate-side-r { fill: #171615; }
+.rv[data-variant='exploded'] .xd-plate-edge { fill: none; stroke: var(--ln); stroke-width: 1.6; }
+.rv[data-variant='exploded'] .xd-grid { fill: none; stroke: #D8D2C6; stroke-opacity: .07; stroke-width: 1; }
+.rv[data-variant='exploded'] .xd-fp { fill: #fff; fill-opacity: .03; stroke: var(--ln); stroke-opacity: .4; stroke-width: 1.2; }
+.rv[data-variant='exploded'] .xd-dim { fill: none; stroke: var(--ln); stroke-opacity: .6; stroke-width: 1.2; }
+.rv[data-variant='exploded'] .xd-label { font-size: 17px; fill: var(--muted); letter-spacing: .08em; }
+
+/* traces */
+.rv[data-variant='exploded'] .xd-trace { fill: none; stroke: var(--accent); stroke-opacity: .34; stroke-width: 1.8; stroke-linejoin: miter; }
+.rv[data-variant='exploded'] .xd-trace-dim { stroke-opacity: .13; }
+.rv[data-variant='exploded'] .xd-pad { fill: #1F1D1B; stroke: var(--accent); stroke-opacity: .75; stroke-width: 1.6; }
+
+/* contact shadows: tighter and darker under low parts, wider and fainter under high ones */
+.rv[data-variant='exploded'] .xd-sh { transform-box: fill-box; transform-origin: center; transition: transform .3s cubic-bezier(.2, .7, .2, 1), opacity .3s ease; pointer-events: none; }
+.rv[data-variant='exploded'] .xd-sh-wall { opacity: .8; }
+
+/* guides */
+.rv[data-variant='exploded'] .xd-guides path { fill: none; stroke: var(--ln); stroke-opacity: .42; stroke-width: 1.2; stroke-dasharray: 3 6; }
+
+/* shaded volumes: top lightest, left mid, right darkest */
+.rv[data-variant='exploded'] .xd-box polygon { stroke: #0F0E0D; stroke-opacity: .55; stroke-width: 1; }
+.rv[data-variant='exploded'] .xd-top { fill: url(#xd-g-top); }
+.rv[data-variant='exploded'] .xd-fv { fill: url(#xd-g-left); }
+.rv[data-variant='exploded'] .xd-fu { fill: url(#xd-g-right); }
+.rv[data-variant='exploded'] .xd-hl { fill: none; stroke: #E2DCD0; stroke-opacity: .5; stroke-width: 1.2; }
+.rv[data-variant='exploded'] .xd-edge-active { fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-opacity: .9; }
+.rv[data-variant='exploded'] .xd-leg { fill: none; stroke: var(--ln); stroke-width: 4; stroke-opacity: .7; }
+
+/* wall slabs */
+.rv[data-variant='exploded'] .xd-slab .xd-fu { fill: url(#xd-g-wall); }
+.rv[data-variant='exploded'] .xd-slab-b .xd-fv { fill: url(#xd-g-wall); }
+.rv[data-variant='exploded'] .xd-slab-b .xd-fu { fill: #262422; }
+.rv[data-variant='exploded'] .xd-frame { fill: #3A3733; stroke: var(--ln); stroke-width: 1.5; }
+.rv[data-variant='exploded'] .xd-frame-in { fill: #151413; stroke: var(--ln-dim); stroke-width: 1; }
+.rv[data-variant='exploded'] .xd-node { fill: #2D2B28; stroke: var(--ln); stroke-width: 1.4; }
+.rv[data-variant='exploded'] .xd-node-a { stroke: var(--accent); }
+.rv[data-variant='exploded'] .xd-link { fill: none; stroke: var(--accent); stroke-opacity: .7; stroke-width: 1.6; stroke-linejoin: miter; }
+
+/* shelf: wood grain, with skill-name book spines */
+.rv[data-variant='exploded'] .xd-wood-base { fill: #6A5C4E; stroke: #2A241E; stroke-width: 1; }
+.rv[data-variant='exploded'] .xd-wood-grain { stroke: none; }
+.rv[data-variant='exploded'] .xd-shelf-in { fill: #14110E; fill-opacity: .66; }
+.rv[data-variant='exploded'] .xd-board { fill: none; stroke: #7E6E5D; stroke-width: 5; stroke-linecap: butt; }
+.rv[data-variant='exploded'] .xd-bk rect { fill: #3F3B36; stroke: var(--ln); stroke-opacity: .4; stroke-width: .8; }
+.rv[data-variant='exploded'] .xd-bk text { font-size: 8.5px; font-weight: 500; fill: var(--ink); letter-spacing: .02em; }
+.rv[data-variant='exploded'] .xd-bk-l rect { fill: #57524B; }
+.rv[data-variant='exploded'] .xd-bk-a rect { fill: var(--accent); stroke: none; }
+.rv[data-variant='exploded'] .xd-bk-a text { fill: var(--accent-ink); font-weight: 600; }
+
+/* cabinet and mailbox: matte, with highlight edges */
+.rv[data-variant='exploded'] .xd-drawer { fill: #3F3C38; stroke: #A39D93; stroke-opacity: .42; stroke-width: .9; }
+.rv[data-variant='exploded'] .xd-handle { fill: #C4BDB0; fill-opacity: .8; }
+.rv[data-variant='exploded'] .xd-slot { fill: #0E0D0C; }
+.rv[data-variant='exploded'] .xd-flag { fill: var(--accent); stroke: #0F0E0D; stroke-opacity: .5; stroke-width: .8; }
+
+/* desk: brushed metal; monitor: glass */
+.rv[data-variant='exploded'] .xd-desk .xd-top { fill: url(#xd-g-desk-top); }
+.rv[data-variant='exploded'] .xd-brushed { stroke: none; pointer-events: none; }
+.rv[data-variant='exploded'] .xd-monitor .xd-fv { fill: #1B1A19; }
+.rv[data-variant='exploded'] .xd-monitor .xd-fu { fill: #0F0E0D; }
+.rv[data-variant='exploded'] .xd-monitor .xd-top { fill: #403C37; }
+.rv[data-variant='exploded'] .xd-key .xd-top { fill: #55504A; }
+.rv[data-variant='exploded'] .xd-screen { fill: url(#xd-g-glass); stroke: #000; stroke-opacity: .6; stroke-width: 1; }
+.rv[data-variant='exploded'] .xd-screen-bar { stroke: var(--accent); stroke-opacity: .45; stroke-width: 1; fill: none; }
+.rv[data-variant='exploded'] .xd-dot { fill: var(--ln); }
+.rv[data-variant='exploded'] .xd-dot-t { fill: var(--accent); }
+.rv[data-variant='exploded'] .xd-prompt { font-size: 15px; font-weight: 600; fill: var(--ink); }
+.rv[data-variant='exploded'] .xd-cursor { fill: var(--accent); }
+.rv[data-variant='exploded'] .xd-code { fill: none; stroke-width: 5; stroke-linecap: round; }
+.rv[data-variant='exploded'] .xd-code-a { stroke: var(--ln); stroke-opacity: .75; }
+.rv[data-variant='exploded'] .xd-code-b { stroke: var(--accent); stroke-opacity: .9; }
+.rv[data-variant='exploded'] .xd-code-t { stroke: var(--evidence); stroke-opacity: .85; }
+
+/* ---------- Discoverable detail: pointing at or focusing a hotspot lifts its part ---------- */
+.rv[data-variant='exploded'] .xd-obj { transition: transform .3s cubic-bezier(.2, .7, .2, 1); }
+.rv[data-variant='exploded'] .rv-stage:has([data-hotspot='explorer']:is(:hover, :focus-visible)) [data-object='explorer'] { transform: translateY(-18px); }
+.rv[data-variant='exploded'] .rv-stage:has([data-hotspot='skills']:is(:hover, :focus-visible)) [data-object='skills'] { transform: translateY(-14px); }
+.rv[data-variant='exploded'] .rv-stage:has([data-hotspot='projects']:is(:hover, :focus-visible)) [data-object='projects'] { transform: translateY(-14px); }
+.rv[data-variant='exploded'] .rv-stage:has([data-hotspot='experience']:is(:hover, :focus-visible)) [data-object='experience'] { transform: translateY(-16px); }
+.rv[data-variant='exploded'] .rv-stage:has([data-hotspot='contact']:is(:hover, :focus-visible)) [data-object='contact'] { transform: translateY(-16px); }
+.rv[data-variant='exploded'] .rv-stage:has([data-hotspot='explorer']:is(:hover, :focus-visible)) .xd-sh-desk { transform: scale(.78); opacity: .45; }
+.rv[data-variant='exploded'] .rv-stage:has([data-hotspot='experience']:is(:hover, :focus-visible)) .xd-sh-cab { transform: scale(.72); opacity: .4; }
+.rv[data-variant='exploded'] .rv-stage:has([data-hotspot='contact']:is(:hover, :focus-visible)) .xd-sh-mail { transform: scale(.72); opacity: .4; }
+.rv[data-variant='exploded'] .rv-stage:has([data-hotspot='skills']:is(:hover, :focus-visible)) .xd-sh-wall,
+.rv[data-variant='exploded'] .rv-stage:has([data-hotspot='projects']:is(:hover, :focus-visible)) .xd-sh-wall { transform: scale(.9); opacity: .5; }
+
+/* ---------- Packet stream (transform and opacity only) ---------- */
+.rv[data-variant='exploded'] .xd-pk { opacity: 0; transform: translate(650px, 507px); }
+.rv[data-variant='exploded'] .xd-core { fill: var(--accent); }
+.rv[data-variant='exploded'] .xd-halo { fill: var(--accent); fill-opacity: .25; }
+.rv[data-variant='exploded'] .xd-pk-a1 { animation: exploded-pk-a 7s linear 0s infinite; }
+.rv[data-variant='exploded'] .xd-pk-b1 { animation: exploded-pk-b 7s linear 1.9s infinite; }
+.rv[data-variant='exploded'] .xd-pk-c1 { animation: exploded-pk-c 7s linear 3.8s infinite; }
+.rv[data-variant='exploded'] .xd-pk-a2 { animation: exploded-pk-a 7s linear 5.4s infinite; }
+.rv[data-variant='exploded'] .xd-cursor { animation: exploded-blink 3.2s linear infinite; }
+
+@keyframes exploded-blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+@keyframes exploded-settle { from { transform: translateY(-16px); opacity: 0; } }
+/* layers settle into place on load (backwards fill: the resting state is the finished drawing) */
+.rv[data-variant='exploded'] .xd-layer { animation: exploded-settle .9s cubic-bezier(.2, .8, .2, 1) backwards; }
+.rv[data-variant='exploded'] .xd-l-traces { animation-delay: .1s; }
+.rv[data-variant='exploded'] .xd-l-desk { animation-delay: .2s; }
+.rv[data-variant='exploded'] .xd-l-cab, .rv[data-variant='exploded'] .xd-l-mail { animation-delay: .32s; }
+.rv[data-variant='exploded'] .xd-l-wall { animation-delay: .44s; }
+
+/* ---------- Hotspots ---------- */
+.rv[data-variant='exploded'] .rv-hotspot { border-radius: 8px; border: 1px solid var(--accent); box-shadow: none; }
+.rv[data-variant='exploded'] .rv-hotspot-dot { border-radius: 50%; }
+.rv[data-variant='exploded'] .rv-hotspot-dot::after { border-radius: 50%; }
+.rv[data-variant='exploded'] .rv-hotspot.is-focal { border-radius: 10px; }
+
+/* ---------- Explorer entrance: the panel's content rises from the desk monitor and settles ----------
+   The dialog box itself stays at full size (it only fades in), so the panel is measurable from the first frame. */
+.rv[data-variant='exploded'] .rd-backdrop.is-full { animation: exploded-fade .26s ease backwards; }
+.rv[data-variant='exploded'] .rd-backdrop.is-full .rd-dialog { animation: exploded-fade .3s ease backwards; }
+.rv[data-variant='exploded'] .rd-backdrop.is-full .rd-head {
+  transform-origin: var(--open-x, 50%) var(--open-y, 50%);
+  animation: exploded-rise .48s cubic-bezier(.2, .9, .25, 1.1) backwards;
+}
+.rv[data-variant='exploded'] .rd-backdrop.is-full .rd-body {
+  transform-origin: var(--open-x, 50%) calc(var(--open-y, 50%) - 66px);
+  animation: exploded-rise .48s cubic-bezier(.2, .9, .25, 1.1) backwards;
+}
+@keyframes exploded-fade { from { opacity: 0; } }
+@keyframes exploded-rise { from { transform: translateY(28px) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ---------- Phone: the same drawing, cropped in to the middle so the monitor reads ---------- */
+@media (max-width: 600px) {
+  .rv[data-variant='exploded'] { --stage-ratio: 6 / 5; }
+  .rv[data-variant='exploded'] .rv-stage { overflow: hidden; }
+  .rv[data-variant='exploded'] .rv-stage > svg { inset: auto; left: -15%; top: -2%; width: 130%; height: 104%; }
+  .rv[data-variant='exploded'] .rv-name { letter-spacing: -.05em; }
+  .rv[data-variant='exploded'] .xd-label { font-size: 19px; }
+}
+
+/* ---------- Packet routes (generated from the scene's route list) ---------- */
+@keyframes exploded-pk-a {
+  0% { transform: translate(650px, 507px); opacity: 0; }
+  8% { transform: translate(650px, 507px); opacity: 1; }
+  26.9% { transform: translate(650px, 635px); opacity: 1; }
+  45.9% { transform: translate(765px, 693px); opacity: 1; }
+  74.0% { transform: translate(935px, 608px); opacity: 1; }
+  80% { transform: translate(935px, 608px); opacity: 0; }
+  100% { transform: translate(935px, 608px); opacity: 0; }
+}
+@keyframes exploded-pk-b {
+  0% { transform: translate(650px, 507px); opacity: 0; }
+  8% { transform: translate(650px, 507px); opacity: 1; }
+  25.6% { transform: translate(650px, 635px); opacity: 1; }
+  34.0% { transform: translate(595px, 663px); opacity: 1; }
+  74.0% { transform: translate(335px, 533px); opacity: 1; }
+  80% { transform: translate(335px, 533px); opacity: 0; }
+  100% { transform: translate(335px, 533px); opacity: 0; }
+}
+@keyframes exploded-pk-c {
+  0% { transform: translate(650px, 507px); opacity: 0; }
+  8% { transform: translate(650px, 507px); opacity: 1; }
+  43.9% { transform: translate(650px, 635px); opacity: 1; }
+  74.0% { transform: translate(554px, 683px); opacity: 1; }
+  80% { transform: translate(554px, 683px); opacity: 0; }
+  100% { transform: translate(554px, 683px); opacity: 0; }
+}
+

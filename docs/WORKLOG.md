@@ -321,6 +321,127 @@ Local checks ran on Windows 11 against a clean copy of each commit: frozen insta
 - Interface text: hotspot names, buttons, filter status messages, "Live link coming soon" and "Resume download unavailable".
 - The System Explorer's CRM flow notes, which are design annotations labeled "Representative design (to confirm)" rather than resume claims.
 
+## Room variations and concepts — rounds 1 and 2 (2026-11-09 to 2026-11-11)
+
+Two design rounds for the engineer's room, both for the owner to compare and pick from. Nothing is merged to main, and the homepage `/` still shows the earlier room; the only homepage changes are the shared System Explorer and the focus fix below.
+
+- **Round 1** (`feature/night-room-variants`, local only): four night-blueprint variations at `/room-variants`: Isometric, Elevation, Plan and Exploded.
+- **Round 2** (`feature/room-concepts`, built on round 1 and pushed on 2026-11-11): the owner said round 1 "looked like the same design in different colours", rejected Plan and purple, and kept Isometric's composition and Elevation's amber. Round 2 removes Plan, develops the other three into separate media (the drawing, the screen, the object), and gives each three accent options at `/room-concepts`.
+
+The design decisions are in `docs/DESIGN-BRIEF.md`. Sonnet sub-agents built each variation and concept in parallel; Haiku sub-agents ran the screenshots, contrast checks and Lighthouse.
+
+### Commits and local checks
+
+Every commit was checked in a clean copy on Windows 11: build, unit tests, API tests and Playwright (desktop and mobile).
+
+| Commit | What | Unit | API | Playwright |
+| --- | --- | --- | --- | --- |
+| `55ae70e` | Round 1 design brief | docs only; checked with the next commit | | |
+| `8d66635` | EF Core Global Query Filters chip (Architecture and testing) | 26/26 | 5/5 | 14/14 |
+| `f873391` | Shared full-screen System Explorer | 30/30 | 5/5 | 14/14 |
+| `10a77d4` | Comparison page and variation shell | 57/57 | 5/5 | 26/26 on the second attempt |
+| `fa55402` | Variation 1: Isometric | 57/57 | 5/5 | 25/26; fixed by the next commit |
+| `145b9a2` | Focus returns to the opener when a panel closes | 62/62 | 5/5 | 26/26 |
+| `eecd23d` | Variation 2: Elevation | 62/62 | 5/5 | 26/26 |
+| `f4b8c31` | Variation 3: Plan | 62/62 | 5/5 | 26/26 |
+| `954dffe` | Variation 4: Exploded | 62/62 | 5/5 | 26/26 |
+| `78ce21c` | Round 1 contact sheet, screenshots, contrast table | 62/62 | 5/5 | 26/26 |
+| `853a627` | Round 2 design brief | 62/62 | 5/5 | 26/26 |
+| `6246448` | Remove Plan | 55/55 | 5/5 | 26/26 |
+| `5ff0979` | Shared accent system | 70/70 | 5/5 | 36/36 on the second attempt |
+| `00479f3` | Develop the Isometric concept | 70/70 | 5/5 | 36/36 |
+| `ab39c3c` | Develop the Elevation concept | 70/70 | 5/5 | 36/36 |
+| `c7e1546` | Develop the Exploded concept | 70/70 | 5/5 | 36/36 |
+| `428baad` | Move the comparison page to `/room-concepts` | 70/70 | 5/5 | 40/40 |
+| `6f2ca6e` | Round 2 contact sheets, screenshots, contrast table | 70/70 | 5/5 | 40/40 |
+
+Three runs did not pass first time:
+
+- `10a77d4`: one 404 test ran out of its 30-second budget while four sub-agents were installing and building at once. The same build passed 26/26 on the re-run.
+- `fa55402`: the browser test caught a real bug, fixed in `145b9a2` (below). This is the one commit without a fully green run of its own.
+- `5ff0979`: the first run failed on a bug in the new accent test (it counted links before the lazy page had loaded) and on a stall of the machine. The test was fixed in the same unpushed commit, and the re-run passed.
+
+### CI
+
+`feature/room-concepts` was pushed with all 18 commits at once, so CI ran on the tip, `6f2ca6e`: run [42990237949](https://github.com/satyendra-varma/Scalable-Portfolio-Showcase/actions/runs/42990237949), success on both systems.
+
+| Job | Build | Unit tests | API tests | Playwright |
+| --- | --- | --- | --- | --- |
+| ubuntu-latest | pass | 70/70 | 5/5 | 40/40 |
+| windows-latest | pass | 70/70 | 5/5 | 40/40 |
+
+The earlier commits were checked locally only (table above); CI did not run on them one by one.
+
+### What changed, round 1
+
+- **System Explorer**: one shared full-screen panel for every room. Flow 01 (CRM request lifecycle) works; flows 02 to 10 are listed as "Planned" and are not interactive. Tests check both.
+- **EF Core Global Query Filters** is a chip under Architecture and testing, in `docs/RESUME-SOURCE.md` first and then in the room. The CRM card keeps its mention.
+- **Focus fix, which also changes the homepage**: closing a panel returned focus inside `requestAnimationFrame`, which never runs while the page is in the background, so focus could be lost. The homepage and the variations now close the panel and return focus at once. Five unit tests cover it; they failed before the fix.
+
+### What changed, round 2
+
+- **Plan is removed**: its scene, palette, registry entry, tests and screenshots. Round 1's contact sheet and contrast table included Plan, so they were removed too; they remain in history at `78ce21c`. `/room-variants` is retired and shows the 404 page.
+- **Accent system**: `src/variants/registry.ts` holds three accent options per concept. An option is one main accent, the ink for text on accent fills, and one supporting tone of the same hue. Tests check every option for AA contrast, restraint, and no purple or violet.
+- **Three concepts, three media**, each with five design additions (lighting, materials, hero type, a detail to discover, an explorer entrance):
+  - 1 · Isometric: the drawing under a desk lamp. Accents: Lamp amber `#FFB547`, Redline `#FF7A68`, Greenline `#8EE3B8`.
+  - 2 · Elevation: a control room lit by the monitor. Accents: Amber LED `#FFB547`, Green LED `#5CF29E`, Blue LED `#7DA8FF`.
+  - 4 · Exploded: a teardown under studio light, on a charcoal ground instead of violet. Accents: Kapton amber `#FFB547`, Copper `#E8957A`, Steel `#93B7DD`.
+- **Real content on the objects**: book spines, drawers and the project frame carry skills, employers and project names imported from `src/content/room.ts`. A test renders every scene and checks each word.
+- **Desk monitor in the first screen**: yes for all three concepts at 1440 × 900 and 390 × 844. In round 1, Exploded's monitor was about 250 px below the first screen at 1440 px.
+
+### Contrast (WCAG 2.2 AA)
+
+Measured in the browser for every concept and accent, across the room, a hovered and a focused hotspot, list view and the System Explorer. All nine combinations pass. The full table is `docs/screenshots/concepts/CONTRAST.md`.
+
+| Concept | Accent | Lowest required pair | Failing pairs |
+| --- | --- | --- | --- |
+| 1 · Isometric | Lamp amber `#FFB547` | 6.99:1 | 0 of 18 |
+| 1 · Isometric | Redline `#FF7A68` | 5.00:1 | 0 of 18 |
+| 1 · Isometric | Greenline `#8EE3B8` | 6.99:1 | 0 of 18 |
+| 2 · Elevation | Amber LED `#FFB547` | 7.10:1 | 0 of 14 |
+| 2 · Elevation | Green LED `#5CF29E` | 7.10:1 | 0 of 14 |
+| 2 · Elevation | Blue LED `#7DA8FF` | 6.69:1 | 0 of 14 |
+| 4 · Exploded | Kapton amber `#FFB547` | 6.97:1 | 0 of 15 |
+| 4 · Exploded | Copper `#E8957A` | 6.30:1 | 0 of 15 |
+| 4 · Exploded | Steel `#93B7DD` | 6.97:1 | 0 of 15 |
+
+Round 1 also passed in every variation; its lowest ratios were 6.99, 7.10, 8.30 and 7.66 to 1.
+
+### Lighthouse (mobile, local production preview, median of 3 runs)
+
+| Round | Page | Performance (runs) | Median | CLS | LCP | Accessibility | Best practices | SEO |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | `/room-variants/isometric` | 100, 100, 100 | **100** | 0.000 | 0.91 s | 100 | 100 | 63 |
+| 1 | `/room-variants/elevation` | 100, 100, 100 | **100** | 0.000 | 1.52 s | 100 | 100 | 63 |
+| 1 | `/room-variants/plan` | 100, 100, 100 | **100** | 0.000 | 0.91 s | 100 | 100 | 63 |
+| 1 | `/room-variants/exploded` | 100, 100, 100 | **100** | 0.000 | 0.91 s | 100 | 100 | 63 |
+| 2 | `/room-concepts/isometric` | 98, 100, 100 | **100** | 0.000 | 0.91 s | 100 | 100 | 63 |
+| 2 | `/room-concepts/elevation` | 100, 100, 100 | **100** | 0.000 | 0.91 s | 100 | 100 | 63 |
+| 2 | `/room-concepts/exploded` | 100, 100, 100 | **100** | 0.000 | 0.91 s | 100 | 100 | 63 |
+| 2 | Homepage `/` (reference) | 100, 100, 100 | **100** | 0.000 | 0.91 s | 100 | 100 | 100 |
+
+- SEO is 63 on the comparison pages only because they are set to `noindex`, on purpose. The homepage scores 100.
+- The largest content paint is the hero name on every page. Round 1's Elevation measured 1.52 s; the homepage hit the same figure in one of its three runs, so it reflects Lighthouse's network model, not the drawing.
+- Each concept was measured with its default accent. The comparison page loads all concepts' code together, so each score includes the others' drawings.
+
+### Notes
+
+- **Round 1's brief arrived cut off** at "labeled with its". The rest was taken from the earlier full version of the same brief.
+- **Explorer entrance**: in Isometric and Exploded it animates the panel's contents, not the panel frame. A shared test measures the panel's width as it opens, and a scaling frame would fail it. The effect looks the same.
+- **Phone crops**: Exploded's phone crop clips one dimension label, and Isometric's clips the "ROOM_01" text. Both are easy to tune on the concept the owner picks.
+- **Screenshot capture**: a full-page capture replays one-time entrance animations where a drawing swaps at a breakpoint, which once produced an empty Elevation room. The capture scripts now grow the viewport and wait for entrances to finish. The site itself was not affected.
+- **Disk space**: drive S: filled up while three sub-agents installed dependencies at once, and one stylesheet was briefly truncated. It was restored; the committed files build and pass. Finished sub-agent worktrees were removed to free space. Their commits are on the branch.
+- **Push**: `feature/room-concepts` was pushed after the owner had reviewed the contact sheets and sent the round 3 brief, which needs this branch pushed with green CI.
+
+### Proposed additions (not built)
+
+- Tune the phone crops for the concept the owner picks.
+- Let the shared test wait out entrance animations, so a concept can animate the whole explorer panel.
+- A preview deploy, so the owner can test on a phone without a local server.
+- The nine planned explorer flows.
+- Lighthouse in CI, and cached Playwright browsers in CI.
+- A blueprint draw-in animation on first load.
+
 ## Approved homepage update
 
 The owner explicitly approved making the warm Engineer’s Room the default homepage. `/` now renders that room directly; comparison URLs remain available. Homepage title and labeling were updated without changing the room's interaction model.

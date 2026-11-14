@@ -1,0 +1,198 @@
+/* Concept 1 — Isometric: the drawing, under the lamp. Ground from docs/DESIGN-BRIEF.md; every selector is scoped to this concept. */
+.rv[data-variant='isometric'] {
+  --bg: #0A2240; --surface: #0E2A4D; --chip: #11335B; --hot: #061A30;
+  --ink: #EAF4FF; --muted: #A8C3DE; /* accents come from registry.ts */
+  --line: #2C5C8A; --grid: #2C5C8A40;
+  --stage-ratio: 4 / 3; --stage-max: 900px;
+  --iso-grid: #2C5C8A26;
+  --iso-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace;
+  background:
+    linear-gradient(var(--iso-grid) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(90deg, var(--iso-grid) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(#2C5C8A40 1px, transparent 1px) 0 0 / 120px 120px,
+    linear-gradient(90deg, #2C5C8A40 1px, transparent 1px) 0 0 / 120px 120px,
+    var(--bg);
+}
+@media (max-width: 600px) {
+  .rv[data-variant='isometric'] { --stage-ratio: 596 / 490; }
+  .rv[data-variant='isometric'] .rv-stage > svg { overflow: hidden; }
+}
+
+/* ---- Hero: a title block on a drafting sheet ---- */
+.rv[data-variant='isometric'] .rv-hero {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr);
+  margin: clamp(14px, 2.4vw, 28px) 0 clamp(14px, 2vw, 24px); padding: 0;
+  background: var(--surface); border: 1px solid var(--line);
+}
+.rv[data-variant='isometric'] .rv-hero::before {
+  content: ''; position: absolute; inset: -4px; pointer-events: none;
+  background:
+    linear-gradient(var(--accent), var(--accent)) 0 0 / 18px 2px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 0 0 / 2px 18px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 0 / 18px 2px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 0 / 2px 18px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 0 100% / 18px 2px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 0 100% / 2px 18px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 100% / 18px 2px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 100% / 2px 18px no-repeat;
+}
+.rv[data-variant='isometric'] .iso-decor { display: block; }
+.rv[data-variant='isometric'] .iso-ruler-tick { fill: none; stroke: var(--line); stroke-width: 1; opacity: .8; }
+.rv[data-variant='isometric'] .iso-construct { fill: none; stroke: var(--line); stroke-width: 1; opacity: .55; }
+.rv[data-variant='isometric'] .iso-construct circle { stroke-dasharray: 2 5; }
+
+/* The name, lettered on guidelines: cap line, x-height and baseline for every line (tuned in em), and a
+   dimension line with end ticks and extension lines under its full width. */
+.rv[data-variant='isometric'] .rv-name {
+  --guide: color-mix(in srgb, var(--accent) 34%, transparent);
+  --guide-base: color-mix(in srgb, var(--accent) 60%, transparent);
+  position: relative; margin: 0; padding: clamp(18px, 3vw, 30px) clamp(16px, 2.6vw, 30px) clamp(44px, 4.4vw, 58px);
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', system-ui, sans-serif; font-weight: 700;
+  font-size: clamp(32px, 5.2vw, 68px); line-height: .95; letter-spacing: -.04em; border-bottom: 1px solid var(--line);
+  background-origin: content-box; background-clip: content-box; background-repeat: repeat-y;
+  background-size: 100% .95em;
+  background-image:
+    linear-gradient(transparent .8em, var(--guide-base) .8em calc(.8em + 1px), transparent calc(.8em + 1px)),
+    linear-gradient(transparent .31em, var(--guide) .31em calc(.31em + 1px), transparent calc(.31em + 1px)),
+    linear-gradient(transparent .1em, var(--guide) .1em calc(.1em + 1px), transparent calc(.1em + 1px));
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+.rv[data-variant='isometric'] .rv-name::after {
+  content: ''; position: absolute; left: clamp(16px, 2.6vw, 30px); right: clamp(16px, 2.6vw, 30px); bottom: 10px; height: 22px; pointer-events: none;
+  background:
+    linear-gradient(var(--accent), var(--accent)) 0 50% / 100% 1px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 0 0 / 1px 100% no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 0 / 1px 100% no-repeat,
+    linear-gradient(135deg, transparent 42%, var(--accent) 42% 58%, transparent 58%) 0 50% / 9px 9px no-repeat,
+    linear-gradient(135deg, transparent 42%, var(--accent) 42% 58%, transparent 58%) 100% 50% / 9px 9px no-repeat;
+}
+.rv[data-variant='isometric'] .rv-role {
+  margin: 0; padding: 12px clamp(16px, 2.6vw, 30px); border-bottom: 1px solid var(--line);
+  font-family: var(--iso-mono); font-size: clamp(12px, 1.2vw, 15px);
+  text-transform: uppercase; letter-spacing: .1em; color: var(--accent); font-weight: 600;
+}
+.rv[data-variant='isometric'] .rv-pos {
+  margin: 0; padding: 14px clamp(16px, 2.6vw, 30px) 4px; max-width: none;
+  font-family: 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif; font-size: clamp(15px, 1.5vw, 19px); line-height: 1.45;
+}
+.rv[data-variant='isometric'] .rv-toggle {
+  justify-self: start; margin: 8px clamp(16px, 2.6vw, 30px) 16px; border-radius: 0; border: 1px solid var(--accent); color: var(--accent);
+  font-family: var(--iso-mono); letter-spacing: .04em; min-height: 36px;
+}
+.rv[data-variant='isometric'] .rv-toggle:hover { background: var(--accent); color: var(--accent-ink); }
+@media (min-width: 960px) {
+  .rv[data-variant='isometric'] .rv-hero { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); grid-template-rows: auto 1fr auto; }
+  .rv[data-variant='isometric'] .rv-hero::after { content: ''; position: absolute; top: 0; bottom: 0; left: 56.52%; width: 1px; background: var(--line); pointer-events: none; }
+  .rv[data-variant='isometric'] .rv-name { grid-column: 1; grid-row: 1 / span 3; align-self: center; border-bottom: 0; }
+  .rv[data-variant='isometric'] .rv-role { grid-column: 2; grid-row: 1; }
+  .rv[data-variant='isometric'] .rv-pos { grid-column: 2; grid-row: 2; padding-top: 18px; }
+  .rv[data-variant='isometric'] .rv-toggle { grid-column: 2; grid-row: 3; }
+}
+
+/* ---- Drawing: walls, floor, linework ---- */
+.rv[data-variant='isometric'] .iso-wall { fill: #0C2849; stroke: none; }
+.rv[data-variant='isometric'] .iso-wall-r { fill: #0B2442; }
+.rv[data-variant='isometric'] .iso-floor { fill: #0D2C50; stroke: none; }
+.rv[data-variant='isometric'] .iso-grid { fill: none; stroke: #5B8DBD; stroke-opacity: .3; stroke-width: .8; }
+.rv[data-variant='isometric'] .iso-datum { fill: none; stroke: #5B8DBD; stroke-opacity: .4; stroke-width: .8; stroke-dasharray: 2 5; }
+.rv[data-variant='isometric'] .iso-l polygon, .rv[data-variant='isometric'] .iso-l polyline, .rv[data-variant='isometric'] .iso-l line,
+.rv[data-variant='isometric'] .iso-l rect, .rv[data-variant='isometric'] .iso-l path {
+  fill: none; stroke: #EAF4FF; stroke-opacity: .82; stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke;
+}
+.rv[data-variant='isometric'] .iso-edge polyline { stroke-width: 1.6; stroke-opacity: .9; }
+.rv[data-variant='isometric'] .iso-l .iso-body { fill: #0A2240; }
+.rv[data-variant='isometric'] .iso-l .iso-body-dim { fill: #081C36; }
+.rv[data-variant='isometric'] .iso-l .iso-top { fill: #123760; }
+.rv[data-variant='isometric'] .iso-l .iso-door { fill: #0A2240; }
+.rv[data-variant='isometric'] .iso-l .iso-mat { fill: #0F2D52; stroke-opacity: .6; }
+.rv[data-variant='isometric'] .iso-l .iso-thin { stroke-width: 1; stroke-opacity: .55; }
+.rv[data-variant='isometric'] .iso-l .iso-dash { stroke-width: 1; stroke-opacity: .6; stroke-dasharray: 4 4; }
+.rv[data-variant='isometric'] .iso-l .iso-book { stroke-opacity: .7; stroke-width: 1; }
+.rv[data-variant='isometric'] .iso-l .iso-bk0 { fill: #0A2240; }
+.rv[data-variant='isometric'] .iso-l .iso-bk1 { fill: #16406C; }
+.rv[data-variant='isometric'] .iso-l .iso-bk2 { fill: #0F2D52; }
+.rv[data-variant='isometric'] .iso-l .iso-book-a { fill: color-mix(in srgb, var(--accent) 80%, transparent); stroke: var(--accent); stroke-opacity: 1; stroke-width: 1; }
+.rv[data-variant='isometric'] .iso-l .iso-bookend { stroke: var(--accent); stroke-opacity: .8; stroke-width: 1.6; }
+.rv[data-variant='isometric'] .iso-l .iso-a { stroke: var(--accent); stroke-opacity: 1; stroke-width: 1.4; }
+.rv[data-variant='isometric'] .iso-a { fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-linecap: round; }
+.rv[data-variant='isometric'] .iso-fill-a { fill: var(--accent); stroke: none; }
+.rv[data-variant='isometric'] .iso-centre line, .rv[data-variant='isometric'] .iso-centre circle { fill: none; stroke: var(--accent); stroke-opacity: .6; stroke-width: 1; }
+
+/* Drafting materials: section hatching, cross-hatched cast shadows, wood grain, perforated metal, keys, cable */
+.rv[data-variant='isometric'] .iso-cut polygon { fill: url(#iso-hatch); stroke: #EAF4FF; stroke-opacity: .8; stroke-width: 1.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.rv[data-variant='isometric'] .iso-hatch-line { stroke: #EAF4FF; stroke-opacity: .6; stroke-width: 1; }
+.rv[data-variant='isometric'] .iso-xhatch-line { stroke: #7FA6CF; stroke-opacity: .4; stroke-width: .8; }
+.rv[data-variant='isometric'] .iso-perf-hole { fill: #7FA6CF; fill-opacity: .55; }
+.rv[data-variant='isometric'] .iso-l .iso-perf-face { fill: url(#iso-perf); stroke-opacity: .82; }
+.rv[data-variant='isometric'] .iso-l .iso-grain { stroke: #EAF4FF; stroke-opacity: .17; stroke-width: .8; }
+.rv[data-variant='isometric'] .iso-l .iso-keys { stroke-width: .7; stroke-opacity: .5; }
+.rv[data-variant='isometric'] .iso-l .iso-cable { stroke: #A8C3DE; stroke-opacity: .85; stroke-width: 2.2; }
+.rv[data-variant='isometric'] .iso-l .iso-post { stroke-width: 2.6; stroke-opacity: .7; }
+.rv[data-variant='isometric'] .iso-l .iso-caster { stroke-width: 2.4; stroke-opacity: .8; }
+.rv[data-variant='isometric'] .iso-lit { fill: none; stroke: var(--accent); stroke-opacity: .9; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+
+/* Tiny lettering: skill names on spines, projects on the framed drawing, employers on drawers */
+.rv[data-variant='isometric'] .iso-mini { fill: #EAF4FF; font: 500 3.8px var(--iso-mono); letter-spacing: 0; }
+.rv[data-variant='isometric'] .iso-spine { font-size: 4px; fill: #EAF4FF; fill-opacity: .9; }
+
+/* The monitor: the largest, brightest object. Accent frame, deep accent-tinted glass. */
+.rv[data-variant='isometric'] .iso-a-edge polygon { stroke: var(--accent); stroke-width: 1.6; stroke-linejoin: round; fill: #0A2240; }
+.rv[data-variant='isometric'] .iso-a-edge .iso-bezel { fill: color-mix(in srgb, var(--accent) 12%, #0C2A4C); stroke-width: 2.4; }
+.rv[data-variant='isometric'] .iso-screen { fill: color-mix(in srgb, var(--accent) 16%, #061A30); stroke: none; }
+.rv[data-variant='isometric'] .iso-screen-edge { fill: none; stroke: var(--accent); stroke-width: 1.2; stroke-opacity: .7; }
+.rv[data-variant='isometric'] .iso-bar { fill: var(--accent); stroke: none; }
+.rv[data-variant='isometric'] .iso-band { fill: var(--evidence); stroke: none; }
+.rv[data-variant='isometric'] .iso-sweep { transform-box: fill-box; transform-origin: center; animation: isometric-sweep 3.2s linear infinite; }
+@keyframes isometric-sweep { from { transform: translateY(0); } to { transform: translateY(-84px); } }
+
+/* The lamp: an architect's arm lamp clamped to the desk */
+.rv[data-variant='isometric'] .iso-lamp polygon { fill: #123760; stroke: var(--ink); stroke-opacity: .8; stroke-width: 1.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.rv[data-variant='isometric'] .iso-lamp .iso-lamp-jaw { fill: none; stroke: var(--ink); stroke-opacity: .8; stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.rv[data-variant='isometric'] .iso-lamp .iso-arm { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.rv[data-variant='isometric'] .iso-lamp .iso-joint { fill: #0A2240; stroke: var(--ink); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.rv[data-variant='isometric'] .iso-lamp .iso-shade { fill: color-mix(in srgb, var(--accent) 22%, #0A2240); stroke: var(--accent); stroke-width: 1.8; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.rv[data-variant='isometric'] .iso-lamp .iso-bulb { fill: var(--evidence); stroke: var(--accent); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+
+/* Pointing at or focusing a hotspot outlines its object in the accent (redline highlight) */
+.rv[data-variant='isometric'] .iso-hl {
+  fill: color-mix(in srgb, var(--accent) 12%, transparent); stroke: var(--accent); stroke-width: 2.6; stroke-linejoin: round; stroke-dasharray: 7 4;
+  vector-effect: non-scaling-stroke; opacity: 0; transition: opacity .18s ease; pointer-events: none;
+}
+.rv[data-variant='isometric'] .rv-stage:has([data-hotspot='explorer']:is(:hover, :focus-visible)) [data-object='explorer'] .iso-hl,
+.rv[data-variant='isometric'] .rv-stage:has([data-hotspot='skills']:is(:hover, :focus-visible)) [data-object='skills'] .iso-hl,
+.rv[data-variant='isometric'] .rv-stage:has([data-hotspot='projects']:is(:hover, :focus-visible)) [data-object='projects'] .iso-hl,
+.rv[data-variant='isometric'] .rv-stage:has([data-hotspot='experience']:is(:hover, :focus-visible)) [data-object='experience'] .iso-hl,
+.rv[data-variant='isometric'] .rv-stage:has([data-hotspot='contact']:is(:hover, :focus-visible)) [data-object='contact'] .iso-hl { opacity: 1; }
+
+/* Dimensions and notes */
+.rv[data-variant='isometric'] .iso-dim line { stroke: var(--accent); stroke-opacity: .85; stroke-width: 1; }
+.rv[data-variant='isometric'] .iso-dim .iso-ext { stroke-opacity: .45; stroke-dasharray: 3 3; }
+.rv[data-variant='isometric'] .iso-text { fill: #A8C3DE; font: 500 11px var(--iso-mono); letter-spacing: .06em; }
+
+/* ---- Hotspots: drafting callout tags ---- */
+.rv[data-variant='isometric'] .rv-hotspot {
+  border-radius: 0; border: 1px solid var(--accent); box-shadow: 3px 3px 0 #2C5C8A; font-family: var(--iso-mono); letter-spacing: .02em;
+}
+.rv[data-variant='isometric'] .rv-hotspot-dot, .rv[data-variant='isometric'] .rv-hotspot-dot::after { border-radius: 0; }
+.rv[data-variant='isometric'] .rv-hotspot.is-focal { box-shadow: 3px 3px 0 color-mix(in srgb, var(--accent) 55%, #061A30); }
+.rv[data-variant='isometric'] .rv-caption { font-family: var(--iso-mono); letter-spacing: .04em; }
+@media (max-width: 600px) {
+  .rv[data-variant='isometric'] .rv-hotspot { box-shadow: 2px 2px 0 #2C5C8A; }
+  .rv[data-variant='isometric'] .iso-text { font-size: 12px; }
+}
+
+/* ---- Explorer entrance: the sheet unfolds from the desk monitor ----
+   The drawing sheet (the dialog's grid and ground) is a fixed pseudo-element that scales up from the monitor's
+   point; the dialog box itself keeps its full size, so its content is laid out and reachable from the first frame
+   and then fades in as the sheet opens. */
+.rv[data-variant='isometric'] .rd-backdrop.is-full { animation: isometric-sheet-bg .32s ease-out backwards; }
+.rv[data-variant='isometric'] .rd-backdrop.is-full .rd-dialog { isolation: isolate; background: none; animation: none; }
+.rv[data-variant='isometric'] .rd-backdrop.is-full .rd-dialog::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 28px 28px, var(--surface);
+  transform-origin: var(--open-x, 50%) var(--open-y, 50%);
+  animation: isometric-unfold .48s cubic-bezier(.16, 1, .3, 1) backwards;
+}
+.rv[data-variant='isometric'] .rd-backdrop.is-full .rd-dialog > * { animation: isometric-sheet-bg .26s ease-out .22s backwards; }
+@keyframes isometric-unfold { from { transform: scale(.06); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes isometric-sheet-bg { from { opacity: 0; } to { opacity: 1; } }

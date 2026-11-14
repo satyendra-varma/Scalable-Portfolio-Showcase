@@ -1,0 +1,48 @@
+/*
+ * The hybrid room's panel (MotionPanel.tsx). Everything here is a function of one number, --p, which runs from
+ * 0 (closed) to 1 (open) and is set on .rmp from script. No animation or transition is declared: the motion is
+ * whatever moves --p, so the panel can be stopped and turned round at any point. In the still state --p jumps.
+ *
+ * The panel opens along linework:
+ *   --a  first half:   the object's box is traced, and four ties run from its corners to the panel's corners
+ *   --b  the middle:   the panel's frame is traced
+ *   --c  second half:  the sheet unfolds, away from the object (or out of the object's box, for the full-screen
+ *                      explorer), and its contents settle in last (--e)
+ */
+.rm .rmp {
+  position: fixed; inset: 0; z-index: 60; display: flex; justify-content: flex-end;
+  --a: clamp(0, var(--p) / .5, 1);
+  --b: clamp(0, (var(--p) - .22) / .43, 1);
+  --c: clamp(0, (var(--p) - .42) / .58, 1);
+  --e: clamp(0, (var(--p) - .62) / .38, 1);
+}
+.rm .rmp[data-state='closing'] { pointer-events: none; }
+.rm .rmp-backdrop { position: absolute; inset: 0; background: #02080dcc; opacity: clamp(0, var(--p), 1); }
+
+.rm .rmp-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.rm .rmp-line {
+  fill: none; stroke: var(--ln); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: var(--len) calc(var(--len) + 4);
+}
+/* The ties stay as a faint tether to the object once the sheet is open. */
+.rm .rmp-object, .rm .rmp-tie { stroke-dashoffset: calc(var(--len) * (1 - var(--a))); opacity: calc(1 - var(--c) * .72); }
+.rm .rmp-object { stroke: var(--accent); }
+.rm .rmp-frame { stroke-dashoffset: calc(var(--len) * (1 - var(--b))); opacity: calc(1 - var(--e)); }
+
+.rm .rmp-sheet {
+  position: relative; width: min(560px, 100%); height: 100%; overflow-y: auto;
+  background: var(--surface); color: var(--ink); border-left: 1px solid var(--line);
+  /* Unfolds from the edge nearest the object, where the ties arrive, away to the screen's edge. */
+  clip-path: inset(0 calc((1 - var(--c)) * 100%) 0 0);
+}
+.rm .rmp[data-full] .rmp-sheet {
+  width: 100%; border: 0;
+  background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 28px 28px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 28px 28px, var(--surface);
+  /* Unfolds out of the object's own box (--ot, --or, --ob, --ol: the box's distances from the sheet's edges). */
+  clip-path: inset(
+    calc((1 - var(--c)) * var(--ot, 50%)) calc((1 - var(--c)) * var(--or, 50%))
+    calc((1 - var(--c)) * var(--ob, 50%)) calc((1 - var(--c)) * var(--ol, 50%))
+  );
+}
+.rm .rmp-sheet > * { opacity: var(--e); }
+.rm .rmp-sheet > .rd-body { transform: translateY(calc((1 - var(--e)) * 14px)); }

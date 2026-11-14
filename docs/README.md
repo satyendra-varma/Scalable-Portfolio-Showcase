@@ -1,6 +1,6 @@
 # Portfolio documentation
 
-Status: The Night blueprint Engineer's Room is the homepage and the only view (see [ROOM-DIRECTIONS.md](ROOM-DIRECTIONS.md)). The React/TypeScript frontend and an ASP.NET Core .NET 10 API (health check only) run in development. The AI guide was removed from v1. Full release audits remain pending; the site has not been published.
+Status: The Power-on Engineer's Room is the home page at `/` (see [STATUS.md](STATUS.md)). The earlier room is at `/room-original` and the round 2 concepts at `/room-concepts`, reachable by direct link only, not linked from anywhere and marked noindex. The React/TypeScript frontend and an ASP.NET Core .NET 10 API (health check only) run in development. The AI guide was removed from v1. Full release audits remain pending; the site has not been published.
 
 ## Reading order
 

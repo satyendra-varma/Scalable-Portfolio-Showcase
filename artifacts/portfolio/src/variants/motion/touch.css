@@ -1,0 +1,60 @@
+/*
+ * Touch screens (Power-on, docs/BRIEF-room-motion.md): a tap stands in for hover. Everything here sits under .rm and
+ * inside @media (hover: none), except the tap targets, which have their own block. Mouse behaviour is untouched. The open-panel lift is Power-on only: in Off the panel just opens.
+ *
+ * 1. Nothing sticks, in Power-on and in Off (where the highlight is room.css's brightness). A tap leaves :hover on the label; that must not hold the object lifted, keep its glow on, or
+ *    leave the label in its hover look. Keyboard focus (:focus-visible) is left alone: it still lifts and outlines.
+ * 2. A tap answers at once, then the panel opens. The script runs the pulse; the label gives a small press; and the
+ *    room's root carries data-open (MotionRoom) while a panel is open, which lifts and lights that object exactly
+ *    as hover does, with no delay, until the panel closes.
+ *
+ * !important is used only here, to win over the :has() hover rules in power.css and room.css (specificity 7 and 6).
+ * The open-state rules are written at specificity 9, above the neutralising rules at 8, so an object whose panel is
+ * open stays lifted even while the tap's :hover lingers. Only transform and opacity ever change.
+ */
+@media (hover: none) {
+  /* The label: back to its normal look, whatever :hover says. */
+  .rm .rv-hotspot:hover { transform: none; background: var(--hot); color: var(--ink); }
+  .rm .rv-hotspot:hover .rv-hotspot-object { color: var(--muted); }
+  .rm .rv-hotspot.is-focal:hover { background: var(--accent); color: var(--accent-ink); }
+  .rm .rv-hotspot.is-focal:hover .rv-hotspot-object { color: var(--accent-ink); }
+  /* The press response, after the rules above so that it wins. */
+  .rm .rv-hotspot:active { transform: scale(.96); }
+
+  /* The object and its glow: a lingering :hover (without keyboard focus) lifts nothing. */
+  .rm[data-motion] .rm-stage:has([data-hotspot='explorer']:hover:not(:focus-visible)) .rm-layer[data-object='explorer'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='skills']:hover:not(:focus-visible)) .rm-layer[data-object='skills'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='projects']:hover:not(:focus-visible)) .rm-layer[data-object='projects'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='experience']:hover:not(:focus-visible)) .rm-layer[data-object='experience'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='contact']:hover:not(:focus-visible)) .rm-layer[data-object='contact'] {
+    transform: none !important; filter: none !important; transition-delay: 0s !important;
+  }
+  .rm[data-motion] .rm-stage:has([data-hotspot='explorer']:hover:not(:focus-visible)) .rm-bloom[data-bloom='explorer'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='skills']:hover:not(:focus-visible)) .rm-bloom[data-bloom='skills'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='projects']:hover:not(:focus-visible)) .rm-bloom[data-bloom='projects'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='experience']:hover:not(:focus-visible)) .rm-bloom[data-bloom='experience'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='contact']:hover:not(:focus-visible)) .rm-bloom[data-bloom='contact'] {
+    opacity: 0 !important; transition-delay: 0s !important;
+  }
+
+  /* The object whose panel is open: lifted and lit, as hover does it, and no delay. */
+  .rm.rm.rm[data-open='explorer'][data-motion='b'] .rm-stage .rm-canvas .rm-layer[data-object='explorer'] { transform: translateY(-1.1%) !important; filter: brightness(1.22) !important; transition-delay: 0s !important; }
+  .rm.rm.rm[data-open='skills'][data-motion='b'] .rm-stage .rm-canvas .rm-layer[data-object='skills'] { transform: translateY(-1.1%) !important; filter: brightness(1.22) !important; transition-delay: 0s !important; }
+  .rm.rm.rm[data-open='projects'][data-motion='b'] .rm-stage .rm-canvas .rm-layer[data-object='projects'] { transform: translateY(-1.1%) !important; filter: brightness(1.22) !important; transition-delay: 0s !important; }
+  .rm.rm.rm[data-open='experience'][data-motion='b'] .rm-stage .rm-canvas .rm-layer[data-object='experience'] { transform: translateY(-1.1%) !important; filter: brightness(1.22) !important; transition-delay: 0s !important; }
+  .rm.rm.rm[data-open='contact'][data-motion='b'] .rm-stage .rm-canvas .rm-layer[data-object='contact'] { transform: translateY(-1.1%) !important; filter: brightness(1.22) !important; transition-delay: 0s !important; }
+  .rm.rm.rm[data-open='explorer'][data-motion='b'] .rm-stage .rm-canvas .rm-bloom[data-bloom='explorer'] { opacity: .9 !important; transition-delay: 0s !important; }
+  .rm.rm.rm[data-open='skills'][data-motion='b'] .rm-stage .rm-canvas .rm-bloom[data-bloom='skills'] { opacity: .9 !important; transition-delay: 0s !important; }
+  .rm.rm.rm[data-open='projects'][data-motion='b'] .rm-stage .rm-canvas .rm-bloom[data-bloom='projects'] { opacity: .9 !important; transition-delay: 0s !important; }
+  .rm.rm.rm[data-open='experience'][data-motion='b'] .rm-stage .rm-canvas .rm-bloom[data-bloom='experience'] { opacity: .9 !important; transition-delay: 0s !important; }
+  .rm.rm.rm[data-open='contact'][data-motion='b'] .rm-stage .rm-canvas .rm-bloom[data-bloom='contact'] { opacity: .9 !important; transition-delay: 0s !important; }
+}
+
+/* Tap targets: each label keeps its look and gets an invisible hit area at least 44px by 44px. */
+@media (max-width: 600px), (hover: none) {
+  .rm .rv-hotspot { position: relative; }
+  .rm .rv-hotspot::before {
+    content: ''; position: absolute; left: 50%; top: 50%; width: 100%; min-width: 44px; height: 44px; min-height: 44px;
+    transform: translate(-50%, -50%);
+  }
+}

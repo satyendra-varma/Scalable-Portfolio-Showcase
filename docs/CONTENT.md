@@ -104,3 +104,8 @@ Until supplied, each project card displays **Live link coming soon** as plain, n
 1. What verified business outcomes, if any, may be added for either project? Until answered, keep the editorial outcome placeholders above.
 2. What are the two approved live URLs? Their absence does not block a release with the required labels.
 3. Should a newly reviewed resume download be included at all?
+
+## Owner update, 13 November 2026
+
+- The CRM facts the owner confirmed with their lead are recorded in `docs/RESUME-SOURCE.md` under "Confirmed by the owner, 13 November 2026". The CRM database is PostgreSQL.
+- Both projects were contract work at Crescenza, so there are no repo or live links. The project cards no longer show "Live link coming soon"; the link line is hidden. CRM_LINK and ECOMMERCE_LINK stay in `src/content/site.ts` so a link can be added later. This replaces "Link presentation and editing" above and closes open question 2.

@@ -1,0 +1,95 @@
+/*
+ * Power-on's mobile opening (docs/BRIEF-room-motion.md). The room's root says which opening it plays:
+ *   data-opening='full'    the 4-second opening (power.css): first visit, on a desktop;
+ *   data-opening='mobile'  about 2.5 seconds: a phone or a touch screen, first visit or not (this file);
+ *   data-opening='return'  the full opening at a quicker pace, about 3 seconds: later visits, desktop only (return.css).
+ *
+ * This file is the mobile opening and nothing else. While it waits or runs, the root carries data-lite ('dark',
+ * then 'opening') and NOT data-b, so none of power.css's opening applies; when it is over the root carries
+ * data-b='on', exactly as after the full opening (usePowerOn).
+ *
+ * Kept from the full opening: the room starts dark and comes alive; the loading bar lets go of its charge; power
+ * moves outward from the bar at one constant speed, so the nearest thing lights first; every object strikes like
+ * a tube; a label appears only once its object is live; the room's own light comes up last, with one ring from
+ * every pad.
+ * Dropped: the drawn linework (the dark room is the room itself, unlit, not an outline of it), the travelling
+ * head and its tail, the ring at each junction on the way, the half-lit stage, and each object's own start-up
+ * (spines one by one, the frame drawing its boxes, drawers, the flag, the monitor typing its line).
+ *
+ * Motion budget: transform and opacity only. Nothing here draws a line.
+ * Timing is still geometry: --rm-arrive is when power reaches an element (power.css), at --rm-speed.
+ */
+.rv.rm[data-motion='b'][data-opening='mobile'] {
+  --rm-travel: 1.3;   /* seconds from the loading bar to the furthest object */
+  --rm-t0: .3s;       /* the bar lets go, then power leaves it */
+  --lt-strike: .46s;  /* an object's flicker */
+  --lt-boot: .42s;    /* from power reaching the monitor to the room going live */
+  --lt-up: .55s;      /* the room's light coming up */
+  --lt-label: .34s;   /* from power reaching an object to its label */
+}
+.rv.rm[data-motion='b'][data-lite] {
+  --rm-live: calc(var(--rm-t0) + (var(--rm-feed) + var(--rm-at-x, 1239.8)) / var(--rm-speed) * 1s + var(--lt-boot));
+}
+.rv.rm[data-motion='b'][data-lite='dark'] { --rm-play: paused; }
+
+/* The unlit room: everything is in its place and barely there. */
+@keyframes rm-l-wake { from { opacity: .16; } }
+@keyframes rm-l-strike { from { opacity: .16; } 14% { opacity: .85; } 28% { opacity: .3; } 48% { opacity: 1; } }
+
+/* ============ The loading bar ============
+   On a phone it charges at page load, as on a desktop but quicker.
+   While the room waits to be seen the bar breathes; then it lets go: a bright block runs off its end, and the bar dips as power leaves. */
+.rm[data-opening='mobile'][data-lite='dark'] .rmh-bar-fill { animation: rm-b-charge .5s cubic-bezier(.3, 0, .35, 1) both; }
+.rm[data-lite='dark'] .rmh-bar { animation: rm-b-armed 1.4s ease-in-out .6s infinite alternate; }
+.rm[data-opening='mobile'][data-lite] .rmh-bar::after {
+  content: ''; position: absolute; inset: 0 auto 0 0; width: 30%;
+  background: linear-gradient(90deg, transparent, #FFF3D6 62%, #fff);
+  animation: rm-b-sweep var(--rm-t0) cubic-bezier(.55, 0, .9, .55) both var(--rm-play);
+}
+.rm[data-lite='opening'] .rmh-bar { animation: rm-b-discharge .7s ease-out var(--rm-t0) both; }
+.rm[data-lite] .rmh .rv-role::before {
+  animation: rm-b-standby 1.3s step-end infinite, rm-b-status-on .6s var(--rm-out) var(--rm-live) forwards var(--rm-play);
+}
+
+/* ============ Power moves outward ============
+   No line is drawn: each stretch of trace comes up as power crosses it, in the time power takes to cross it,
+   and each pad jumps as power reaches it. Stretch after stretch and pad after pad, the eye still reads travel. */
+.rm[data-lite] .rm-feed :is(.rm-w-lit, .rm-w-glow) {
+  animation: rm-b-fade-in calc(var(--rm-feed) / var(--rm-speed) * 1s) ease-in var(--rm-t0) both var(--rm-play);
+}
+.rm[data-lite] .rm-stage :is(.rm-w-lit, .rm-w-glow) {
+  animation: rm-b-fade-in max(.12s, calc(var(--len) / var(--rm-speed) * 1s)) linear var(--rm-arrive) both var(--rm-play);
+}
+.rm[data-lite] .rm-pad { animation: rm-b-pad .5s ease-out var(--rm-arrive) both var(--rm-play); }
+
+/* ============ The room and its objects ============
+   The wall comes up as power enters it and the floor plate as power steps down onto it. */
+.rm[data-lite] .rm-layer:is([data-layer='wall'], [data-layer='floor'], [data-layer='shadows'], [data-layer='guides']) {
+  animation: rm-l-wake var(--lt-up) ease-out var(--rm-arrive) both var(--rm-play);
+}
+/* Every object strikes like a tube as power reaches it, and its glow flashes behind it. The monitor's glass
+   catches a moment after the desk under it. */
+.rm[data-lite] .rm-layer[data-object] { animation: rm-l-strike var(--lt-strike) linear var(--rm-arrive) both var(--rm-play); }
+.rm[data-lite] .rm-layer[data-layer='monitor'] { animation-delay: calc(var(--rm-arrive) + .08s); }
+.rm[data-lite] .rm-bloom {
+  animation: rm-b-bloom .7s ease-out calc(var(--rm-arrive) + .06s) both var(--rm-play), rm-b-bloom var(--lt-up) ease-out var(--rm-live) forwards var(--rm-play);
+}
+
+/* Labels: hidden while the room is dark, and each appears only when its object is live. Keyboard focus shows one at once. */
+.rm[data-lite] .rv-hotspot {
+  animation: rm-b-label .45s var(--rm-spring) calc(var(--rm-arrive) + var(--lt-label)) both var(--rm-play);
+}
+.rm[data-lite] .rv-hotspot:focus-visible { animation: none; }
+.rm[data-lite] .rv-hotspot-dot { animation: rm-b-pop .45s var(--rm-spring) calc(var(--rm-arrive) + var(--lt-label) + .1s) both var(--rm-play); }
+.rm[data-lite] .rv-hotspot-dot::after { animation: none; }
+
+/* ============ The room goes live ============
+   The light behind the room, the overhead light, the light on the floor and the glow on the wall come up
+   together; the monitor's glass takes its glare and its amber edge strikes; one ring spreads from every pad. */
+.rm[data-lite] .rm-stage::before { animation: rm-b-dim var(--lt-up) ease-out var(--rm-live) both var(--rm-play); }
+.rm[data-lite] :is(.rm-layer[data-layer='light'], .rm-lit, .rm-aura, .rm-glow) {
+  animation: rm-b-fade-in var(--lt-up) ease-out var(--rm-live) both var(--rm-play);
+}
+.rm[data-lite] .rm-layer[data-layer='monitor'] path[fill^='url'] { animation: rm-b-fade-in var(--lt-up) ease-out var(--rm-live) both var(--rm-play); }
+.rm[data-lite] .rm-layer .rm-edge-active { animation: rm-b-strike .4s linear var(--rm-live) both var(--rm-play); }
+.rm[data-lite] .rm-pad-ring { display: inline; animation: rm-b-ring .6s ease-out var(--rm-live) both var(--rm-play); }

@@ -1,0 +1,32 @@
+/*
+ * The return visit (docs/BRIEF-room-motion.md): the full opening at a quicker pace, about 3 seconds.
+ * Every later visit in a browser session, on a desktop (a phone always plays the mobile opening, lite.css), plays the same opening as the first one (power.css): the dark room in
+ * linework, power leaving the loading bar as a head with a tail, down the feed and along the traces, each object
+ * coming on as its trace arrives and its label after it. These are the same rules, not a second set: the root
+ * carries data-b exactly as in the full opening, and this file only changes how fast they run.
+ *
+ * Shortened: --rm-travel is the seconds power takes from the bar to the furthest object (2.3 in the full
+ * opening), and --rm-k scales each object's own start-up and the bar's release (.8 in the full opening).
+ * Everything in power.css follows from those two. The two fixed-length tails at the moment the room goes live,
+ * the ring from every pad and the bloom, are cut short as well.
+ *
+ * Skipped: the at-load drawing. In the full opening, while the room waits dark, the linework draws itself in,
+ * the unpowered copper is traced in and the loading bar charges. Here the dark room is simply there, already
+ * drawn, with the bar already full. The dark-phase rules that use var(--rm-play) are the opening itself, held on
+ * its first frame, and the bar's breathing and the status light are part of waiting: none of those is touched.
+ *
+ * No keyframes, no transitions and no line drawing here.
+ */
+.rv.rm[data-motion='b'][data-opening='return'] {
+  --rm-travel: 1.6;
+  --rm-k: .5;
+}
+
+.rm[data-opening='return'][data-b='dark'] .rm-wire :is(path, polygon, polyline, rect, circle),
+.rm[data-opening='return'][data-b='dark'] .rm-wire .rm-label,
+.rm[data-opening='return'][data-b='dark'] :is(.rm-stage, .rm-feed) .rm-w-base,
+.rm[data-opening='return'][data-b='dark'] .rm-trace-dim,
+.rm[data-opening='return'][data-b='dark'] .rmh-bar-fill { animation: none; }
+
+.rm[data-opening='return'][data-b]:not([data-b='on']) .rm-pad-ring { animation-duration: .8s, .65s; }
+.rm[data-opening='return'][data-b]:not([data-b='on']) .rm-bloom { animation-duration: .9s, .65s; }

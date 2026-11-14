@@ -1,29 +1,34 @@
 import { useRef, useState } from 'react';
-import { useDocumentMeta } from '@/hooks/use-document-meta';
+import { flushSync } from 'react-dom';
+import { useDocumentMeta, useNoIndex } from '@/hooks/use-document-meta';
 import { contact, hero } from '@/content/room';
 import { RoomScene, hotspots, type HotspotId } from '@/components/room/RoomScene';
 import { RoomDialog } from '@/components/room/RoomDialog';
-import { RoomExplorer } from '@/components/room/RoomExplorer';
+import { SystemExplorer } from '@/components/room/SystemExplorer';
 import { ContactContent, ExperienceContent, ProjectList, SkillsContent } from '@/components/room/RoomContent';
 import '@/styles/room.css';
 
-export default function Room() {
+/** The earlier home page, kept at /room-original: not linked from anywhere and not indexed. */
+export default function RoomOriginal() {
   const [open, setOpen] = useState<HotspotId | null>(null);
   const [listView, setListView] = useState(false);
   const [activeSkill, setActiveSkill] = useState<string | null>(null);
   const opener = useRef<HTMLElement | null>(null);
 
-  useDocumentMeta('Satyendra Varma Nadimpalli | Full Stack .NET Software Engineer', hero.positioning);
+  useDocumentMeta('Earlier room | Satyendra Varma Nadimpalli', 'The earlier version of the engineer’s room, kept for comparison.');
+  useNoIndex();
 
+  // Close the panel now, then hand focus back to the object that opened it. A deferred focus
+  // (requestAnimationFrame) never runs while the page is in the background, so focus would be lost.
   const close = () => {
-    setOpen(null);
     const el = opener.current;
-    requestAnimationFrame(() => el?.focus());
+    flushSync(() => setOpen(null));
+    el?.focus();
   };
 
   const body = (id: HotspotId) => {
     switch (id) {
-      case 'explorer': return <RoomExplorer initialAsList={listView && !open} />;
+      case 'explorer': return <SystemExplorer initialAsList={listView && !open} />;
       case 'skills': return <SkillsContent activeSkill={activeSkill} setActiveSkill={setActiveSkill} />;
       case 'experience': return <ExperienceContent />;
       case 'projects': return <ProjectList activeSkill={activeSkill} />;

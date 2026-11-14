@@ -1,14 +1,15 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
 
-test('room: panels, filters, Explorer and accessible alternatives', async ({ page, isMobile }) => {
+test('earlier room (/room-original): panels, filters, Explorer and accessible alternatives', async ({ page, isMobile }) => {
   // A long journey (five panels, filters, keyboard paths, two axe scans). Cold Windows CI runners
   // have taken over 30 s for it, so give it the slow-test budget instead of the 30 s default.
   test.slow();
   if (!isMobile) await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/');
+  await page.goto('/room-original');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
   for (const id of ['text-name', 'text-role', 'text-positioning']) {
     await expect(page.getByTestId(id)).toBeInViewport();
   }
@@ -27,9 +28,14 @@ test('room: panels, filters, Explorer and accessible alternatives', async ({ pag
   await page.getByTestId('chip-skill-react').click();
   await expect(page.getByTestId('list-projects').getByRole('article')).toHaveCount(0);
   await page.getByTestId('button-clear-filter').click();
-  await expect(page.getByText('Live link coming soon')).toHaveCount(2);
+  await expect(page.getByTestId('list-projects').getByRole('article')).toHaveCount(2);
+  await expect(page.getByText('Live link coming soon')).toHaveCount(0);
   await page.keyboard.press('Escape');
   await page.getByTestId('hotspot-explorer').click();
+  const planned = page.getByTestId('panel-explorer').locator('[data-flow-status="planned"]');
+  await expect(planned).toHaveCount(9);
+  await expect(planned.filter({ hasText: 'Planned' })).toHaveCount(9);
+  await expect(planned.locator('a, button, [tabindex]')).toHaveCount(0);
   await page.getByTestId('button-flow-crm-request').focus();
   await page.keyboard.press('Tab');
   await expect(page.getByTestId('button-explorer-list')).toBeFocused();
@@ -57,17 +63,67 @@ test('room: panels, filters, Explorer and accessible alternatives', async ({ pag
   expect(await page.getByTestId('button-node-1').evaluate(el => getComputedStyle(el).animationName)).toBe('none');
 });
 
-test('fonts are self-hosted: no Google Fonts requests, all three faces load', async ({ page }) => {
+// Two font tests, because the faces are not all used at once on the home page: its first screen
+// uses only DM Sans and JetBrains Mono, and Space Grotesk is fetched quietly once the opening has
+// finished (so the first panel or list view opens without a font change). The earlier room uses all
+// three faces on its first screen.
+function recordFontRequests(page: Page) {
   const external: string[] = [];
+  const fonts: string[] = [];
   page.on('request', (req) => {
     if (/fonts\.(googleapis|gstatic)\.com/.test(req.url())) external.push(req.url());
+    if (req.resourceType() === 'font') fonts.push(req.url());
   });
+  return { external, fonts };
+}
+
+function expectSelfHosted(page: Page, rec: { external: string[]; fonts: string[] }) {
+  expect(rec.external).toEqual([]);
+  const origin = new URL(page.url()).origin;
+  for (const url of rec.fonts) {
+    const u = new URL(url);
+    expect(u.origin).toBe(origin);
+    expect(u.pathname).toContain('/fonts/');
+  }
+}
+
+test('fonts on the home page are self-hosted, and the heading face loads by itself after the opening', async ({ page }) => {
+  const rec = recordFontRequests(page);
   await page.goto('/');
+  await expect(page.getByTestId('room-motion')).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
-  expect(external).toEqual([]);
-  const loaded = await page.evaluate(() =>
-    ['DM Sans', 'Space Grotesk', 'JetBrains Mono'].map((f) => document.fonts.check(`16px "${f}"`)));
-  expect(loaded).toEqual([true, true, true]);
+  expectSelfHosted(page, rec);
+  for (const face of ['DM Sans', 'JetBrains Mono']) {
+    await expect.poll(() => page.evaluate((f) => document.fonts.check(`16px "${f}"`), face)).toBe(true);
+  }
+  // The heading face must not be fetched before the room is on. Reading both in one evaluate is what makes
+  // this race-free: the room cannot go on between the two reads.
+  const early = await page.evaluate(() => ({
+    on: document.querySelector('[data-testid="room-motion"]')?.getAttribute('data-b') === 'on',
+    fetched: performance.getEntriesByType('resource').some((e) => e.name.includes('space-grotesk')),
+  }));
+  expect(early.on || !early.fetched).toBe(true);
+  // The face arrives by itself after the opening (about 5 s on a desktop, then an idle callback), with nothing opened.
+  await expect.poll(() => page.evaluate(() => document.fonts.check('700 26px "Space Grotesk"')), { timeout: 20_000 }).toBe(true);
+  // The opening is skippable by a click, so retry; the button is a toggle, so click only while the list is not on (aria-pressed).
+  const toggle = page.getByTestId('button-list-view');
+  await expect(async () => {
+    if ((await toggle.getAttribute('aria-pressed')) !== 'true') await toggle.click({ timeout: 2000 });
+    await expect(page.getByTestId('list-sections')).toBeVisible({ timeout: 1000 });
+  }).toPass();
+  expect(await page.evaluate(() => document.fonts.check('700 26px "Space Grotesk"'))).toBe(true);
+  expectSelfHosted(page, rec);
+});
+
+test('fonts on the earlier room (/room-original) are self-hosted: all three faces load on its first screen', async ({ page }) => {
+  const rec = recordFontRequests(page);
+  await page.goto('/room-original');
+  await expect(page.getByTestId('text-name')).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  expectSelfHosted(page, rec);
+  for (const face of ['DM Sans', 'Space Grotesk', 'JetBrains Mono']) {
+    await expect.poll(() => page.evaluate((f) => document.fonts.check(`16px "${f}"`), face)).toBe(true);
+  }
 });
 
 test('no resume PDF is published until the clean copy exists', async ({ page }) => {
@@ -76,13 +132,14 @@ test('no resume PDF is published until the clean copy exists', async ({ page }) 
   expect((await res.body()).subarray(0, 4).toString()).not.toBe('%PDF');
 });
 
-for (const path of ['/room-directions', '/room-directions/warm', '/projects/crm', '/no-such-page']) {
+for (const path of ['/room-directions', '/room-directions/warm', '/room-variants', '/room-variants/isometric', '/projects/crm', '/no-such-page']) {
   test(`retired or unknown route ${path} shows the 404 page`, async ({ page }) => {
     await page.goto(path);
     await expect(page.getByTestId('page-not-found')).toBeVisible();
     await expect(page.getByRole('link')).toHaveCount(1);
     await page.getByTestId('link-404-home').click();
-    await expect(page.getByTestId('page-room')).toBeVisible();
-    expect((await new AxeBuilder({ page }).withTags(WCAG).analyze()).violations).toEqual([]);
+    await expect(page.getByTestId('room-motion')).toBeVisible();
+    await expect(page).toHaveURL(/\/$/);
+    // The axe scan used to run on the old home page after the click; that page is still scanned twice in the journey test above.
   });
 }
