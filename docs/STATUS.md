@@ -1,6 +1,6 @@
 # Status — room motion (round 4)
 
-Updated on 2026-11-13, after the owner chose Motion B, "Power-on", at 4 seconds and asked for it to be finished (the third brief of that day). The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
+Updated on 2026-11-13, after the return-visit opening was changed from 1 second to about 3 (the owner's fourth brief of that day; the third chose Motion B, "Power-on", at 4 seconds and asked for it to be finished). The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
 
 **No model has looked at any of this in a browser.** By the working rules the owner checks the page and reports. The one exception is the scripted performance measurement below, which the owner asked for. Everything about how the page looks is what the code is written to do.
 
@@ -9,7 +9,7 @@ Updated on 2026-11-13, after the owner chose Motion B, "Power-on", at 4 seconds 
 - **Branch**: `feature/room-motion`. It is **not pushed**, and nothing is merged.
 - **Route**: `/room-motion` plays Power-on. `/room-motion?motion=off` is the still state. Motions A and C and the 6 and 8 second speeds are removed from the switcher and the code. The switcher keeps Power-on, Off and Replay.
 - **Other branches are untouched**: `main`, `feature/room-concepts` and `feature/room-rotation`.
-- **State of the tip**: typecheck passes, the build passes, and **all 142 unit tests pass**.
+- **State of the tip**: typecheck passes, the build passes, and **all 148 unit tests pass**.
 
 | Commit | What |
 | --- | --- |
@@ -18,6 +18,8 @@ Updated on 2026-11-13, after the owner chose Motion B, "Power-on", at 4 seconds 
 | `f17d275` | Mobile: a 2.5-second opening, tap in place of hover, a readable room at phone width, the header tag fixed. |
 | `1d2f07f` | Reduced motion: the room lit and still, in the same layout as Power-on. |
 | `8ff1613` | Tests: the line-drawing exception, the fifteen layers, the new openings. |
+| `49f8c1d` | Return visits play the full opening compressed to about 3 seconds (replaces the 1-second version). |
+| `b9e0456` | A phone always plays the mobile opening; the return opening is desktop only. |
 
 **Not changed in this job**, by the owner's instruction: the desktop opening, the idle packets, the hover lift, and how the panels open. The only edit to `power.css` moved the 4-second values (`--rm-travel: 2.3`, `--rm-k: .8`) into the base rule.
 
@@ -26,21 +28,27 @@ Updated on 2026-11-13, after the owner chose Motion B, "Power-on", at 4 seconds 
 | Visitor | Opening | Where it is written |
 | --- | --- | --- |
 | Desktop, first visit in a browser session | The full opening, "4 seconds", as approved | `power.css` |
-| Phone or touch screen, first visit | "Mobile", about 2.5 seconds | `lite.css` |
-| Any device, later visits in the same session | "Return", about 1 second | `lite.css` |
+| Phone or touch screen, every visit | "Mobile", about 2.5 seconds | `lite.css` |
+| Desktop, later visits in the same session | "Return": the full opening at a quicker pace, about 3 seconds | `return.css` (pace only; the rules are `power.css`) |
 | Reduced motion, or Off in the switcher | No opening: the room lit and still | `room.css` |
 
-The room's root says which one plays: `data-opening='full' | 'mobile' | 'return'` (`opening.ts`, chosen once when the room mounts). **Replay** always plays the first-visit opening for the device. To see the return version: reload the page, or switch to Off and back.
+The room's root says which one plays: `data-opening='full' | 'mobile' | 'return'` (`opening.ts`, chosen once when the room mounts). **Replay** always plays the first-visit opening for the device. To see the return version, on a desktop: reload the page, or switch to Off and back.
 
-### The two short openings (one design at two speeds)
+### The return opening, about 3 seconds
+
+The owner saw the first return version (1 second, without the travelling light) and rejected it: too fast, and it dropped the best part. It is now the full opening itself, the same rules in `power.css`, run faster. Worked out from the timings, not measured: about 0.25 seconds of dark room, then about 3 seconds from power leaving the bar to the last animation ending.
+
+- **Kept, all of it**: the dark room in linework, the bar letting go, the head and its tail travelling down the feed and along the traces, the ring at each junction, each object's own start-up, labels after their objects, the room's light last.
+- **Shortened**: power's travel from the bar to the furthest object, 2.3 seconds to 1.6; each object's own start-up and the bar's release, to five eighths of their length (`--rm-k` .8 to .5), so the monitor types its line in a quarter of a second; the ring and the glow when the room goes live, to 0.65 seconds.
+- **Skipped**: the drawing at page load. The linework and the copper are already drawn and the bar is already full, so power leaves after 0.25 seconds, not 1.35.
+
+### The mobile opening (`lite.css`)
 
 **Kept**: the room starts dark and comes alive; the loading bar lets go of its charge; power moves outward from the bar at one constant speed, so the nearest object lights first; every object strikes with the tube flicker; each label appears only when its object is live; the room's own light comes up last, with one ring from every pad.
 
 **Dropped**: the drawn linework (the dark room is the room itself at low light, not an outline); the travelling head and its tail; the ring at each junction on the way; the half-lit stage; each object's own start-up (spines one by one, the frame drawing its boxes, the drawers, the flag, the monitor typing its line).
 
-**Return only**: the bar is already full and does not charge or sweep; the room waits 0.15 seconds, not 1.35.
-
-How it is built: while a short opening waits or runs the root carries `data-lite` and no `data-b`, so none of the full opening's rules apply; when it ends the root carries `data-b='on'`, the same resting state as after the full opening. `lite.css` animates transform and opacity only.
+How it is built: while the mobile opening waits or runs the root carries `data-lite` and no `data-b`, so none of the full opening's rules apply; when it ends the root carries `data-b='on'`, the same resting state as after the full opening. `lite.css` animates transform and opacity only.
 
 ### Mobile and touch
 
@@ -75,11 +83,12 @@ Desktop Chrome, headless, 1920x1080, hardware-accelerated, from power leaving th
 | Frames over 33 ms / 50 ms / 100 ms | 2 / 1 / 1 | 3 / 2 / 2 |
 | Main-thread tasks over 50 ms | 0 | 1 |
 
-Two things to know. The "4 second" opening measures about 4.9 seconds from power leaving the bar to the last animation ending; it is the same opening the owner chose, not a change. And each run has one frame over 100 ms; the measurement does not say where in the opening it falls. The short openings were not measured.
+Two things to know. The "4 second" opening measures about 4.9 seconds from power leaving the bar to the last animation ending; it is the same opening the owner chose, not a change. And each run has one frame over 100 ms; the measurement does not say where in the opening it falls. The return and mobile openings were not measured. The return opening runs the same animations as the full one in less time.
 
 ## Decided for the owner, to confirm
 
 - **"Browser session" is the tab's session** (`sessionStorage`): a reload or coming back to the page plays the return version; a new tab plays the full opening once.
+- **A phone or touch screen plays the mobile opening on every visit**, first or not. The 3-second return opening is for desktops only: it has the linework and the travelling head, which the brief keeps off phones, and the owner has not judged mobile yet. So on a phone there is no shorter return version now (the 1-second one is gone). The choice is one line in `opening.ts` (`pickOpening`).
 - **"Mobile" is 600 px or less, or no hover.** A window between 601 and 1099 px wide with a mouse still plays the full opening in the older stacked layout.
 - **Off and reduced motion use the fitted first-screen layout**, as Power-on does.
 - **The two small notes drawn in the room** ("ROOM_01 / 4.20 m", "// scale 1:40") are about 8 px tall on a phone and are left as decoration.
@@ -88,7 +97,7 @@ Two things to know. The "4 second" opening measures about 4.9 seconds from power
 ## Look at first
 
 1. A phone, or a narrow window: the dark room (is the unlit room too dim or too bright?), the 2.5-second opening, then tap a label and close the panel.
-2. Reload on the desktop: the 1-second return version. Then Replay for the full one.
+2. Reload on the desktop: the 3-second return version. Can the eye still follow the head, and does the monitor's typing read at that pace? Then Replay for the full one.
 3. The header at phone width: the tag above the name.
 4. Reduced motion (or Off) on the desktop: the room should sit as it does in Power-on.
 
