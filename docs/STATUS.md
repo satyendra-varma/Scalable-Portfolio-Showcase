@@ -7,7 +7,7 @@ Updated on 2026-11-13, after the owner's fifth brief of that day: Power-on is ch
 ## Where things are
 
 - **Branch**: `feature/room-motion`. This job's commits are **not pushed**, and nothing is merged.
-- **State of the tip**: typecheck passes, the build passes, and **all 156 unit tests pass**. The browser (Playwright) specs were edited and **not run**.
+- **State of the tip**: typecheck passes, the build passes, and **all 157 unit tests pass**. The browser (Playwright) specs were edited and **not run**.
 
 ### Routes
 
@@ -27,6 +27,7 @@ Updated on 2026-11-13, after the owner's fifth brief of that day: Power-on is ch
 | --- | --- |
 | `6ea4103` | Content: the confirmed CRM facts, the "Confirmed" label, no link line on project cards. |
 | `929bdf4` | The Power-on room at `/`; the earlier room at `/room-original`; the switcher and Replay removed. |
+| `a1831eb` | PostgreSQL is CRM evidence in the Skills panel; React stays a general skill. |
 
 ### Content (Part 1)
 
@@ -130,7 +131,7 @@ Two things to know. The "4 second" opening measures about 4.9 seconds from power
 - **The earlier home page is at `/room-original`.** The address can be changed in one line of `App.tsx`.
 - **`/room-motion` redirects to `/`** instead of showing the 404 page, so an old bookmark still works.
 - **The 404 page is noindex too.** The app answers a mistyped address with a normal page, so without the mark it could be indexed.
-- **PostgreSQL and React are still general skills in the Skills panel**, not CRM evidence. The confirmed facts now say the CRM uses both, but the brief did not ask for the chips to change, so choosing either chip still shows no project. One line each in `projectEvidence` (`room.ts`) if the owner wants it.
+- **PostgreSQL is CRM evidence in the Skills panel; React stays a general skill.** This is the owner's answer, not a decision to confirm: it is recorded in `docs/RESUME-SOURCE.md` under "Skill evidence". Choosing the PostgreSQL chip shows the CRM card; choosing React still shows no project.
 - **The flow note lost its second sentence** (what "From resume" means). The Redis stage's own note still says its position is representative.
 - **"Browser session" is the tab's session** (`sessionStorage`): a reload or coming back to the page plays the return version; a new tab plays the full opening once.
 - **A phone or touch screen plays the mobile opening on every visit**, first or not. The 3-second return opening is for desktops only: it has the linework and the travelling head, which the brief keeps off phones, and the owner has not judged mobile yet. So on a phone there is no shorter return version now (the 1-second one is gone). The choice is one line in `opening.ts` (`pickOpening`).
@@ -159,7 +160,7 @@ Two things to know. The "4 second" opening measures about 4.9 seconds from power
 
 1. The owner's look at the five points above, and any fixes from it.
 2. Push: only when the owner says. The push runs the browser specs in CI for the first time since this job; expect to fix them if the new home spec or the 404 tests fail.
-3. The owner's answers on the PostgreSQL and React chips, and on an accessibility scan for the home page.
+3. The owner's answer on an accessibility scan for the home page.
 4. `index.html` still carries the older static title and description ("Resume-backed portfolio of..."), which a crawler that does not run scripts would read. The page sets the right ones as soon as it loads. Not changed, because the wording is content and the brief did not give any.
 5. Merge to `main`: only when the owner says.
 
