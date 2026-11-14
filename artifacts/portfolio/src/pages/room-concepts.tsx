@@ -1,6 +1,6 @@
-import { useEffect, type CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 import { Link, useParams } from 'wouter';
-import { useDocumentMeta } from '@/hooks/use-document-meta';
+import { useDocumentMeta, useNoIndex } from '@/hooks/use-document-meta';
 import NotFound from '@/pages/not-found';
 import { findAccent, findVariant, variants } from '@/variants/registry';
 import { scenes } from '@/variants/scenes';
@@ -15,14 +15,7 @@ export default function RoomConcepts() {
   const accent = variant && findAccent(variant, accentId);
 
   useDocumentMeta('Room concepts | Satyendra Varma Nadimpalli', 'Three concepts of the engineer’s room, each in three accent options, side by side for comparison.');
-  useEffect(() => {
-    const robots = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
-    const previous = robots?.content;
-    const meta = robots ?? Object.assign(document.createElement('meta'), { name: 'robots' });
-    meta.content = 'noindex, nofollow';
-    if (!robots) document.head.appendChild(meta);
-    return () => { if (robots && previous !== undefined) robots.content = previous; else meta.remove(); };
-  }, []);
+  useNoIndex();
 
   if (!variant || !accent) return <NotFound />;
 

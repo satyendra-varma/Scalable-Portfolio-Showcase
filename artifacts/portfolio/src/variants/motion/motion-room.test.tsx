@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
@@ -7,8 +7,7 @@ import ExplodedScene from '../exploded/Scene';
 import { layers } from './layers';
 import { MotionRoom } from './MotionRoom';
 import { MotionStage } from './MotionStage';
-import { MotionSwitcher } from './MotionSwitcher';
-import { ACCENT, DEFAULT_MOTION, MOTIONS, motionHref, parseMotion } from './options';
+import { ACCENT } from './options';
 
 const SHAPES = 'polygon, polyline, path, rect, circle, ellipse, text, stop';
 /** The hybrid renames Exploded's xd- classes and ids to rm-; undo that so the two drawings can be compared. */
@@ -112,7 +111,7 @@ describe('the hybrid room', () => {
 
   it('carries the chosen motion on the root, for the concepts to style', () => {
     const { rerender } = render(<MotionRoom motion="off" />);
-    for (const { id } of MOTIONS) {
+    for (const id of ['b', 'off'] as const) {
       rerender(<MotionRoom motion={id} />);
       expect(screen.getByTestId('room-motion')).toHaveAttribute('data-motion', id);
     }
@@ -120,69 +119,19 @@ describe('the hybrid room', () => {
 });
 
 describe('the options', () => {
-  it('offers Power-on and Off, in Kapton amber only', () => {
-    expect(MOTIONS.map((m) => m.code)).toEqual(['On', 'Off']);
-    expect(DEFAULT_MOTION).toBe('b');
+  it('has the one accent, Kapton amber', () => {
     expect([ACCENT.name, ACCENT.hex]).toEqual(['Kapton amber', '#FFB547']);
   });
 
-  it('reads the motion from the address and falls back to the default', () => {
-    expect(parseMotion('')).toBe(DEFAULT_MOTION);
-    expect(parseMotion('?motion=b')).toBe('b');
-    expect(parseMotion('?motion=off')).toBe('off');
-    expect(parseMotion('motion=c&header=own&accent=copper')).toBe(DEFAULT_MOTION); // options that no longer exist are ignored
-    expect(parseMotion('?motion=a')).toBe(DEFAULT_MOTION);
-    expect(parseMotion('?motion=spin')).toBe(DEFAULT_MOTION);
-  });
-
-  it('builds a link to each motion and leaves the default out', () => {
-    expect(motionHref(DEFAULT_MOTION)).toBe('/room-motion');
-    expect(motionHref('off')).toBe('/room-motion?motion=off');
-    for (const { id } of MOTIONS) expect(parseMotion(motionHref(id).split('?')[1] ?? '')).toBe(id);
-  });
-});
-
-describe('the switcher', () => {
-  const show = (reducedMotion: boolean, collapsed = false) =>
-    render(<MotionSwitcher shownMotion={reducedMotion ? 'off' : 'b'} reducedMotion={reducedMotion} collapsed={collapsed} onToggle={() => {}} />);
-
-  it('marks the current motion and links to the other one, and offers nothing else', () => {
-    show(false);
-    expect(screen.getByTestId('link-motion-b')).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByTestId('link-motion-b')).toHaveAttribute('href', '/room-motion');
-    expect(screen.getByTestId('link-motion-off')).toHaveAttribute('href', '/room-motion?motion=off');
-    expect(screen.getByTestId('button-switcher-toggle')).toHaveTextContent('On · Power-on');
-    expect(screen.queryByTestId('note-reduced-motion')).toBeNull();
-    const switcher = screen.getByTestId('motion-switcher');
-    expect(switcher.querySelectorAll('[data-testid^="link-motion-"]')).toHaveLength(2);
-    expect(switcher.querySelectorAll('[data-testid^="link-"]')).toHaveLength(2);
-    expect(screen.queryByTestId('speed-row')).toBeNull();
-    expect(screen.getByTestId('replay-row')).toContainElement(screen.getByTestId('button-replay'));
-    expect(switcher).not.toHaveTextContent(/Copper|header/i);
-  });
-
-  it('shows Replay only when Power-on is shown', () => {
-    render(<MotionSwitcher shownMotion="off" reducedMotion={false} collapsed={false} onToggle={() => {}} />);
-    expect(screen.queryByTestId('replay-row')).toBeNull();
-    expect(screen.queryByTestId('button-replay')).toBeNull();
-    expect(screen.getByTestId('motion-switcher').querySelectorAll('[data-testid^="link-"]')).toHaveLength(2);
-  });
-
-  it('with reduced motion shows Off, says why, and offers no motion to switch to', () => {
-    show(true);
-    expect(screen.getByTestId('link-motion-off')).toHaveAttribute('aria-current', 'true');
-    const item = screen.getByTestId('link-motion-b');
-    expect(item).toHaveAttribute('aria-disabled', 'true');
-    expect(item).not.toHaveAttribute('href');
-    expect(screen.queryByTestId('button-replay')).toBeNull();
-    expect(screen.getByTestId('note-reduced-motion')).toHaveTextContent('reduced motion');
-    expect(screen.getByTestId('button-switcher-toggle')).toHaveTextContent('Off · Still');
-  });
-
-  it('collapses to one bar', () => {
-    show(false, true);
-    expect(screen.getByTestId('button-switcher-toggle')).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByTestId('link-motion-off')).not.toBeVisible();
+  it('has no switcher left: its files are gone and nothing in src refers to it', () => {
+    for (const name of ['MotionSwitcher.tsx', 'switcher.css']) expect(existsSync(resolve(__dirname, name)), name).toBe(false);
+    const walk = (dir: string): string[] => readdirSync(dir).flatMap((name) => {
+      const path = resolve(dir, name);
+      return statSync(path).isDirectory() ? walk(path) : [path];
+    });
+    const files = walk(resolve(__dirname, '../..')).filter((f) => /\.(css|ts|tsx)$/.test(f) && !/\.test\.tsx?$/.test(f));
+    expect(files.length).toBeGreaterThan(50);
+    expect(files.filter((f) => /rms-|MotionSwitcher/.test(readFileSync(f, 'utf8')))).toEqual([]);
   });
 });
 
@@ -190,7 +139,7 @@ describe('the still state', () => {
   const css = (name: string) => readFileSync(resolve(__dirname, name), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
 
   it('has no animation anywhere yet, and Off switches every animation and transition off', () => {
-    for (const file of ['room.css', 'header.css', 'switcher.css']) {
+    for (const file of ['room.css', 'header.css']) {
       expect(css(file), file).not.toMatch(/@keyframes/);
       expect(css(file).replace(/(animation|transition): none !important/g, ''), file).not.toMatch(/\b(animation|transition)[\w-]*\s*:/);
     }
@@ -198,7 +147,7 @@ describe('the still state', () => {
   });
 
   it('keeps every rule inside the hybrid, so no other room can change', () => {
-    for (const [file, prefix] of [['room.css', /^(\.rm |\.rv\.rm)/], ['header.css', /^\.rm \.rmh\b/], ['switcher.css', /^\.rms-/]] as const) {
+    for (const [file, prefix] of [['room.css', /^(\.rm |\.rv\.rm)/], ['header.css', /^\.rm \.rmh\b/]] as const) {
       const body = css(file).replace(/@media[^{]*\{/g, '').replace(/\{[^{}]*\}/g, '\n');
       // Split on new lines and on the commas between selectors, not the commas inside :is(...).
       const selectors = body.split(/\n|,(?![^()]*\))/).map((s) => s.trim()).filter((s) => s && s !== '}');

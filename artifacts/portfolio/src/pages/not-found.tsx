@@ -1,9 +1,10 @@
 import { Link } from 'wouter';
-import { useDocumentMeta } from '@/hooks/use-document-meta';
+import { useDocumentMeta, useNoIndex } from '@/hooks/use-document-meta';
 import '@/styles/room.css';
 
 export default function NotFound() {
   useDocumentMeta('Page not found | Satyendra Varma Nadimpalli', 'This page does not exist on the portfolio.');
+  useNoIndex();
   return (
     <div className="rp" data-testid="page-not-found">
       <main className="rp-404" aria-labelledby="nf-title">

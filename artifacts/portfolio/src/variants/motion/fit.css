@@ -10,7 +10,6 @@
   .rv.rm[data-motion]:has(.rm-figure) .rv-main { flex: 1 1 auto; min-height: 0; width: 100%; max-width: 1560px; padding: 8px clamp(16px, 4vw, 48px); display: grid; }
   .rv.rm[data-motion]:has(.rm-figure) .rm-figure { min-height: 0; min-width: 0; container-type: size; display: flex; flex-direction: column; }
   .rv.rm[data-motion]:has(.rm-figure) .rv-caption { margin-top: 6px; line-height: 18px; }
-  .rms-page:has(.rm[data-motion] .rm-figure) { padding-bottom: 0; }
 }
 
 @media (min-width: 1100px) and (min-height: 560px) and (min-aspect-ratio: 7/5) {

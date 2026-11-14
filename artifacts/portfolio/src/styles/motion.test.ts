@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 const ALLOWED = new Set(['transform', 'opacity']);
 
 /**
- * The one named exception to the rule. The owner allowed /room-motion's opening to draw its lines (docs/BRIEF-room-motion.md,
+ * The one named exception to the rule. The owner allowed the home page's opening to draw its lines (docs/BRIEF-room-motion.md,
  * decision 8): in this file only, the keyframes with this name may animate this property. Nothing else is excused:
  * not another file, another keyframe, another property, and never a transition.
  */

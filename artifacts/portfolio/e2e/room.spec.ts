@@ -3,12 +3,13 @@ import AxeBuilder from '@axe-core/playwright';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
 
-test('room: panels, filters, Explorer and accessible alternatives', async ({ page, isMobile }) => {
+test('earlier room (/room-original): panels, filters, Explorer and accessible alternatives', async ({ page, isMobile }) => {
   // A long journey (five panels, filters, keyboard paths, two axe scans). Cold Windows CI runners
   // have taken over 30 s for it, so give it the slow-test budget instead of the 30 s default.
   test.slow();
   if (!isMobile) await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/');
+  await page.goto('/room-original');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
   for (const id of ['text-name', 'text-role', 'text-positioning']) {
     await expect(page.getByTestId(id)).toBeInViewport();
   }
@@ -87,7 +88,8 @@ for (const path of ['/room-directions', '/room-directions/warm', '/room-variants
     await expect(page.getByTestId('page-not-found')).toBeVisible();
     await expect(page.getByRole('link')).toHaveCount(1);
     await page.getByTestId('link-404-home').click();
-    await expect(page.getByTestId('page-room')).toBeVisible();
-    expect((await new AxeBuilder({ page }).withTags(WCAG).analyze()).violations).toEqual([]);
+    await expect(page.getByTestId('room-motion')).toBeVisible();
+    await expect(page).toHaveURL(/\/$/);
+    // The axe scan used to run on the old home page after the click; that page is still scanned twice in the journey test above.
   });
 }

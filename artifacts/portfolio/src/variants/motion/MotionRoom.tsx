@@ -27,7 +27,7 @@ import './touch.css';
  * `motion` is 'b', Power-on (usePowerOn, power.css; its opening takes about 4 seconds), or 'off', the still state
  * that reduced motion also gets: the room already powered (lit traces, lit room, labels showing), nothing moving,
  * the panel opening at once, in the same layout as Power-on (fit.css). Power-on's opening is the full one on a desktop's first visit in a session and the same one at a quicker pace after (return.css); a phone always plays the simpler mobile one (lite.css).
- * The page keys this component by motion, so choosing a motion starts it afresh.
+ * The home page keys this component by motion, so a change of the reduced-motion setting starts it afresh.
  * The root carries the choice as data-motion and the accent as custom properties. --rm-progress (0 to 1) is what
  * the header's loading bar shows; it rests at 1, a full bar.
  */

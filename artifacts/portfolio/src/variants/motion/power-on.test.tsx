@@ -1,8 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { Router } from 'wouter';
-import { memoryLocation } from 'wouter/memory-location';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import RoomMotionPage from '@/pages/room-motion';
+import { hero } from '@/content/room';
+import HomePage from '@/pages/home';
 import { MotionRoom } from './MotionRoom';
 import { MOBILE_QUERY, markOpeningSeen, openingSeen } from './opening';
 
@@ -261,52 +260,38 @@ describe('a tap in place of hover', () => {
   });
 });
 
-describe('the page', () => {
-  const renderPage = (path: string) => {
-    const { hook, searchHook } = memoryLocation({ path });
-    return render(<Router hook={hook} searchHook={searchHook}><RoomMotionPage /></Router>);
-  };
+describe('the home page', () => {
+  const robotsContent = () => document.head.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '';
+  const roomLinks = () => [...document.querySelectorAll('a')].filter((a) => (a.getAttribute('href') ?? '').startsWith('/room'));
 
-  it('shows Power-on at /room-motion and Off at ?motion=off', () => {
+  it('is Power-on by default, with no switcher, Replay or reduced-motion note', () => {
     stubAnimations();
-    renderPage('/room-motion');
+    render(<HomePage />);
     expect(room()).toHaveAttribute('data-motion', 'b');
-    expect(screen.getByTestId('button-replay')).toBeInTheDocument();
+    for (const id of ['motion-switcher', 'button-replay', 'replay-row', 'note-reduced-motion']) expect(screen.queryByTestId(id), id).toBeNull();
   });
 
-  it('shows Off, with no Replay, at ?motion=off', () => {
+  it('carries the home page title and description, and is not noindex', () => {
     stubAnimations();
-    renderPage('/room-motion?motion=off');
-    expect(room()).toHaveAttribute('data-motion', 'off');
-    expect(screen.queryByTestId('button-replay')).toBeNull();
+    render(<HomePage />);
+    expect(document.title).toBe('Satyendra Varma Nadimpalli | Full Stack .NET Software Engineer');
+    expect(document.head.querySelector('meta[name="description"]')).toHaveAttribute('content', hero.positioning);
+    expect(robotsContent()).not.toContain('noindex');
   });
 
-  it('says the room is "powering on" in its description', () => {
-    stubAnimations();
-    renderPage('/room-motion');
-    expect(document.head.querySelector('meta[name="description"]')).toHaveAttribute('content', expect.stringContaining('powering on'));
-  });
-
-  it('plays the quicker full opening on a return, and Replay brings the first-visit opening back', () => {
+  it('plays the quicker full opening on a return visit', () => {
     stubAnimations([fakeAnimation()]);
     markOpeningSeen();
-    renderPage('/room-motion');
+    render(<HomePage />);
     expect(room()).toHaveAttribute('data-opening', 'return');
-
-    fireEvent.click(screen.getByTestId('button-replay'));
-    expect(room()).toHaveAttribute('data-opening', 'full');
-    expect(room()).toHaveAttribute('data-b', 'dark');
-    expect(linework()).toBeInTheDocument();
-    expect(window.sessionStorage.getItem(KEY)).toBeNull();
   });
 
-  it('with reduced motion shows Off with its note, and every hotspot still opens its panel and Escape hands focus back', () => {
+  it('with reduced motion shows the still room, and every hotspot still opens its panel and Escape hands focus back', () => {
     stubAnimations();
     stubMedia((query) => query.includes('prefers-reduced-motion'));
-    renderPage('/room-motion');
+    render(<HomePage />);
     expect(room()).toHaveAttribute('data-motion', 'off');
     for (const name of ['data-opening', 'data-b', 'data-lite']) expect(room()).not.toHaveAttribute(name);
-    expect(screen.getByTestId('note-reduced-motion')).toBeInTheDocument();
     for (const id of ['explorer', 'skills', 'projects', 'experience', 'contact']) {
       const button = screen.getByTestId(`hotspot-${id}`);
       fireEvent.click(button);
@@ -315,5 +300,14 @@ describe('the page', () => {
       expect(screen.queryByTestId(`panel-${id}`)).toBeNull();
       expect(button).toHaveFocus();
     }
+  });
+
+  it('links to no /room page, in the room view or the list view', () => {
+    stubAnimations();
+    render(<HomePage />);
+    expect(roomLinks()).toHaveLength(0);
+    fireEvent.click(screen.getByTestId('button-list-view'));
+    expect(screen.getByTestId('list-sections')).toBeInTheDocument();
+    expect(roomLinks()).toHaveLength(0);
   });
 });

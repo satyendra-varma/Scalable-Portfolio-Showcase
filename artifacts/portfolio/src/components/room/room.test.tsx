@@ -6,17 +6,18 @@ import { ContactContent, ProjectList, SkillsContent } from './RoomContent';
 import { SystemExplorer } from './SystemExplorer';
 import { crmFlow, flowSequenceNote, projectEvidence, projects } from '@/content/room';
 import { CRM_LINK, ECOMMERCE_LINK } from '@/content/site';
-import Room from '@/pages/room';
+import RoomOriginal from '@/pages/room-original';
 import NotFound from '@/pages/not-found';
 
 describe('engineer room', () => {
-  it('is the homepage, with a single direction and no switcher', () => {
-    render(<Room />);
+  it('the earlier room, kept at a hidden route', () => {
+    render(<RoomOriginal />);
     expect(screen.getByTestId('page-room')).toBeInTheDocument();
     expect(screen.getByText('Engineer’s Room')).toBeInTheDocument();
     expect(screen.queryByRole('navigation', { name: 'Direction switcher' })).toBeNull();
     expect(screen.queryByText(/Warm workshop|Night blueprint|Not the live site/)).toBeNull();
-    expect(document.title).toBe('Satyendra Varma Nadimpalli | Full Stack .NET Software Engineer');
+    expect(document.title).toBe('Earlier room | Satyendra Varma Nadimpalli');
+    expect(document.head.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex');
     expect(screen.getByTestId('hotspot-explorer')).toBeInTheDocument();
     expect(screen.getByTestId('link-header-email')).toHaveAttribute('href', 'mailto:satyendrasatya447@gmail.com');
   });
@@ -97,7 +98,7 @@ describe('engineer room', () => {
     );
   });
   it('returns focus to the object that opened a panel as soon as the panel closes', () => {
-    render(<Room />);
+    render(<RoomOriginal />);
     const monitor = screen.getByTestId('hotspot-explorer');
     fireEvent.click(monitor);
     expect(screen.getByTestId('panel-explorer')).toBeInTheDocument();
@@ -107,9 +108,11 @@ describe('engineer room', () => {
   });
   it('gives unknown routes a 404 page with a single way home', () => {
     render(<NotFound />);
+    expect(document.head.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex');
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('This page isn’t on the record.');
     const links = screen.getAllByRole('link');
     expect(links).toHaveLength(1);
     expect(links[0]).toHaveTextContent('Back to the room');
+    expect(links[0]).toHaveAttribute('href', '/');
   });
 });
