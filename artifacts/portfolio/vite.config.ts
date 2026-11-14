@@ -33,6 +33,9 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, 'dist/public'),
     emptyOutDir: true,
+    // The repository is private and the built site is public: publish no source maps.
+    // (This is Vite's default; it is stated here so a change has to be deliberate.)
+    sourcemap: false,
   },
   server: {
     port,
