@@ -4,6 +4,17 @@ Updated on 2026-11-14, after the font browser test was fixed and the Space Grote
 
 **No model has looked at this job's changes in a browser.** By the working rules the owner checks the page and reports. Two exceptions, both asked for by the owner: the scripted performance measurement below, from the earlier job, and headless runs of the one spec `e2e/room.spec.ts` on 2026-11-14. Everything about how the page looks is what the code is written to do.
 
+## Hosting: Cloudflare Workers, static assets (branch `chore/cloudflare-hosting`, 2026-11-14)
+
+The site is built as static files and served by a Worker with no script. The .NET API is not deployed. No page, motion or content changed.
+
+- **Config**: `artifacts/portfolio/wrangler.jsonc`: Worker name `scalable-portfolio-showcase` (must equal the Worker name in Cloudflare's dashboard), `assets.directory` `./dist/public`, `assets.not_found_handling` `single-page-application` (a path that is not a file gets `index.html` with 200, so a refresh on `/room-original` works). `wrangler` 4.162.0 is an exact devDependency of `@workspace/portfolio`; `.node-version` says 24; `build.sourcemap` is `false` in `vite.config.ts`.
+- **Cloudflare settings**: Root directory `/artifacts/portfolio`; Build command `pnpm run build`; Deploy command `npx wrangler deploy`; no build variables (`BASE_PATH` stays unset, so the site is served at the domain root).
+- **Output** (`artifacts/portfolio/dist/public`, 16 files): `index.html`, `robots.txt`, `favicon.svg`, `assets/` (4 JS, 2 CSS), `fonts/` (3 woff2 and 3 licence files). No source maps, no `docs/`, `e2e/` or API files: only `vite build` writes there.
+- **Checked** (fresh clone, Windows, Node 24.16): frozen-lockfile install, `pnpm run build` and `wrangler deploy --dry-run` succeed from the root directory; `wrangler dev` served `/`, `/room-original`, `/room-motion`, `/room-concepts` and an unknown path as `index.html` (200), real files as themselves.
+- **Not checked**: a real build on Cloudflare (Linux, its Node and Corepack); the dashboard screen itself. A path that looks like a missing asset (`/assets/missing.js`) also returns `index.html` with 200: that is how the fallback works.
+- **The config must be on the branch Cloudflare builds.** Until this branch is merged to `main`, a build of `main` has no Wrangler config.
+
 ## Where things are
 
 - **Branch**: `feature/room-motion`. The owner pushed it for the CI run of 2026-11-14. Everything from the font fix `5d097b6` onward is local, **not pushed**. Nothing is merged.

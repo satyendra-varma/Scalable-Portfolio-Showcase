@@ -13,6 +13,7 @@ out-tsc
 .nuxt
 .output
 .vercel
+.wrangler
 
 # dependencies
 node_modules
