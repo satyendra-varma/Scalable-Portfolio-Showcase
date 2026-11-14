@@ -55,6 +55,12 @@ describe('engineer room', () => {
     await user.click(screen.getByRole('button', { name: 'Redis' }));
     expect(screen.getByTestId('card-project-crm')).toBeInTheDocument();
     expect(screen.queryByTestId('card-project-ecommerce')).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'PostgreSQL' }));
+    expect(screen.getByTestId('card-project-crm')).toBeInTheDocument();
+    expect(screen.queryByTestId('card-project-ecommerce')).toBeNull();
+    screen.getAllByTestId('status-filter').forEach((el) => {
+      expect(el).toHaveTextContent('Showing projects with source evidence for PostgreSQL.');
+    });
     await user.click(screen.getByRole('button', { name: 'React' }));
     expect(screen.queryAllByRole('article')).toHaveLength(0);
     await user.click(screen.getByRole('button', { name: 'Clear filter' }));

@@ -95,6 +95,15 @@ describe('the confirmed CRM facts', () => {
     }
   });
 
+  it('records the skill evidence: PostgreSQL is CRM evidence, React stays general', () => {
+    expect(section).toContain('- PostgreSQL is project evidence for the Enterprise CRM Platform: the CRM database is PostgreSQL.');
+    expect(section).toContain('- React stays a general skill, not project evidence.');
+    expect(projectEvidence.PostgreSQL).toEqual(['crm']);
+    expect(projectEvidence.React).toBeUndefined();
+    const databases = skillGroups.find((g) => g.label === 'Databases')!.skills;
+    expect(databases.filter((s) => projectEvidence[s])).toEqual(['SQL Server (MSSQL)', 'PostgreSQL']);
+  });
+
   it('lists the nine confirmed facts', () => {
     const facts = [
       '- A React front end calls the API.',

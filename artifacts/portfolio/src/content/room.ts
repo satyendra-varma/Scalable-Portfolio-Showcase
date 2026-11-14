@@ -44,12 +44,13 @@ export const projects: {
   },
 ];
 
-/** Skill -> projects whose source entry names it. Absent = general skill only. */
+/** Skill -> projects whose source entry names it, or that the owner confirmed as evidence (docs/RESUME-SOURCE.md, "Skill evidence"). Absent = general skill only. */
 export const projectEvidence: Record<string, ProjectId[]> = {
   'C#': ['ecommerce'],
   '.NET 8': ['crm'],
   'Entity Framework Core': ['crm'],
   'SQL Server (MSSQL)': ['ecommerce'],
+  PostgreSQL: ['crm'],
   'JWT auth': ['crm'],
   RBAC: ['crm'],
   'AWS (EC2, S3)': ['ecommerce'],

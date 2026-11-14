@@ -71,6 +71,10 @@ The owner went through the open questions about the Enterprise CRM Platform with
 ### Project links
 - Both projects were contract work at Crescenza, so there are no repo or live links. The link line is hidden on both project cards. CRM_LINK and ECOMMERCE_LINK stay in the site config so a link can be added later.
 
+### Skill evidence
+- PostgreSQL is project evidence for the Enterprise CRM Platform: the CRM database is PostgreSQL.
+- React stays a general skill, not project evidence.
+
 ### System Explorer wording, flow 01 (CRM request lifecycle)
 Stage titles, source labels and notes exactly as the site shows them.
 1. Client request (Confirmed): A React front end calls the CRM API.
