@@ -1,15 +1,53 @@
-# Status — room motion (round 4)
+# Status — the Power-on room is the home page
 
-Updated on 2026-11-13, after the return-visit opening was changed from 1 second to about 3 (the owner's fourth brief of that day; the third chose Motion B, "Power-on", at 4 seconds and asked for it to be finished). The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
+Updated on 2026-11-13, after the owner's fifth brief of that day: Power-on is chosen, finished, checked by the owner in the browser and green in CI, so it becomes the real home page, and the content now carries the CRM facts the owner confirmed with their lead. The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
 
-**No model has looked at any of this in a browser.** By the working rules the owner checks the page and reports. The one exception is the scripted performance measurement below, which the owner asked for. Everything about how the page looks is what the code is written to do.
+**No model has looked at this job's changes in a browser, and no browser test was run.** By the working rules the owner checks the page and reports. The one exception is the scripted performance measurement below, from the earlier job. Everything about how the page looks is what the code is written to do.
 
 ## Where things are
 
-- **Branch**: `feature/room-motion`. It is **not pushed**, and nothing is merged.
-- **Route**: `/room-motion` plays Power-on. `/room-motion?motion=off` is the still state. Motions A and C and the 6 and 8 second speeds are removed from the switcher and the code. The switcher keeps Power-on, Off and Replay.
-- **Other branches are untouched**: `main`, `feature/room-concepts` and `feature/room-rotation`.
-- **State of the tip**: typecheck passes, the build passes, and **all 148 unit tests pass**.
+- **Branch**: `feature/room-motion`. This job's commits are **not pushed**, and nothing is merged.
+- **State of the tip**: typecheck passes, the build passes, and **all 156 unit tests pass**. The browser (Playwright) specs were edited and **not run**.
+
+### Routes
+
+| Address | What it shows | Linked from | Search engines |
+| --- | --- | --- | --- |
+| `/` | The Power-on room. No switcher, no Replay. | The 404 page's "Back to the room" | Indexable. Title "Satyendra Varma Nadimpalli \| Full Stack .NET Software Engineer", description: the positioning line. |
+| `/room-original` | The earlier home page (Night blueprint), unchanged apart from its title. | Nowhere | noindex |
+| `/room-concepts`, `/room-concepts/<concept>/<accent>` | The round 2 comparison page, unchanged. | Nowhere (its own dock links stay inside it) | noindex |
+| `/room-motion` | Redirects to `/`. Any `?motion=` is dropped. | Nowhere | — |
+| Anything else | The 404 page | — | noindex |
+
+`public/robots.txt` is unchanged and does not list the hidden pages: listing them would advertise them, and a crawler that is blocked cannot read the noindex mark.
+
+### This job's commits
+
+| Commit | What |
+| --- | --- |
+| `6ea4103` | Content: the confirmed CRM facts, the "Confirmed" label, no link line on project cards. |
+| `929bdf4` | The Power-on room at `/`; the earlier room at `/room-original`; the switcher and Replay removed. |
+
+### Content (Part 1)
+
+- `docs/RESUME-SOURCE.md` has a new section, **"Confirmed by the owner, 13 November 2026"**: the CRM facts in the owner's words, the project-links decision, and the exact wording of the ten stages and the flow note. `room.source.test.ts` checks every stage, label, note and the flow note against that section, so the site cannot drift from it.
+- The two `[TO CONFIRM]` notes those facts answer (which database the CRM uses; "applies to every read") are removed from that file. The one on "4+ years" and "microservices orchestration" stays.
+- A third source label, **"Confirmed"**. Nine stages of the CRM flow carry it. Stage 8, the Redis check, keeps "From resume" and its note, untouched. Stage 9 is "EF Core query on PostgreSQL" (it said SQL Server, which was wrong). "Representative design (to confirm)" stays in the code as a label; no stage uses it now.
+- How "Confirmed" looks: the stage's box and its label get an outline in the accent colour (amber on the home page). "From resume" keeps its outline in the second colour, so the Redis check reads as the one stage that is different. The word carries the meaning; the colour only backs it up.
+- The flow note is one sentence: "The sequence is confirmed except the position of the Redis check."
+- Project cards show no link line. `CRM_LINK` and `ECOMMERCE_LINK` stay in `src/content/site.ts`; fill one in and its card shows "Visit live project" again.
+
+### Home page (Part 2)
+
+- `src/pages/home.tsx` is the home page: it shows the room with Power-on, or still where the visitor's system asks for reduced motion. Nothing else chooses the state; `?motion=off` no longer exists.
+- Removed: `MotionSwitcher.tsx`, `switcher.css`, the switcher's page wrapper (and its one rule in `fit.css`), and the query-string options in `options.ts`.
+- One hook, `useNoIndex` (`src/hooks/use-document-meta.ts`), marks the earlier room, the concepts page and the 404 page noindex, and puts "index, follow" back when the visitor moves to the home page.
+- **Not changed**, by the owner's instruction: the opening, the idle packets, the hover lift, the panels, the mobile opening, reduced motion. In the motion folder only comments, `options.ts`, the one dead `fit.css` rule and the tests changed.
+- The home page's main script is now about 116 kB gzipped (it was 105 kB with the earlier room first): the Power-on room now loads up front and the earlier room on demand.
+
+## The earlier job: Power-on, finished
+
+*Kept from the previous version of this file. Where it mentions the switcher, Off or Replay, those are gone; the commits below are the history.*
 
 | Commit | What |
 | --- | --- |
@@ -30,9 +68,9 @@ Updated on 2026-11-13, after the return-visit opening was changed from 1 second 
 | Desktop, first visit in a browser session | The full opening, "4 seconds", as approved | `power.css` |
 | Phone or touch screen, every visit | "Mobile", about 2.5 seconds | `lite.css` |
 | Desktop, later visits in the same session | "Return": the full opening at a quicker pace, about 3 seconds | `return.css` (pace only; the rules are `power.css`) |
-| Reduced motion, or Off in the switcher | No opening: the room lit and still | `room.css` |
+| Reduced motion | No opening: the room lit and still | `room.css` |
 
-The room's root says which one plays: `data-opening='full' | 'mobile' | 'return'` (`opening.ts`, chosen once when the room mounts). **Replay** always plays the first-visit opening for the device. To see the return version, on a desktop: reload the page, or switch to Off and back.
+The room's root says which one plays: `data-opening='full' | 'mobile' | 'return'` (`opening.ts`, chosen once when the room mounts). To see the return version, on a desktop: reload the page. To see the full opening again: open the site in a new tab. To see the still room: switch on reduced motion in the system or in the browser's developer tools.
 
 ### The return opening, about 3 seconds
 
@@ -61,13 +99,15 @@ How it is built: while the mobile opening waits or runs the root carries `data-l
 
 ### Reduced motion
 
-The page shows Off: the powered room, lit traces, labels showing, the panel opening at once, nothing moving. Off now uses the same first-screen layout as Power-on (`fit.css` applies to both), and the feed line is drawn. A rule in `room.css` also switches off every animation and transition under `prefers-reduced-motion`, in case the script's answer is ever late.
+The page shows the still room (`data-motion='off'` in the code): the powered room, lit traces, labels showing, the panel opening at once, nothing moving. It uses the same first-screen layout as Power-on (`fit.css` applies to both), and the feed line is drawn. A rule in `room.css` also switches off every animation and transition under `prefers-reduced-motion`, in case the script's answer is ever late.
 
 ### Tests
 
 - `src/styles/motion.test.ts`: the transform-and-opacity rule still covers the whole site. **One named exception** (`LINE_DRAWING`): in `variants/motion/power.css` only, the keyframes `rm-b-draw` only, may animate `stroke-dashoffset` only. Tests check the exception is still in use and excuses nothing else.
 - `motion-room.test.tsx`: the fifteen layers, and the comparison with Exploded (it leaves out only the wiring, heads, pads, blooms, flows and typing cover, and on Exploded's side the traces, pads and packets the hybrid replaces).
-- New: `opening.test.ts`, `power-on.test.tsx`, `stylesheets.test.ts` (the kinds of opening, the phases, skip, Replay, reduced motion on the page, tap, and the stylesheets' scoping).
+- `opening.test.ts`, `power-on.test.tsx`, `stylesheets.test.ts`: the kinds of opening, the phases, skip, reduced motion on the home page, tap, and the stylesheets' scoping.
+- New in this job: `App.test.tsx` (every route, the `/room-motion` redirect, robots on each page and back to indexable on the home page), `use-document-meta.test.tsx` (the noindex hook), the confirmed-facts checks in `room.source.test.ts`, and a check that no switcher code is left.
+- Browser specs, edited and not run: `e2e/home.spec.ts` is new and small (the room shows at `/`, no switcher, the title, indexable, no link to a hidden page, the redirect). The long journey in `e2e/room.spec.ts` now runs on `/room-original`, the page it was written for. The 404 tests expect the Power-on room after "Back to the room".
 - Not testable in unit tests: real timing and rendering, the wait for the room to be seen, the CSS cascade, real touch.
 
 ### Performance: one scripted measurement of the full opening
@@ -87,31 +127,41 @@ Two things to know. The "4 second" opening measures about 4.9 seconds from power
 
 ## Decided for the owner, to confirm
 
+- **The earlier home page is at `/room-original`.** The address can be changed in one line of `App.tsx`.
+- **`/room-motion` redirects to `/`** instead of showing the 404 page, so an old bookmark still works.
+- **The 404 page is noindex too.** The app answers a mistyped address with a normal page, so without the mark it could be indexed.
+- **PostgreSQL and React are still general skills in the Skills panel**, not CRM evidence. The confirmed facts now say the CRM uses both, but the brief did not ask for the chips to change, so choosing either chip still shows no project. One line each in `projectEvidence` (`room.ts`) if the owner wants it.
+- **The flow note lost its second sentence** (what "From resume" means). The Redis stage's own note still says its position is representative.
 - **"Browser session" is the tab's session** (`sessionStorage`): a reload or coming back to the page plays the return version; a new tab plays the full opening once.
 - **A phone or touch screen plays the mobile opening on every visit**, first or not. The 3-second return opening is for desktops only: it has the linework and the travelling head, which the brief keeps off phones, and the owner has not judged mobile yet. So on a phone there is no shorter return version now (the 1-second one is gone). The choice is one line in `opening.ts` (`pickOpening`).
 - **"Mobile" is 600 px or less, or no hover.** A window between 601 and 1099 px wide with a mouse still plays the full opening in the older stacked layout.
-- **Off and reduced motion use the fitted first-screen layout**, as Power-on does.
+- **Reduced motion uses the fitted first-screen layout**, as Power-on does.
 - **The two small notes drawn in the room** ("ROOM_01 / 4.20 m", "// scale 1:40") are about 8 px tall on a phone and are left as decoration.
-- The switcher names the two states "On · Power-on" and "Off · Still".
 
 ## Look at first
 
-1. A phone, or a narrow window: the dark room (is the unlit room too dim or too bright?), the 2.5-second opening, then tap a label and close the panel.
-2. Reload on the desktop: the 3-second return version. Can the eye still follow the head, and does the monitor's typing read at that pace? Then Replay for the full one.
-3. The header at phone width: the tag above the name.
-4. Reduced motion (or Off) on the desktop: the room should sit as it does in Power-on.
+1. The site root: the Power-on room, with nothing at the bottom of the screen where the switcher was. On a phone, the page now ends where the room ends; the space the switcher reserved is gone.
+2. The System Explorer, first flow: nine stages say "Confirmed" with an amber outline, the Redis check says "From resume" with the other outline, and stage 9 says PostgreSQL. Is the amber outline on nine boxes too much next to the selected stage, which is filled amber?
+3. The Projects panel, and the project cards under Skills: two cards, no link line, no gap where it was.
+4. `/room-original`, `/room-concepts` and an address that does not exist: each still opens, and "Back to the room" lands on Power-on.
+5. An old `/room-motion` bookmark: it should land on `/`.
 
 ## Not checked
 
-- Anything in a browser, at any size, apart from the measurement above.
+- Anything in a browser in this job, at any size. The browser specs were edited and not run; CI will run them on the next push, and `e2e/home.spec.ts` has never run anywhere.
+- **The Power-on home page has never had an accessibility scan.** The scans in the browser specs cover the earlier room and the concepts. Adding one for the home page needs a browser run to see what it reports.
+- How the "Confirmed" outline looks in the earlier room and the three round 2 concepts, which share the System Explorer and have their own colours.
+- The home page without the switcher's wrapper: it gave the page a dark background and bottom padding. The room has its own background and fills the screen by itself, so nothing should show, but nobody has looked.
 - On a phone the feed line runs from the bar's end down the header's right edge, close to the corner bracket. It may look crowded.
 - The full-screen System Explorer panel, closing a panel part-way, switching hotspots while a panel closes, the list view with Power-on, any browser other than Chrome: written and not looked at.
 
 ## Left
 
-1. The owner's look, and any fixes from it.
-2. `/room-motion` is still the comparison page: it has the switcher (Power-on, Off, Replay) and is marked noindex. Making it the real site (its route, removing the switcher, search-engine settings) is the next job and waits for the owner.
-3. Push and merge: only when the owner says.
+1. The owner's look at the five points above, and any fixes from it.
+2. Push: only when the owner says. The push runs the browser specs in CI for the first time since this job; expect to fix them if the new home spec or the 404 tests fail.
+3. The owner's answers on the PostgreSQL and React chips, and on an accessibility scan for the home page.
+4. `index.html` still carries the older static title and description ("Resume-backed portfolio of..."), which a crawler that does not run scripts would read. The page sets the right ones as soon as it loads. Not changed, because the wording is content and the brief did not give any.
+5. Merge to `main`: only when the owner says.
 
 ## Working in this copy
 
