@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import App from './App';
 
@@ -20,6 +20,10 @@ afterEach(() => {
   window.history.pushState({}, '', '/');
 });
 
+// A lazy page's first import can take longer than Testing Library's default second when the whole suite runs,
+// and its effects (the robots meta) land a moment after its markup. So: a generous wait, and waitFor on robots.
+const LAZY = { timeout: 10_000 };
+
 const visit = (path: string) => {
   window.history.pushState({}, '', path);
   return render(<App />);
@@ -36,14 +40,14 @@ describe('the routes', () => {
 
   it('/room-original is the earlier room, noindex', async () => {
     visit('/room-original');
-    expect(await screen.findByTestId('page-room')).toBeInTheDocument();
-    expect(robots()).toContain('noindex');
+    expect(await screen.findByTestId('page-room', {}, LAZY)).toBeInTheDocument();
+    await waitFor(() => expect(robots()).toContain('noindex'));
   });
 
   it('/room-concepts is the comparison page, noindex', async () => {
     visit('/room-concepts');
-    expect(await screen.findByTestId('variant-dock')).toBeInTheDocument();
-    expect(robots()).toContain('noindex');
+    expect(await screen.findByTestId('variant-dock', {}, LAZY)).toBeInTheDocument();
+    await waitFor(() => expect(robots()).toContain('noindex'));
   });
 
   it.each(['/room-motion', '/room-motion?motion=off'])('%s lands on / with no query, showing Power-on', async (path) => {
@@ -57,12 +61,10 @@ describe('the routes', () => {
   it('an unknown path is the 404 page, noindex, and its link goes home, indexable again', async () => {
     visit('/no-such-page');
     expect(await screen.findByTestId('page-not-found')).toBeInTheDocument();
-    expect(robots()).toContain('noindex');
+    await waitFor(() => expect(robots()).toContain('noindex'));
     fireEvent.click(screen.getByTestId('link-404-home'));
     expect(await screen.findByTestId('room-motion')).toBeInTheDocument();
     expect(window.location.pathname).toBe('/');
-    await act(async () => {});
-    expect(robots()).not.toContain('noindex');
-    expect(robots()).toBe('index, follow');
+    await waitFor(() => expect(robots()).toBe('index, follow'));
   });
 });

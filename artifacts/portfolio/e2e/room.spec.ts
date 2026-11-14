@@ -64,8 +64,9 @@ test('earlier room (/room-original): panels, filters, Explorer and accessible al
 });
 
 // Two font tests, because the faces are not all used at once on the home page: its first screen
-// uses only DM Sans and JetBrains Mono, and Space Grotesk loads there once a panel or the list view
-// shows. The earlier room uses all three faces on its first screen.
+// uses only DM Sans and JetBrains Mono, and Space Grotesk is fetched quietly once the opening has
+// finished (so the first panel or list view opens without a font change). The earlier room uses all
+// three faces on its first screen.
 function recordFontRequests(page: Page) {
   const external: string[] = [];
   const fonts: string[] = [];
@@ -86,7 +87,7 @@ function expectSelfHosted(page: Page, rec: { external: string[]; fonts: string[]
   }
 }
 
-test('fonts on the home page are self-hosted: no Google Fonts requests, and the faces it uses load', async ({ page }) => {
+test('fonts on the home page are self-hosted, and the heading face loads by itself after the opening', async ({ page }) => {
   const rec = recordFontRequests(page);
   await page.goto('/');
   await expect(page.getByTestId('room-motion')).toBeVisible();
@@ -95,13 +96,22 @@ test('fonts on the home page are self-hosted: no Google Fonts requests, and the 
   for (const face of ['DM Sans', 'JetBrains Mono']) {
     await expect.poll(() => page.evaluate((f) => document.fonts.check(`16px "${f}"`), face)).toBe(true);
   }
+  // The heading face must not be fetched before the room is on. Reading both in one evaluate is what makes
+  // this race-free: the room cannot go on between the two reads.
+  const early = await page.evaluate(() => ({
+    on: document.querySelector('[data-testid="room-motion"]')?.getAttribute('data-b') === 'on',
+    fetched: performance.getEntriesByType('resource').some((e) => e.name.includes('space-grotesk')),
+  }));
+  expect(early.on || !early.fetched).toBe(true);
+  // The face arrives by itself after the opening (about 5 s on a desktop, then an idle callback), with nothing opened.
+  await expect.poll(() => page.evaluate(() => document.fonts.check('700 26px "Space Grotesk"')), { timeout: 20_000 }).toBe(true);
   // The opening is skippable by a click, so retry; the button is a toggle, so click only while the list is not on (aria-pressed).
   const toggle = page.getByTestId('button-list-view');
   await expect(async () => {
     if ((await toggle.getAttribute('aria-pressed')) !== 'true') await toggle.click({ timeout: 2000 });
     await expect(page.getByTestId('list-sections')).toBeVisible({ timeout: 1000 });
   }).toPass();
-  await expect.poll(() => page.evaluate(() => document.fonts.check('700 26px "Space Grotesk"'))).toBe(true);
+  expect(await page.evaluate(() => document.fonts.check('700 26px "Space Grotesk"'))).toBe(true);
   expectSelfHosted(page, rec);
 });
 

@@ -1,5 +1,6 @@
-import { useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { contact } from '@/content/room';
+import { warmDisplayFont } from '@/lib/fonts';
 import { hotspots, type HotspotId } from '@/components/room/RoomScene';
 import { SystemExplorer } from '@/components/room/SystemExplorer';
 import { ContactContent, ExperienceContent, ProjectList, SkillsContent } from '@/components/room/RoomContent';
@@ -41,6 +42,9 @@ export function MotionRoom({ motion }: { motion: MotionId }) {
   const [opening] = useState(() => pickOpening({ seen: openingSeen(), mobile: isMobile() }));
   const power = usePowerOn(root, motion === 'b', opening);
   const lite = opening === 'mobile';
+  // Once the room is on (at once in the still room), fetch the heading face the panels and the list view use.
+  const ready = motion === 'off' || power === 'on';
+  useEffect(() => { if (ready) warmDisplayFont(); }, [ready]);
 
   // Start closing, and hand focus straight back to the object that opened the panel: the visitor is not kept waiting.
   const close = () => {
