@@ -152,3 +152,7 @@
 /* ---------- Off ----------
    Off is the reduced-motion state: nothing may move in it. */
 .rv.rm[data-motion='off'] *, .rv.rm[data-motion='off'] *::before, .rv.rm[data-motion='off'] *::after { animation: none !important; transition: none !important; }
+/* A safety net: with reduced motion nothing moves, even if the script's answer comes late or wrong. */
+@media (prefers-reduced-motion: reduce) {
+  .rv.rm *, .rv.rm *::before, .rv.rm *::after { animation: none !important; transition: none !important; }
+}

@@ -1,8 +1,8 @@
 /*
  * Touch screens (Power-on, docs/BRIEF-room-motion.md): a tap stands in for hover. Everything here sits under .rm and
- * inside @media (hover: none), except the tap targets, which have their own block. Mouse behaviour is untouched.
+ * inside @media (hover: none), except the tap targets, which have their own block. Mouse behaviour is untouched. The open-panel lift is Power-on only: in Off the panel just opens.
  *
- * 1. Nothing sticks. A tap leaves :hover on the label; that must not hold the object lifted, keep its glow on, or
+ * 1. Nothing sticks, in Power-on and in Off (where the highlight is room.css's brightness). A tap leaves :hover on the label; that must not hold the object lifted, keep its glow on, or
  *    leave the label in its hover look. Keyboard focus (:focus-visible) is left alone: it still lifts and outlines.
  * 2. A tap answers at once, then the panel opens. The script runs the pulse; the label gives a small press; and the
  *    room's root carries data-open (MotionRoom) while a panel is open, which lifts and lights that object exactly
@@ -22,18 +22,18 @@
   .rm .rv-hotspot:active { transform: scale(.96); }
 
   /* The object and its glow: a lingering :hover (without keyboard focus) lifts nothing. */
-  .rm[data-motion='b'] .rm-stage:has([data-hotspot='explorer']:hover:not(:focus-visible)) .rm-layer[data-object='explorer'],
-  .rm[data-motion='b'] .rm-stage:has([data-hotspot='skills']:hover:not(:focus-visible)) .rm-layer[data-object='skills'],
-  .rm[data-motion='b'] .rm-stage:has([data-hotspot='projects']:hover:not(:focus-visible)) .rm-layer[data-object='projects'],
-  .rm[data-motion='b'] .rm-stage:has([data-hotspot='experience']:hover:not(:focus-visible)) .rm-layer[data-object='experience'],
-  .rm[data-motion='b'] .rm-stage:has([data-hotspot='contact']:hover:not(:focus-visible)) .rm-layer[data-object='contact'] {
+  .rm[data-motion] .rm-stage:has([data-hotspot='explorer']:hover:not(:focus-visible)) .rm-layer[data-object='explorer'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='skills']:hover:not(:focus-visible)) .rm-layer[data-object='skills'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='projects']:hover:not(:focus-visible)) .rm-layer[data-object='projects'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='experience']:hover:not(:focus-visible)) .rm-layer[data-object='experience'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='contact']:hover:not(:focus-visible)) .rm-layer[data-object='contact'] {
     transform: none !important; filter: none !important; transition-delay: 0s !important;
   }
-  .rm[data-motion='b'] .rm-stage:has([data-hotspot='explorer']:hover:not(:focus-visible)) .rm-bloom[data-bloom='explorer'],
-  .rm[data-motion='b'] .rm-stage:has([data-hotspot='skills']:hover:not(:focus-visible)) .rm-bloom[data-bloom='skills'],
-  .rm[data-motion='b'] .rm-stage:has([data-hotspot='projects']:hover:not(:focus-visible)) .rm-bloom[data-bloom='projects'],
-  .rm[data-motion='b'] .rm-stage:has([data-hotspot='experience']:hover:not(:focus-visible)) .rm-bloom[data-bloom='experience'],
-  .rm[data-motion='b'] .rm-stage:has([data-hotspot='contact']:hover:not(:focus-visible)) .rm-bloom[data-bloom='contact'] {
+  .rm[data-motion] .rm-stage:has([data-hotspot='explorer']:hover:not(:focus-visible)) .rm-bloom[data-bloom='explorer'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='skills']:hover:not(:focus-visible)) .rm-bloom[data-bloom='skills'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='projects']:hover:not(:focus-visible)) .rm-bloom[data-bloom='projects'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='experience']:hover:not(:focus-visible)) .rm-bloom[data-bloom='experience'],
+  .rm[data-motion] .rm-stage:has([data-hotspot='contact']:hover:not(:focus-visible)) .rm-bloom[data-bloom='contact'] {
     opacity: 0 !important; transition-delay: 0s !important;
   }
 

@@ -24,7 +24,8 @@ import './touch.css';
  * drawn as one svg per depth layer. Same content, panels and System Explorer as every other room.
  *
  * `motion` is 'b', Power-on (usePowerOn, power.css; its opening takes about 4 seconds), or 'off', the still state
- * that reduced motion also gets. Power-on's opening is the full one on a session's first visit and a short one after.
+ * that reduced motion also gets: the room already powered (lit traces, lit room, labels showing), nothing moving,
+ * the panel opening at once, in the same layout as Power-on (fit.css). Power-on's opening is the full one on a session's first visit and a short one after.
  * The page keys this component by motion, so choosing a motion starts it afresh.
  * The root carries the choice as data-motion and the accent as custom properties. --rm-progress (0 to 1) is what
  * the header's loading bar shows; it rests at 1, a full bar.
