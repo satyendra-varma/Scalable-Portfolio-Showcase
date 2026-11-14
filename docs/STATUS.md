@@ -1,13 +1,13 @@
 # Status — the Power-on room is the home page
 
-Updated on 2026-11-13, after the owner's fifth brief of that day: Power-on is chosen, finished, checked by the owner in the browser and green in CI, so it becomes the real home page, and the content now carries the CRM facts the owner confirmed with their lead. The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
+Updated on 2026-11-14, after the font browser test was fixed (see "The first CI run" below). Before that: 2026-11-13, the owner's fifth brief of that day: Power-on is chosen, finished, checked by the owner in the browser and green in CI, so it becomes the real home page, and the content now carries the CRM facts the owner confirmed with their lead. The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
 
-**No model has looked at this job's changes in a browser, and no browser test was run.** By the working rules the owner checks the page and reports. The one exception is the scripted performance measurement below, from the earlier job. Everything about how the page looks is what the code is written to do.
+**No model has looked at this job's changes in a browser.** By the working rules the owner checks the page and reports. Two exceptions, both asked for by the owner: the scripted performance measurement below, from the earlier job, and one headless run of `e2e/room.spec.ts` on 2026-11-14. Everything about how the page looks is what the code is written to do.
 
 ## Where things are
 
-- **Branch**: `feature/room-motion`. This job's commits are **not pushed**, and nothing is merged.
-- **State of the tip**: typecheck passes, the build passes, and **all 157 unit tests pass**. The browser (Playwright) specs were edited and **not run**.
+- **Branch**: `feature/room-motion`. The owner pushed it for the CI run of 2026-11-14. The font fix `5d097b6` and the status commit after it are local, **not pushed**. Nothing is merged.
+- **State of the tip**: typecheck passes, the build passes, and **all 157 unit tests pass**. `e2e/room.spec.ts` passes locally, headless, on desktop and mobile (20 of 20). The other two browser specs were not run locally; they passed in CI.
 
 ### Routes
 
@@ -28,6 +28,16 @@ Updated on 2026-11-13, after the owner's fifth brief of that day: Power-on is ch
 | `6ea4103` | Content: the confirmed CRM facts, the "Confirmed" label, no link line on project cards. |
 | `929bdf4` | The Power-on room at `/`; the earlier room at `/room-original`; the switcher and Replay removed. |
 | `a1831eb` | PostgreSQL is CRM evidence in the Skills panel; React stays a general skill. |
+| `5d097b6` | Browser test: the font check now matches the fonts each page really uses. |
+
+### The first CI run, and the font test (2026-11-14)
+
+CI ran the browser specs for the first time since the Power-on room became the home page: 42 of 44 passed. The two failures were one test on both screen sizes, "fonts are self-hosted", on Ubuntu and Windows alike.
+
+- **Cause**: the test opened `/` and expected all three typefaces to be loaded. The Power-on room's first screen uses only JetBrains Mono (the name, the room's labels) and DM Sans (the positioning line and body text). Nothing on it uses Space Grotesk, so the browser never loads it there. The test was written for the earlier room, whose name is in Space Grotesk. The page is as the owner approved it; the test was out of date.
+- **Space Grotesk is still used**: on the home page, once a panel or the list view opens (panel titles, card titles, System Explorer headings, the list view's section headings); on `/room-original` from the first screen; and in the names of two of the `/room-concepts` rooms (Exploded, Isometric).
+- **Fix** (`e2e/room.spec.ts` only; no page changed): two tests. On the home page: no Google Fonts requests, every font request is one of the site's own `/fonts/` files, DM Sans and JetBrains Mono load, and Space Grotesk loads once the list view shows headings that use it. On `/room-original`: all three load on the first screen.
+- **Found, not changed**: `index.html` still preloads all three font files for every page. So the home page downloads the Space Grotesk file (22 kB) at load although its first screen does not use it. That was right when the earlier room was the home page. Dropping the preload would save the download at load; keeping it means the first panel's headings never flash in a fallback font. It is the owner's call, and the test passes either way.
 
 ### Content (Part 1)
 
@@ -108,7 +118,7 @@ The page shows the still room (`data-motion='off'` in the code): the powered roo
 - `motion-room.test.tsx`: the fifteen layers, and the comparison with Exploded (it leaves out only the wiring, heads, pads, blooms, flows and typing cover, and on Exploded's side the traces, pads and packets the hybrid replaces).
 - `opening.test.ts`, `power-on.test.tsx`, `stylesheets.test.ts`: the kinds of opening, the phases, skip, reduced motion on the home page, tap, and the stylesheets' scoping.
 - New in this job: `App.test.tsx` (every route, the `/room-motion` redirect, robots on each page and back to indexable on the home page), `use-document-meta.test.tsx` (the noindex hook), the confirmed-facts checks in `room.source.test.ts`, and a check that no switcher code is left.
-- Browser specs, edited and not run: `e2e/home.spec.ts` is new and small (the room shows at `/`, no switcher, the title, indexable, no link to a hidden page, the redirect). The long journey in `e2e/room.spec.ts` now runs on `/room-original`, the page it was written for. The 404 tests expect the Power-on room after "Back to the room".
+- Browser specs: all three have now run in CI, and `e2e/room.spec.ts` also locally after the font fix. `e2e/home.spec.ts` is new and small (the room shows at `/`, no switcher, the title, indexable, no link to a hidden page, the redirect). The long journey in `e2e/room.spec.ts` now runs on `/room-original`, the page it was written for. The 404 tests expect the Power-on room after "Back to the room".
 - Not testable in unit tests: real timing and rendering, the wait for the room to be seen, the CSS cascade, real touch.
 
 ### Performance: one scripted measurement of the full opening
@@ -149,7 +159,7 @@ Two things to know. The "4 second" opening measures about 4.9 seconds from power
 
 ## Not checked
 
-- Anything in a browser in this job, at any size. The browser specs were edited and not run; CI will run them on the next push, and `e2e/home.spec.ts` has never run anywhere.
+- Anything in a browser by a model, at any size, apart from the headless run of `e2e/room.spec.ts`. The fixed font tests have passed locally (Chrome, Windows) and not yet in CI.
 - **The Power-on home page has never had an accessibility scan.** The scans in the browser specs cover the earlier room and the concepts. Adding one for the home page needs a browser run to see what it reports.
 - How the "Confirmed" outline looks in the earlier room and the three round 2 concepts, which share the System Explorer and have their own colours.
 - The home page without the switcher's wrapper: it gave the page a dark background and bottom padding. The room has its own background and fills the screen by itself, so nothing should show, but nobody has looked.
@@ -159,9 +169,9 @@ Two things to know. The "4 second" opening measures about 4.9 seconds from power
 ## Left
 
 1. The owner's look at the five points above, and any fixes from it.
-2. Push: only when the owner says. The push runs the browser specs in CI for the first time since this job; expect to fix them if the new home spec or the 404 tests fail.
+2. Push: only when the owner says. The font fix (`5d097b6`) is local; the next push shows whether CI is green on both systems.
 3. The owner's answer on an accessibility scan for the home page.
-4. `index.html` still carries the older static title and description ("Resume-backed portfolio of..."), which a crawler that does not run scripts would read. The page sets the right ones as soon as it loads. Not changed, because the wording is content and the brief did not give any.
+4. `index.html` still carries the older static title and description ("Resume-backed portfolio of..."), which a crawler that does not run scripts would read. The page sets the right ones as soon as it loads. Not changed, because the wording is content and the brief did not give any. The same file preloads the Space Grotesk font, which the home page's first screen no longer uses (see "The first CI run" above): keep or drop is the owner's call.
 5. Merge to `main`: only when the owner says.
 
 ## Working in this copy
