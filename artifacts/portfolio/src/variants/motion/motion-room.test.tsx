@@ -8,7 +8,7 @@ import { layers } from './layers';
 import { MotionRoom } from './MotionRoom';
 import { MotionStage } from './MotionStage';
 import { MotionSwitcher } from './MotionSwitcher';
-import { ACCENT, DEFAULT_MOTION, MOTIONS, motionHref, parseMotion } from './options';
+import { ACCENT, DEFAULT_MOTION, MOTIONS, motionHref, parseMotion, parseSpeed } from './options';
 
 const SHAPES = 'polygon, polyline, path, rect, circle, ellipse, text, stop';
 /** The hybrid renames Exploded's xd- classes and ids to rm-; undo that so the two drawings can be compared. */
@@ -118,6 +118,15 @@ describe('the options', () => {
     expect(motionHref('b')).toBe('/room-motion?motion=b');
     for (const { id } of MOTIONS) expect(parseMotion(motionHref(id).split('?')[1] ?? '')).toBe(id);
   });
+
+  it('reads the opening speed and adds it to the link only for Motion B and only when not the default', () => {
+    expect(parseSpeed('')).toBe('6');
+    expect(parseSpeed('?motion=b&speed=4')).toBe('4');
+    expect(parseSpeed('?speed=9')).toBe('6');
+    expect(motionHref('b', '8')).toBe('/room-motion?motion=b&speed=8');
+    expect(motionHref('b', '6')).toBe('/room-motion?motion=b');
+    expect(motionHref('a', '8')).toBe('/room-motion?motion=a');
+  });
 });
 
 describe('the switcher', () => {
@@ -131,8 +140,27 @@ describe('the switcher', () => {
     expect(screen.getByTestId('link-motion-a')).toHaveAttribute('href', '/room-motion?motion=a');
     expect(screen.getByTestId('button-switcher-toggle')).toHaveTextContent('B · Power-on');
     expect(screen.queryByTestId('note-reduced-motion')).toBeNull();
-    expect(screen.getByTestId('motion-switcher').querySelectorAll('[data-testid^="link-"]')).toHaveLength(4);
-    expect(screen.getByTestId('motion-switcher')).not.toHaveTextContent(/Copper|header/i);
+    const switcher = screen.getByTestId('motion-switcher');
+    expect(switcher.querySelectorAll('[data-testid^="link-motion-"]')).toHaveLength(4);
+    // Motion B also offers its opening speeds and Replay, and nothing else
+    expect(switcher.querySelectorAll('[data-testid^="link-speed-"]')).toHaveLength(3);
+    expect(screen.getByTestId('link-speed-6')).toHaveAttribute('aria-current', 'true');
+    expect(screen.getByTestId('link-speed-4')).toHaveAttribute('href', '/room-motion?motion=b&speed=4');
+    expect(screen.getByTestId('link-speed-8')).toHaveAttribute('href', '/room-motion?motion=b&speed=8');
+    expect(screen.getByTestId('button-replay')).toBeInTheDocument();
+    expect(switcher.querySelectorAll('[data-testid^="link-"]')).toHaveLength(7);
+    expect(switcher).not.toHaveTextContent(/Copper|header/i);
+  });
+
+  it('shows the speed row and Replay only when Motion B is shown', () => {
+    for (const motion of ['a', 'c', 'off'] as const) {
+      const { unmount } = render(<MotionSwitcher shownMotion={motion} reducedMotion={false} collapsed={false} onToggle={() => {}} />);
+      expect(screen.queryByTestId('speed-row')).toBeNull();
+      expect(screen.queryByTestId('link-speed-4')).toBeNull();
+      expect(screen.queryByTestId('button-replay')).toBeNull();
+      expect(screen.getByTestId('motion-switcher').querySelectorAll('[data-testid^="link-"]')).toHaveLength(4);
+      unmount();
+    }
   });
 
   it('with reduced motion shows Off, says why, and offers no motion to switch to', () => {

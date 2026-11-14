@@ -9,6 +9,7 @@ import { MotionPanel } from './MotionPanel';
 import { MotionStage } from './MotionStage';
 import { ACCENT, type MotionId, type SpeedId } from './options';
 import { usePowerOn } from './usePowerOn';
+import { ARRIVAL, REACH } from './wiring';
 import '@/styles/room.css';
 import '../variants.css';
 import './room.css';
@@ -54,7 +55,7 @@ export function MotionRoom({ motion, speed }: { motion: MotionId; speed?: SpeedI
     opener.current = el;
     setOpen(id);
   };
-  const style = { '--accent': ACCENT.hex, '--accent-ink': ACCENT.ink, '--evidence': ACCENT.support, '--rm-progress': 1 } as CSSProperties;
+  const style = { '--accent': ACCENT.hex, '--accent-ink': ACCENT.ink, '--evidence': ACCENT.support, '--rm-progress': 1, '--rm-reach': REACH, '--rm-at-x': ARRIVAL.explorer } as CSSProperties;
 
   return (
     <div ref={root} className="rp rv rm" data-variant="room-motion" data-motion={motion} data-speed={motion === 'b' ? speed : undefined} data-b={power} data-testid="room-motion" style={style}>

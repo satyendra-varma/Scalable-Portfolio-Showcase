@@ -1,8 +1,8 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { VIEW } from './layers';
-import { ENTRY } from './wiring';
+import { ENTRY, Heads, pieces, type Piece } from './wiring';
 
-type Shape = { d: string; px: number; units: number; scale: number };
+type Shape = { d: string; px: number; units: number; scale: number; heads: Piece[] };
 type XY = [number, number];
 
 const PACKETS = [0, 1, 2, 3, 4];
@@ -35,7 +35,9 @@ function trace(main: HTMLElement): Shape | null {
     end,
   ];
   const px = points.slice(1).reduce((sum, p, i) => sum + Math.hypot(p[0] - points[i][0], p[1] - points[i][1]), 0);
-  return { d: 'M' + points.map((p) => p.map((n) => Math.round(n * 10) / 10).join(',')).join('L'), px: Math.ceil(px), units: Math.round(px / scale), scale };
+  // The head's pieces count their distance back from the room's entry point: the feed ends where the room's wiring starts.
+  const heads = pieces(points, -px / scale, scale);
+  return { d: 'M' + points.map((p) => p.map((n) => Math.round(n * 10) / 10).join(',')).join('L'), px: Math.ceil(px), units: Math.round(px / scale), scale, heads };
 }
 
 /**
@@ -75,6 +77,7 @@ export function Feed() {
           <path className="rm-w-lit" d={shape.d} />
           {/* One per object: each packet runs down the feed before it runs to its object (usePowerOn). */}
           {PACKETS.map((i) => <path key={i} className="rm-flow rm-packet" d={shape.d} />)}
+          <Heads id="feed" list={shape.heads} scale={shape.scale} />
         </>
       )}
     </svg>

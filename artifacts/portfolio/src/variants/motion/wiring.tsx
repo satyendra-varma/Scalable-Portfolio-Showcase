@@ -88,6 +88,75 @@ export const ARRIVAL = Object.fromEntries(
 /** The furthest any trace runs from the entry point. */
 export const REACH = Math.max(...segments.map((s) => s.end));
 
+/** Where power reaches the floor plate: the foot of the drop from the wall's end. */
+export const FLOOR_AT = drop.end;
+
+/** A straight piece of a line: where it starts, which way it runs, how far along the line it starts, how long it is. */
+export type Piece = { x: number; y: number; angle: number; at: number; len: number };
+
+/**
+ * The straight pieces of the line through `points`. `at` is how far from the room's entry point the line starts;
+ * `scale` is how many of the points' units make one drawing unit (the feed is measured in px).
+ */
+export function pieces(points: XY[], at = 0, scale = 1): Piece[] {
+  const out: Piece[] = [];
+  let run = at;
+  points.slice(1).forEach((p, i) => {
+    const a = points[i];
+    const len = Math.hypot(p[0] - a[0], p[1] - a[1]) / scale;
+    if (len > 0) out.push({ x: a[0], y: a[1], angle: (Math.atan2(p[1] - a[1], p[0] - a[0]) * 180) / Math.PI, at: run, len });
+    run += len;
+  });
+  return out;
+}
+
+const TAIL = 150; // drawing units: the length of the fading tail behind the head
+const fine = (n: number) => Math.round(n * 100) / 100;
+
+/**
+ * The head of the power as it travels in (Motion B's opening): a hot point with a fading tail. There is one per
+ * straight piece of a line, lying along it and clipped to it, and the stylesheet slides each along its piece
+ * when power gets there (--at, --len). Where two pieces meet, one head leaves as the next enters, so the eye
+ * sees a single point turn the corner, and a branch splits it in two. Only transform moves.
+ */
+export function Heads({ id, list, scale = 1 }: { id: string; list: Piece[]; scale?: number }) {
+  return (
+    <g className="rm-heads">
+      {list.map((p, i) => (
+        <g key={i} transform={`translate(${fine(p.x)} ${fine(p.y)}) rotate(${fine(p.angle)}) scale(${fine(scale)})`}>
+          <clipPath id={`rm-hc-${id}-${i}`}><rect x={-1.5} y={-14} width={fine(p.len + 3)} height={28} /></clipPath>
+          <g clipPath={`url(#rm-hc-${id}-${i})`}>
+            <g className="rm-head" style={{ '--at': fine(p.at), '--len': fine(p.len) } as CSSProperties}>
+              <rect className="rm-head-halo" x={-TAIL} y={-5} width={TAIL} height={10} rx={5} fill="url(#rm-tail)" />
+              <rect className="rm-head-tail" x={-TAIL} y={-1.7} width={TAIL} height={3.4} rx={1.7} fill="url(#rm-tail)" />
+              <circle className="rm-head-glow" r={11} fill="url(#rm-hot)" />
+              <circle className="rm-head-core" r={3.2} />
+            </g>
+          </g>
+        </g>
+      ))}
+    </g>
+  );
+}
+
+/** The head's gradients. Drawn once, with the wall's wiring; the feed uses them too (ids are document-wide). */
+const headDefs = (
+  <defs>
+    <linearGradient id="rm-tail" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" style={{ stopColor: 'var(--accent)' }} stopOpacity="0" />
+      <stop offset=".5" style={{ stopColor: 'var(--accent)' }} stopOpacity=".28" />
+      <stop offset=".88" style={{ stopColor: 'var(--accent)' }} stopOpacity=".95" />
+      <stop offset="1" stopColor="#FFF6DE" />
+    </linearGradient>
+    <radialGradient id="rm-hot">
+      <stop offset="0" stopColor="#FFF6DE" stopOpacity=".95" />
+      <stop offset=".34" style={{ stopColor: 'var(--accent)' }} stopOpacity=".5" />
+      <stop offset="1" style={{ stopColor: 'var(--accent)' }} stopOpacity="0" />
+    </radialGradient>
+  </defs>
+);
+const headsOn = (layer: Segment['layer']) => segments.filter((s) => s.layer === layer).flatMap((s) => pieces(s.points, s.at));
+
 /** Each object's box in the drawing ([x0, y0, x1, y1]): where its glow sits, and where its panel unfolds from. */
 export const OBJECT_BOX: Record<HotspotId, [number, number, number, number]> = {
   skills: [278, 57, 534, 315],
@@ -110,10 +179,16 @@ function Trace({ s }: { s: Segment }) {
   );
 }
 
-/** A solder pad, lit when power reaches it. */
+/** A solder pad, lit when power reaches it, and the ring that spreads from it at that moment. */
 function Pad({ at, node, small = false }: { at: number; node: V3; small?: boolean }) {
   const [cx, cy] = project(...node);
-  return <circle className={`rm-pad${small ? ' rm-pad-s' : ''}`} cx={cx} cy={cy} r={small ? 3 : 4.5} style={{ '--at': at } as CSSProperties} />;
+  const style = { '--at': at } as CSSProperties;
+  return (
+    <>
+      <circle className="rm-pad-ring" cx={cx} cy={cy} r={small ? 3 : 4.5} style={style} />
+      <circle className={`rm-pad${small ? ' rm-pad-s' : ''}`} cx={cx} cy={cy} r={small ? 3 : 4.5} style={style} />
+    </>
+  );
 }
 
 /** The traces on the wall, and the drop from the wall's end to the floor. Painted over the wall, under the shelf and the frame. */
@@ -126,6 +201,8 @@ export function WallWiring() {
       <Pad at={shelfRun.end} node={N.shelfFoot} small />
       <Pad at={shelf.end} node={N.shelf} />
       <Pad at={frame.end} node={N.frame} />
+      {headDefs}
+      <Heads id="wall" list={headsOn('wall')} />
     </g>
   );
 }
@@ -140,6 +217,7 @@ export function FloorWiring() {
       <Pad at={ground.end} node={N.ground} />
       <Pad at={hub.end} node={N.hub} />
       <Pad at={mailbox.end} node={N.mailbox} />
+      <Heads id="floor" list={headsOn('floor')} />
     </>
   );
 }

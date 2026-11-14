@@ -30,6 +30,8 @@
   --rm-spring: linear(0, .3 7%, .7 16%, .99 26%, 1.085 36%, 1.06 46%, 1.012 60%, .995 76%, 1);
   --rm-out: cubic-bezier(.2, .8, .2, 1);
 }
+.rv.rm[data-speed='4'] { --rm-travel: 2.3; --rm-k: .8; }  /* the 4-second opening */
+.rv.rm[data-speed='8'] { --rm-travel: 5.2; --rm-k: 1.2; } /* the 8-second opening */
 .rv.rm[data-b='dark'] { --rm-play: paused; }
 /* When this element's trace arrives. Declared on each element, because it depends on the element's own --at. */
 .rm[data-motion='b'] :is(.rm-stage, .rm-stage *, .rm-feed, .rm-feed *) { --rm-arrive: calc(var(--rm-t0) + (var(--rm-feed) + var(--at, 0)) / var(--rm-speed) * 1s); }
@@ -39,7 +41,9 @@
 @keyframes rm-b-fade-out { to { opacity: 0; } }
 @keyframes rm-b-light { from { opacity: 0; transform: translateY(9px) scale(.975); } 34% { opacity: 1; } }
 @keyframes rm-b-bloom { from { opacity: 0; } 20% { opacity: 1; } to { opacity: 0; } }
-@keyframes rm-b-pad { from { opacity: .3; transform: scale(.55); } }
+@keyframes rm-b-pad { from { opacity: .3; transform: scale(.55); } 30% { opacity: 1; transform: scale(1.7); } }
+@keyframes rm-b-ring { from { opacity: 0; transform: scale(1); } 12% { opacity: .95; } to { opacity: 0; transform: scale(4.4); } }
+@keyframes rm-b-head { from { transform: translateX(-12px); } to { transform: translateX(calc((var(--len) + 164) * 1px)); } }
 @keyframes rm-b-tag { from { opacity: .42; } }
 @keyframes rm-b-dot { from { opacity: .3; transform: scale(.5); } }
 @keyframes rm-b-charge { from { transform: translateX(-100%); } to { transform: translateX(0); } }
@@ -98,8 +102,22 @@
 .rm[data-b]:not([data-b='on']) .rm-stage :is(.rm-w-lit, .rm-w-glow) {
   animation: rm-b-draw calc(var(--len) / var(--rm-speed) * 1s) linear var(--rm-arrive) both var(--rm-play);
 }
-.rm[data-motion='b'] .rm-pad { transform-box: fill-box; transform-origin: center; }
-.rm[data-b]:not([data-b='on']) .rm-pad { animation: rm-b-pad .5s var(--rm-spring) var(--rm-arrive) both var(--rm-play); }
+.rm[data-motion='b'] :is(.rm-pad, .rm-pad-ring) { transform-box: fill-box; transform-origin: center; }
+.rm[data-b]:not([data-b='on']) .rm-pad { animation: rm-b-pad .6s ease-out var(--rm-arrive) both var(--rm-play); }
+/* A ring spreads from each pad as power reaches it: the eye gets a mark at every junction on the way. */
+.rm .rm-pad-ring { display: none; fill: none; stroke: var(--accent); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+.rm[data-b]:not([data-b='on']) .rm-pad-ring { display: inline; animation: rm-b-ring .8s ease-out var(--rm-arrive) both var(--rm-play); }
+
+/* The head of the power (wiring.tsx, Heads): a hot point with a fading tail, slid along each straight piece of the
+   feed and of the traces as power gets there. It starts and ends outside its piece's clip, 12 units before and
+   164 after, so the tail drains into whatever the piece ends at. The lit trace above is drawn in behind it. */
+.rm .rm-heads { display: none; }
+.rm .rm-head-halo { opacity: .4; }
+.rm .rm-head-core { fill: #FFF8E8; }
+.rm[data-b]:not([data-b='on']) .rm-heads { display: inline; }
+.rm[data-b]:not([data-b='on']) .rm-head {
+  animation: rm-b-head calc((var(--len) + 176) / var(--rm-speed) * 1s) linear calc(var(--rm-arrive) - 12s / var(--rm-speed)) both var(--rm-play);
+}
 
 /* ============ Opening, part 3: each object comes on as its trace arrives ============ */
 .rm[data-b]:not([data-b='on']) .rm-layer[data-object] { animation: rm-b-light .66s var(--rm-spring) var(--rm-arrive) both var(--rm-play); }
