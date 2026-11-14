@@ -63,6 +63,8 @@ export function Feed() {
     measure();
     const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
     observer?.observe(el);
+    // Where the page is fitted to the window, the header and the room can change size while <main> does not.
+    el.querySelectorAll('.rmh, .rm-stage').forEach((part) => observer?.observe(part));
     window.addEventListener('resize', measure);
     void document.fonts?.ready.then(measure);
     return () => { observer?.disconnect(); window.removeEventListener('resize', measure); };
