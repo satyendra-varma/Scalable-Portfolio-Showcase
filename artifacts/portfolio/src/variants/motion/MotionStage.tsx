@@ -2,13 +2,16 @@ import type { CSSProperties } from 'react';
 import { hotspots } from '@/components/room/RoomScene';
 import type { SceneProps } from '../Stage';
 import { VIEW, defs, layers, positions, type LayerId } from './layers';
-import { ARRIVAL, OBJECT_BOX } from './wiring';
+import { ARRIVAL, FLOOR_AT, OBJECT_BOX } from './wiring';
 import './room.css';
 
 const VIEW_BOX = `0 0 ${VIEW.w} ${VIEW.h}`;
 
-/** The room itself, as opposed to the things in it: these come up together, when the monitor does. */
-const AMBIENT: LayerId[] = ['light', 'floor', 'shadows', 'guides', 'wall'];
+/**
+ * The room itself, as opposed to the things in it, and where power first touches each part (--at): the wall at
+ * the entry point, the floor plate and what lies on it at the foot of the drop from the wall.
+ */
+const ZONE: Partial<Record<LayerId, number>> = { wall: 0, floor: FLOOR_AT, shadows: FLOOR_AT, guides: FLOOR_AT };
 
 /** The order in which the linework is drawn, for the layers that have linework: the plate first, the monitor last. */
 const WIRE_ORDER: Partial<Record<LayerId, number>> = { floor: 0, guides: 1, desk: 2, cabinet: 3, mailbox: 3, wall: 4, shelf: 5, frame: 5, monitor: 6 };
@@ -19,7 +22,7 @@ function layerStyle(id: LayerId, object?: keyof typeof ARRIVAL): CSSProperties |
     const [x0, y0, x1, y1] = OBJECT_BOX[object];
     return { '--at': ARRIVAL[object], transformOrigin: `${((x0 + x1) / 2 / VIEW.w) * 100}% ${((y0 + y1) / 2 / VIEW.h) * 100}%` } as CSSProperties;
   }
-  return AMBIENT.includes(id) ? ({ '--at': ARRIVAL.explorer } as CSSProperties) : undefined;
+  return ZONE[id] === undefined ? undefined : ({ '--at': ZONE[id] } as CSSProperties);
 }
 
 /**
@@ -39,7 +42,7 @@ export function MotionStage({ onOpen, wire = false }: SceneProps & { wire?: bool
           {wire && (
             <svg className="rm-wire" viewBox={VIEW_BOX} focusable="false" data-testid="room-linework">
               {layers.filter((l) => WIRE_ORDER[l.id] !== undefined).map((l) => (
-                <g key={l.id} data-wire={l.id} data-object={l.object} style={{ '--wi': WIRE_ORDER[l.id], '--at': ARRIVAL[l.object ?? 'explorer'] } as CSSProperties}>{l.art}</g>
+                <g key={l.id} data-wire={l.id} data-object={l.object} style={{ '--wi': WIRE_ORDER[l.id], '--at': l.object ? ARRIVAL[l.object] : ZONE[l.id] ?? 0 } as CSSProperties}>{l.art}</g>
               ))}
             </svg>
           )}

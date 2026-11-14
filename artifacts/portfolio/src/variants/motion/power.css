@@ -39,13 +39,26 @@
 @keyframes rm-b-draw { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
 @keyframes rm-b-fade-in { from { opacity: 0; } }
 @keyframes rm-b-fade-out { to { opacity: 0; } }
-@keyframes rm-b-light { from { opacity: 0; transform: translateY(9px) scale(.975); } 34% { opacity: 1; } }
 @keyframes rm-b-bloom { from { opacity: 0; } 20% { opacity: 1; } to { opacity: 0; } }
+/* An object strikes like a tube: it flickers before it holds, and seats itself as it does. */
+@keyframes rm-b-on { from { opacity: 0; transform: translateY(8px); } 9% { opacity: .8; } 18% { opacity: .15; } 32% { opacity: .9; } 44% { opacity: .5; } 60% { opacity: 1; transform: none; } }
+@keyframes rm-b-flick { from { opacity: 0; } 9% { opacity: .8; } 18% { opacity: .15; } 32% { opacity: .9; } 44% { opacity: .5; } 60% { opacity: 1; } }
+@keyframes rm-b-strike { from { opacity: 0; } 15% { opacity: 1; } 30% { opacity: .25; } 50% { opacity: 1; } }
+@keyframes rm-b-half { from { opacity: 0; } to { opacity: .5; } }
+@keyframes rm-b-lift { from { opacity: .5; } to { opacity: 1; } }
+@keyframes rm-b-dim { from { opacity: .1; } }
+@keyframes rm-b-spine { from { opacity: .13; } 40% { opacity: 1; transform: translateY(-3.5px); } }
+@keyframes rm-b-drawer { from { opacity: .1; transform: translateY(5px); } 35% { opacity: 1; } }
+@keyframes rm-b-raise { from { opacity: 0; transform: scaleY(.04); } 12% { opacity: 1; } }
+@keyframes rm-b-pop { from { opacity: 0; transform: scale(.3); } 30% { opacity: 1; } }
+@keyframes rm-b-line { from { opacity: 0; transform: scaleX(0); } 2% { opacity: 1; } }
+@keyframes rm-b-type-cursor { from { transform: translateX(-94px); } to { transform: translateX(-4px); } }
+@keyframes rm-b-type-cover { to { transform: translateX(90px); } }
+@keyframes rm-b-settle { from, to { transform: none; } }
+@keyframes rm-b-label { from { opacity: 0; transform: translateY(9px) scale(.92); } 30% { opacity: 1; } }
 @keyframes rm-b-pad { from { opacity: .3; transform: scale(.55); } 30% { opacity: 1; transform: scale(1.7); } }
 @keyframes rm-b-ring { from { opacity: 0; transform: scale(1); } 12% { opacity: .95; } to { opacity: 0; transform: scale(4.4); } }
 @keyframes rm-b-head { from { transform: translateX(-12px); } to { transform: translateX(calc((var(--len) + 164) * 1px)); } }
-@keyframes rm-b-tag { from { opacity: .42; } }
-@keyframes rm-b-dot { from { opacity: .3; transform: scale(.5); } }
 @keyframes rm-b-charge { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 @keyframes rm-b-armed { to { opacity: .68; } }
 @keyframes rm-b-sweep { from { transform: translateX(-100%); } 94% { opacity: 1; } to { opacity: 0; transform: translateX(234%); } }
@@ -67,8 +80,10 @@
 }
 .rm[data-b='dark'] .rm-wire .rm-label { animation: rm-b-fade-in .5s ease-out .45s both; }
 /* Each outline goes as its object comes on; the floor's and the wall's go when the room's light comes up. */
-.rm[data-b]:not([data-b='on']) .rm-wire [data-wire] { animation: rm-b-fade-out .38s ease-out var(--rm-arrive) both var(--rm-play); }
-.rm[data-b]:not([data-b='on']) .rm-wire [data-wire]:not([data-object]) { animation-duration: .7s; }
+.rm[data-b]:not([data-b='on']) .rm-wire [data-wire] { animation: rm-b-fade-out .45s ease-out var(--rm-arrive) both var(--rm-play); }
+.rm[data-b]:not([data-b='on']) .rm-wire [data-wire]:not([data-object]) { animation: rm-b-fade-out calc(.9s * var(--rm-k)) ease-out var(--rm-live) both var(--rm-play); }
+/* The light behind the room is all but out. */
+.rm[data-b]:not([data-b='on']) .rm-stage::before { animation: rm-b-dim calc(1s * var(--rm-k)) ease-out var(--rm-live) both var(--rm-play); }
 
 /* The unpowered copper is part of the drawing: it is traced in with the linework, outward from the entry point. */
 .rm[data-b='dark'] :is(.rm-stage, .rm-feed) .rm-w-base {
@@ -106,7 +121,11 @@
 .rm[data-b]:not([data-b='on']) .rm-pad { animation: rm-b-pad .6s ease-out var(--rm-arrive) both var(--rm-play); }
 /* A ring spreads from each pad as power reaches it: the eye gets a mark at every junction on the way. */
 .rm .rm-pad-ring { display: none; fill: none; stroke: var(--accent); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
-.rm[data-b]:not([data-b='on']) .rm-pad-ring { display: inline; animation: rm-b-ring .8s ease-out var(--rm-arrive) both var(--rm-play); }
+.rm[data-b]:not([data-b='on']) .rm-pad-ring {
+  display: inline;
+  /* ...and once more from every pad together, when the room goes live. */
+  animation: rm-b-ring .8s ease-out var(--rm-arrive) both var(--rm-play), rm-b-ring 1.1s ease-out var(--rm-live) forwards var(--rm-play);
+}
 
 /* The head of the power (wiring.tsx, Heads): a hot point with a fading tail, slid along each straight piece of the
    feed and of the traces as power gets there. It starts and ends outside its piece's clip, 12 units before and
@@ -119,16 +138,102 @@
   animation: rm-b-head calc((var(--len) + 176) / var(--rm-speed) * 1s) linear calc(var(--rm-arrive) - 12s / var(--rm-speed)) both var(--rm-play);
 }
 
-/* ============ Opening, part 3: each object comes on as its trace arrives ============ */
-.rm[data-b]:not([data-b='on']) .rm-layer[data-object] { animation: rm-b-light .66s var(--rm-spring) var(--rm-arrive) both var(--rm-play); }
-.rm[data-b]:not([data-b='on']) .rm-bloom { animation: rm-b-bloom .8s ease-out var(--rm-arrive) both var(--rm-play); }
-/* The room's own light comes up when the monitor does. */
-.rm[data-b]:not([data-b='on']) .rm-layer:is([data-layer='light'], [data-layer='floor'], [data-layer='shadows'], [data-layer='guides'], [data-layer='wall']) {
-  animation: rm-b-fade-in .7s ease-out var(--rm-arrive) both var(--rm-play);
+/* ============ Opening, part 3: each object comes on in its own way as its trace arrives ============
+   Beats are seconds after the object's trace arrives, stretched by --rm-k. --boot is when the object is live:
+   its label appears then, and not before. */
+.rm[data-motion='b'] [data-hotspot='skills'] { --boot: 1.6s; }
+.rm[data-motion='b'] [data-hotspot='projects'] { --boot: 1.45s; }
+.rm[data-motion='b'] [data-hotspot='experience'] { --boot: 1.1s; }
+.rm[data-motion='b'] [data-hotspot='contact'] { --boot: 1s; }
+.rm[data-motion='b'] [data-hotspot='explorer'] { --boot: 1.45s; }
+
+/* The room itself. The wall shows, half lit, as power enters it at the top of the corner, and the floor plate as
+   power steps down onto it. Neither is fully lit until the room goes live. */
+.rm[data-b]:not([data-b='on']) .rm-layer:is([data-layer='wall'], [data-layer='floor'], [data-layer='shadows'], [data-layer='guides']) {
+  animation: rm-b-half calc(.9s * var(--rm-k)) ease-out var(--rm-arrive) both var(--rm-play), rm-b-lift calc(.9s * var(--rm-k)) ease-out var(--rm-live) forwards var(--rm-play);
 }
-/* Labels are usable from the first frame, but read as unpowered until their object is. */
-.rm[data-b]:not([data-b='on']) .rv-hotspots > li { animation: rm-b-tag .4s ease-out var(--rm-arrive) both var(--rm-play); }
-.rm[data-b]:not([data-b='on']) .rv-hotspot-dot { animation: rm-b-dot .55s var(--rm-spring) var(--rm-arrive) both var(--rm-play); }
+
+/* Every object strikes like a tube as its trace arrives, and its glow flashes behind it. */
+.rm[data-b]:not([data-b='on']) .rm-layer[data-object] { animation: rm-b-on calc(.6s * var(--rm-k)) linear var(--rm-arrive) both var(--rm-play); }
+.rm[data-b]:not([data-b='on']) .rm-bloom {
+  animation: rm-b-bloom .9s ease-out calc(var(--rm-arrive) + .1s) both var(--rm-play), rm-b-bloom 1.3s ease-out var(--rm-live) forwards var(--rm-play);
+}
+
+/* Bookshelf: the shelf strikes with its books dark, then the spines light one by one, top row first. */
+.rm .rm-bk:nth-child(5) { --bi: 1; } .rm .rm-bk:nth-child(6) { --bi: 2; } .rm .rm-bk:nth-child(7) { --bi: 3; } .rm .rm-bk:nth-child(8) { --bi: 4; } .rm .rm-bk:nth-child(9) { --bi: 5; }
+.rm .rm-bk:nth-child(10) { --bi: 6; } .rm .rm-bk:nth-child(11) { --bi: 7; } .rm .rm-bk:nth-child(12) { --bi: 8; } .rm .rm-bk:nth-child(13) { --bi: 9; } .rm .rm-bk:nth-child(14) { --bi: 10; }
+.rm .rm-bk:nth-child(15) { --bi: 11; } .rm .rm-bk:nth-child(16) { --bi: 12; } .rm .rm-bk:nth-child(17) { --bi: 13; } .rm .rm-bk:nth-child(18) { --bi: 14; } .rm .rm-bk:nth-child(19) { --bi: 15; }
+.rm .rm-bk:nth-child(20) { --bi: 16; } .rm .rm-bk:nth-child(21) { --bi: 17; }
+.rm[data-b]:not([data-b='on']) .rm-layer .rm-bk {
+  animation: rm-b-spine .36s ease-out calc(var(--rm-arrive) + (.3s + var(--bi, 0) * .065s) * var(--rm-k)) both var(--rm-play);
+}
+
+/* Project frame: the frame strikes empty, then draws its three boxes in turn, then the links between them. */
+.rm .rm-node:nth-child(4) { --ni: 1; } .rm .rm-node:nth-child(5) { --ni: 2; }
+.rm[data-b]:not([data-b='on']) .rm-layer .rm-node {
+  --len: 152; --d: calc(var(--rm-arrive) + (.25s + var(--ni, 0) * .24s) * var(--rm-k));
+  stroke-dasharray: 152 156;
+  animation: rm-b-fade-in .12s linear var(--d) both var(--rm-play), rm-b-draw calc(.42s * var(--rm-k)) ease-out var(--d) both var(--rm-play);
+}
+.rm[data-b]:not([data-b='on']) .rm-layer .rm-link {
+  --len: 74; --d: calc(var(--rm-arrive) + .97s * var(--rm-k));
+  stroke-dasharray: 74 78;
+  animation: rm-b-fade-in .05s linear var(--d) both var(--rm-play), rm-b-draw calc(.5s * var(--rm-k)) ease-in-out var(--d) both var(--rm-play);
+}
+
+/* Filing cabinet: its three drawers come on from the top down, each with a small knock. */
+.rm .rm-l-cabinet g[transform] > g:nth-child(2) { --di: 1; } .rm .rm-l-cabinet g[transform] > g:nth-child(3) { --di: 2; }
+.rm[data-b]:not([data-b='on']) .rm-layer .rm-l-cabinet g[transform] > g {
+  animation: rm-b-drawer calc(.42s * var(--rm-k)) var(--rm-spring) calc(var(--rm-arrive) + (.3s + var(--di, 0) * .2s) * var(--rm-k)) both var(--rm-play);
+}
+
+/* Mailbox: it strikes, then its flag goes up. */
+.rm[data-b]:not([data-b='on']) .rm-layer .rm-flag {
+  transform-box: fill-box; transform-origin: 50% 100%;
+  animation: rm-b-raise calc(.6s * var(--rm-k)) var(--rm-spring) calc(var(--rm-arrive) + .4s * var(--rm-k)) both var(--rm-play);
+}
+
+/* Desk and monitor, the last to finish. The monitor boots: the glass strikes, the title bar and its three lights
+   come up, the prompt types its line, the output prints, and only then do the glare on the glass and the amber
+   edge appear. A cover (wiring.tsx, Flows) hides the letters not yet typed; the cursor steps along ahead of it. */
+.rm[data-b]:not([data-b='on']) .rm-layer[data-layer='monitor'] { animation: rm-b-flick calc(.5s * var(--rm-k)) linear calc(var(--rm-arrive) + .12s * var(--rm-k)) both var(--rm-play); }
+.rm[data-b]:not([data-b='on']) .rm-layer .rm-screen-bar { animation: rm-b-fade-in .2s linear calc(var(--rm-arrive) + .5s * var(--rm-k)) both var(--rm-play); }
+.rm .rm-dot:nth-of-type(2) { --oi: 1; } .rm .rm-dot:nth-of-type(3) { --oi: 2; }
+.rm[data-b]:not([data-b='on']) .rm-layer .rm-dot {
+  transform-box: fill-box; transform-origin: center;
+  animation: rm-b-pop .3s var(--rm-spring) calc(var(--rm-arrive) + (.56s + var(--oi, 0) * .09s) * var(--rm-k)) both var(--rm-play);
+}
+.rm[data-b]:not([data-b='on']) .rm-layer .rm-cursor {
+  animation: rm-b-type-cursor calc(.5s * var(--rm-k)) steps(10, end) calc(var(--rm-arrive) + .8s * var(--rm-k)) both var(--rm-play),
+    rm-b-settle .01s linear calc(var(--rm-arrive) + 1.32s * var(--rm-k)) forwards var(--rm-play);
+}
+.rm .rm-type { display: none; }
+.rm .rm-type-cover { fill: #181716; }
+.rm[data-b]:not([data-b='on']) .rm-type { display: inline; }
+.rm[data-b]:not([data-b='on']) .rm-type-cover {
+  animation: rm-b-fade-in .01s linear calc(var(--rm-arrive) + .1s * var(--rm-k)) both var(--rm-play),
+    rm-b-type-cover calc(.5s * var(--rm-k)) steps(10, end) calc(var(--rm-arrive) + .8s * var(--rm-k)) both var(--rm-play);
+}
+.rm .rm-code-b { --li: 1; } .rm .rm-code-t { --li: 2; }
+.rm[data-b]:not([data-b='on']) .rm-layer .rm-code {
+  transform-box: fill-box; transform-origin: 0 50%;
+  animation: rm-b-line calc(.24s * var(--rm-k)) var(--rm-out) calc(var(--rm-arrive) + (1.26s + var(--li, 0) * .08s) * var(--rm-k)) both var(--rm-play);
+}
+.rm[data-b]:not([data-b='on']) .rm-layer[data-layer='monitor'] path[fill^='url'] { animation: rm-b-fade-in calc(.5s * var(--rm-k)) ease-out var(--rm-live) both var(--rm-play); }
+.rm[data-b]:not([data-b='on']) .rm-layer .rm-edge-active { animation: rm-b-strike calc(.5s * var(--rm-k)) linear var(--rm-live) both var(--rm-play); }
+
+/* The room goes live when the monitor has booted: the overhead light, the light on the floor and the glow on the
+   wall come up together (and with them the half-lit wall and floor, the status light, and one ring from every pad). */
+.rm[data-b]:not([data-b='on']) :is(.rm-layer[data-layer='light'], .rm-lit, .rm-aura, .rm-glow) {
+  animation: rm-b-fade-in calc(1s * var(--rm-k)) ease-out var(--rm-live) both var(--rm-play);
+}
+
+/* Labels: hidden while the room is dark, and each appears only when its object is live. Keyboard focus shows one at once. */
+.rm[data-b]:not([data-b='on']) .rv-hotspot {
+  animation: rm-b-label .55s var(--rm-spring) calc(var(--rm-arrive) + var(--boot, 1s) * var(--rm-k)) both var(--rm-play);
+}
+.rm[data-b]:not([data-b='on']) .rv-hotspot:focus-visible { animation: none; }
+.rm[data-b]:not([data-b='on']) .rv-hotspot-dot { animation: rm-b-pop .5s var(--rm-spring) calc(var(--rm-arrive) + var(--boot, 1s) * var(--rm-k) + .12s) both var(--rm-play); }
 .rm[data-b]:not([data-b='on']) .rv-hotspot-dot::after { animation: none; }
 
 /* ============ Idle (data-b='on'): packets are run from script (usePowerOn); these are the small signs of life ============ */

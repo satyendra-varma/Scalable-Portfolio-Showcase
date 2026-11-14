@@ -251,8 +251,16 @@ export function Blooms() {
  * it is a packet (idle) or a pulse (hover or focus). Hidden unless a motion concept shows it.
  */
 export function Flows() {
+  // The monitor's screen, in its own plane (as layers.tsx draws it): x runs along the screen, y down it.
+  const [sx, sy] = project(140, 182, 280);
   return (
     <g className="rm-l rm-l-flows">
+      {/* Motion B's opening types the prompt's line: this cover hides the letters not yet typed. It steps to the
+          right, one letter at a time, out of its clip. The prompt sits at x 18, 9 units a letter, baseline 52. */}
+      <g className="rm-type" transform={`matrix(1 .5 0 1 ${sx} ${sy})`} style={{ '--at': ARRIVAL.explorer } as CSSProperties}>
+        <clipPath id="rm-type-clip"><rect x="16" y="36" width="118" height="23" /></clipPath>
+        <g clipPath="url(#rm-type-clip)"><rect className="rm-type-cover" x="44" y="37" width="90" height="21" /></g>
+      </g>
       {(Object.keys(routes) as HotspotId[]).map((id, i) => (
         <g key={id} data-flow={id} style={{ '--len': routes[id].len, '--i': i } as CSSProperties}>
           <path className="rm-flow rm-packet" d={routes[id].d} />
