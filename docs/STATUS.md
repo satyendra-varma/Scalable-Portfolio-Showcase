@@ -1,86 +1,108 @@
 # Status — room motion (round 4)
 
-Updated on 2026-11-13, after the rework of Motion B's opening (the owner's second brief of that day). The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
+Updated on 2026-11-13, after the owner chose Motion B, "Power-on", at 4 seconds and asked for it to be finished (the third brief of that day). The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
 
-**Nothing in the rework has been looked at in a browser.** By the working rules the owner checks the page and reports. Everything below about how it looks is what the code is written to do.
+**No model has looked at any of this in a browser.** By the working rules the owner checks the page and reports. The one exception is the scripted performance measurement below, which the owner asked for. Everything about how the page looks is what the code is written to do.
 
 ## Where things are
 
-- **Branch**: `feature/room-motion`, created from `feature/room-concepts` at `5ee726b`. It is **not pushed**, and nothing is merged.
-- **Route**: `/room-motion`, and `/room-motion?motion=a|b|c|off`. Off is the default. For Motion B, `&speed=4|6|8` picks the opening's length; 6 is the default and is left out of the address.
+- **Branch**: `feature/room-motion`. It is **not pushed**, and nothing is merged.
+- **Route**: `/room-motion` plays Power-on. `/room-motion?motion=off` is the still state. Motions A and C and the 6 and 8 second speeds are removed from the switcher and the code. The switcher keeps Power-on, Off and Replay.
 - **Other branches are untouched**: `main`, `feature/room-concepts` and `feature/room-rotation`.
+- **State of the tip**: typecheck passes, the build passes, and **all 142 unit tests pass**.
 
-| Step | What | State |
+| Commit | What |
+| --- | --- |
+| `eebc077` | Power-on locked at 4 seconds; A, C and the speed options removed. |
+| `42eeaab` | Return visits in a session get a 1-second opening. |
+| `f17d275` | Mobile: a 2.5-second opening, tap in place of hover, a readable room at phone width, the header tag fixed. |
+| `1d2f07f` | Reduced motion: the room lit and still, in the same layout as Power-on. |
+| `8ff1613` | Tests: the line-drawing exception, the fifteen layers, the new openings. |
+
+**Not changed in this job**, by the owner's instruction: the desktop opening, the idle packets, the hover lift, and how the panels open. The only edit to `power.css` moved the 4-second values (`--rm-travel: 2.3`, `--rm-k: .8`) into the base rule.
+
+## What a visitor gets
+
+| Visitor | Opening | Where it is written |
 | --- | --- | --- |
-| 1 | Read the code, propose tooling | Done. Approved by the owner. |
-| 2 | Static hybrid with the switcher | Done, commit `611bbfd`. |
-| — | Kapton amber and the Amber LED header only | Done, commit `1093a57`. |
-| 3 | Motion B, "Power-on" | **Desktop opening reworked, waiting for the owner's look.** First build `b557bef`; rework `99ff493`, `e96a24d`, `6e4214d`, `699921b`. |
-| 4 | Motion C, "Depth focus" | Not started. |
-| 5 | Motion A, "Assembly" | Not started. |
+| Desktop, first visit in a browser session | The full opening, "4 seconds", as approved | `power.css` |
+| Phone or touch screen, first visit | "Mobile", about 2.5 seconds | `lite.css` |
+| Any device, later visits in the same session | "Return", about 1 second | `lite.css` |
+| Reduced motion, or Off in the switcher | No opening: the room lit and still | `room.css` |
 
-**State of the tip**: typecheck passes and the build passes. **Unit tests: 95 of 98.** The three failures are the same expected ones, listed under "Left".
+The room's root says which one plays: `data-opening='full' | 'mobile' | 'return'` (`opening.ts`, chosen once when the room mounts). **Replay** always plays the first-visit opening for the device. To see the return version: reload the page, or switch to Off and back.
 
-## Motion B: the rework of 13 November
+### The two short openings (one design at two speeds)
 
-**Why**: the owner saw the first build and said the opening was over in one or two seconds, too fast to follow, lit things only a little, and was missed where the room sat below the first screen. The opening is now 4, 6 or 8 seconds (this replaces "2 to 3 seconds" in the brief), starts only when the room is seen, and has a much stronger before and after. The idle packets and the hover lift are **unchanged**, by the owner's instruction.
+**Kept**: the room starts dark and comes alive; the loading bar lets go of its charge; power moves outward from the bar at one constant speed, so the nearest object lights first; every object strikes with the tube flicker; each label appears only when its object is live; the room's own light comes up last, with one ring from every pad.
 
-Files are in `src/variants/motion/`: `power.css` (all the timing), `usePowerOn.ts` (when it starts, skip), `wiring.tsx` (traces, the travelling head), `Feed.tsx`, `fit.css` (the desktop fit), `MotionStage.tsx`.
+**Dropped**: the drawn linework (the dark room is the room itself at low light, not an outline); the travelling head and its tail; the ring at each junction on the way; the half-lit stage; each object's own start-up (spines one by one, the frame drawing its boxes, the drawers, the flag, the monitor typing its line).
 
-### What is built (desktop)
+**Return only**: the bar is already full and does not charge or sweep; the room waits 0.15 seconds, not 1.35.
 
-1. **The room fits the first screen** (`fit.css`, Motion B only, from 1100 px wide).
-   - Wide window: the header is a 340 px title block at the top left, with the name on three lines, and the room takes the full height beside it. The feed leaves the loading bar, climbs beside the header, runs over the top of the wall and drops into the corner.
-   - Squarer window (narrower than 7:5): a compact two-row header above the room, the feed as before.
-   - The room is never made smaller than the window's height forces. Worked out from the CSS, not measured: in a full-screen window on a 1920x1080 screen the room is its full 1120 px; on a 1366x768 screen (about 640 px of window height) it is about 800 px wide, because a 1120 px room is 747 px tall and cannot fit that height at any header size.
-2. **The opening waits to be seen** (`usePowerOn.ts`). At page load the loading bar charges and the linework is drawn. Then the room waits dark, every animation paused on its first frame (`data-b='dark'`), until the bar has charged, 60% of the room is on screen and the tab is in front. It then runs once, on time (`data-b='opening'`, then `'on'`). Nothing follows the scroll position.
-3. **Three speeds** in the switcher: 4, 6 and 8 seconds, with a Replay button. Power covers the feed and the furthest trace in 2.3, 3.7 or 5.2 seconds at one constant speed, and each object's own beats stretch with it (`--rm-travel`, `--rm-k` in `power.css`).
-4. **Power travels as a head with a tail** (`Heads` in `wiring.tsx`): a hot point with a 150-unit fading tail, moved by transform only. It turns corners, splits in two at each branch, and its tail drains into whatever the trace ends at. The lit trace is drawn in behind it.
-5. **Before power**: near-black stage, dim linework, dim copper, labels hidden. The loading bar is the one bright thing.
-6. **Each object comes on in its own way** as its trace arrives. All of them first flicker, like a tube striking. Then: the shelf's spines light one by one; the project frame draws its three boxes and then the links; the cabinet's drawers come on from the top down; the mailbox's flag goes up; the monitor boots (title bar, its three lights, the prompt types `dotnet run` letter by letter, the output prints, then the glare and the amber edge). Each label appears only when its object is live.
-7. **Skip**: any click, tap or key while the opening runs finishes it at once. While the room is still dark and off screen, keys and clicks elsewhere do not skip it (scrolling to the room with the keyboard must not kill the opening); a click on the room, or keyboard focus reaching a label, powers it at once.
+How it is built: while a short opening waits or runs the root carries `data-lite` and no `data-b`, so none of the full opening's rules apply; when it ends the root carries `data-b='on'`, the same resting state as after the full opening. `lite.css` animates transform and opacity only.
 
-### Added beyond the owner's list
+### Mobile and touch
 
-- The bar **releases its charge**: a bright block runs along its segments and leaves by the end where the feed begins, then the bar dips. While it waits for the room to be seen, the charged bar breathes.
-- **A ring spreads from every pad** as power reaches it, and once more from all of them together when the room goes live.
-- **The room comes on in stages**: the wall half lit as power enters it, the floor plate as power steps down onto it, the full light only when the monitor has booted. The header's status light blinks "standby" until then and goes solid at that moment.
-- The opening also waits for the **tab to be in front**, so a page opened in a background tab is not missed.
-- The switcher is a **compact panel at the bottom left** on desktop, so it does not cover the room.
+- **Which devices**: 600 px wide or less, or a screen with no hover (`MOBILE_QUERY` in `opening.ts`).
+- **Tap in place of hover** (`touch.css`, touch screens only): a tap sends the pulse down the trace, the label gives a small press, and the object lifts and glows for as long as its panel is open, then settles. Nothing stays lifted or highlighted after a tap. Keyboard focus still lifts and outlines.
+- **Tap targets**: each label looks the same and has an invisible hit area of at least 44 px.
+- **Labels at phone width**: worked out by arithmetic at 390 and 320 px: the five labels do not overlap and stay inside the room. No position was changed. At 320 px the hit areas of "System Explorer" and "Experience" overlap by about 8 px; the visible labels do not.
+- **The "ROOM_01 / 4.20 m" tag in the header**: at 600 px and under the header has 36 px of top padding, so the ruler, the tag and the name each have their own band (14 px between the tag and the name). The desktop header is unchanged.
+- **The panel** opens on a phone exactly as on a desktop.
 
-### Changed from the brief: for the owner to confirm
+### Reduced motion
 
-- **The short "return visit" opening is switched off.** Every load, and every Replay, plays the full opening, so the three speeds can be compared. The brief says the opening must not replay in full on every return. Decide what a return shows once a speed is chosen.
-- **The tight header is Motion B's only.** A, C and Off keep the old header and layout until their turn.
+The page shows Off: the powered room, lit traces, labels showing, the panel opening at once, nothing moving. Off now uses the same first-screen layout as Power-on (`fit.css` applies to both), and the feed line is drawn. A rule in `room.css` also switches off every animation and transition under `prefers-reduced-motion`, in case the script's answer is ever late.
 
-### Look at first
+### Tests
 
-1. `/room-motion?motion=b` in a full-screen window: does the header sit clear of the room, and does the feed line run clear of the header's text and the room's labels? The layout was built from the drawing's geometry, not from a look at the page.
-2. The three speeds, with Replay. Can the eye follow the head from the bar to each object?
-3. The monitor's typing: the cover that hides the untyped letters is a flat dark rectangle laid over the screen. If its edge shows, or the letters and the cursor do not line up, say so.
-4. The dark room: is the linework too dim or too bright before power?
+- `src/styles/motion.test.ts`: the transform-and-opacity rule still covers the whole site. **One named exception** (`LINE_DRAWING`): in `variants/motion/power.css` only, the keyframes `rm-b-draw` only, may animate `stroke-dashoffset` only. Tests check the exception is still in use and excuses nothing else.
+- `motion-room.test.tsx`: the fifteen layers, and the comparison with Exploded (it leaves out only the wiring, heads, pads, blooms, flows and typing cover, and on Exploded's side the traces, pads and packets the hybrid replaces).
+- New: `opening.test.ts`, `power-on.test.tsx`, `stylesheets.test.ts` (the kinds of opening, the phases, skip, Replay, reduced motion on the page, tap, and the stylesheets' scoping).
+- Not testable in unit tests: real timing and rendering, the wait for the room to be seen, the CSS cascade, real touch.
 
-### Not checked
+### Performance: one scripted measurement of the full opening
 
-- Anything in a browser, at any size: see the note at the top.
-- Mobile and touch, and widths under 1100 px: not touched in the rework. They get the new opening with the old layout.
-- The full-screen System Explorer panel, closing a panel part-way, switching hotspots while a panel closes, keyboard focus pulses, the list view with Motion B on, any browser other than Chrome: as before, written and not looked at.
-- No performance trace. The head adds about twenty small moving groups; the linework and the lit traces still animate `stroke-dashoffset`, which repaints on the main thread.
+Desktop Chrome, headless, 1920x1080, hardware-accelerated, from power leaving the bar to the room being on. The browser ran uncapped at about 200 frames a second, so frame times are lower than on a 60 Hz screen. The trace files are deleted.
 
-## Motion B: left
+| | Normal CPU | CPU slowed 4x |
+| --- | --- | --- |
+| Length of the opening | 4946 ms | 5046 ms |
+| Frames | 1031 | 647 |
+| Frame time: mean / median / 95th percentile | 4.8 / 4.6 / 5.3 ms | 7.8 / 7.5 / 10.6 ms |
+| Longest frame | 114 ms | 132 ms |
+| Frames over 33 ms / 50 ms / 100 ms | 2 / 1 / 1 | 3 / 2 / 2 |
+| Main-thread tasks over 50 ms | 0 | 1 |
 
-Items 1 to 3 go to Sonnet or Haiku sub-agents, or to a session running on Sonnet (working rules). None has been started; the owner wants B right first.
+Two things to know. The "4 second" opening measures about 4.9 seconds from power leaving the bar to the last animation ending; it is the same opening the owner chose, not a change. And each run has one frame over 100 ms; the measurement does not say where in the opening it falls. The short openings were not measured.
 
-1. **Tests and the test exception.** Three unit tests fail:
-   - `src/styles/motion.test.ts` rejects `power.css`, because the keyframes `rm-b-draw` animate `stroke-dashoffset`. It is still the only keyframe that does. Add the narrow, named exception the owner asked for, for `/room-motion` only: that one keyframe name, in that one file. Do not loosen the rule for the site, and report the exception.
-   - Two tests in `motion-room.test.tsx` still expect the old 13 layers and an exact match with Exploded. There are 15 layers (`wallwire` and `bloom` are new, `packets` became `flows`); `traces`, `wallwire` and `flows` hold things Exploded does not have (the wiring, the heads, the pad rings, the typing cover), so the comparison must leave those layers out. The object layers themselves are unchanged.
-   - Nothing yet tests the wiring, the opening's phases (`dark`, `opening`, `on`), or the panel in Motion B. The switcher's speed row and `parseSpeed` are tested.
-2. **Simpler mobile and touch version**: shorter opening without the linework, no hover effects, tap to focus, a simpler panel.
-3. **Reduced-motion state**: with reduced motion the page already shows Off, which is the powered room with the feed and an instant panel. It needs checking and a test.
-4. **Return visits**: see "Changed from the brief".
-5. **Performance trace**: **not yet, and not by a model unless the owner asks.** The owner chooses a motion first.
-6. **Looking at it**: the owner checks the page and reports what they see. No model opens a browser or takes screenshots unless asked. Open `/room-motion?motion=b` after building and starting the preview (see below).
-7. The report for Step 3, then the owner's go-ahead for Motion C.
+## Decided for the owner, to confirm
+
+- **"Browser session" is the tab's session** (`sessionStorage`): a reload or coming back to the page plays the return version; a new tab plays the full opening once.
+- **"Mobile" is 600 px or less, or no hover.** A window between 601 and 1099 px wide with a mouse still plays the full opening in the older stacked layout.
+- **Off and reduced motion use the fitted first-screen layout**, as Power-on does.
+- **The two small notes drawn in the room** ("ROOM_01 / 4.20 m", "// scale 1:40") are about 8 px tall on a phone and are left as decoration.
+- The switcher names the two states "On · Power-on" and "Off · Still".
+
+## Look at first
+
+1. A phone, or a narrow window: the dark room (is the unlit room too dim or too bright?), the 2.5-second opening, then tap a label and close the panel.
+2. Reload on the desktop: the 1-second return version. Then Replay for the full one.
+3. The header at phone width: the tag above the name.
+4. Reduced motion (or Off) on the desktop: the room should sit as it does in Power-on.
+
+## Not checked
+
+- Anything in a browser, at any size, apart from the measurement above.
+- On a phone the feed line runs from the bar's end down the header's right edge, close to the corner bracket. It may look crowded.
+- The full-screen System Explorer panel, closing a panel part-way, switching hotspots while a panel closes, the list view with Power-on, any browser other than Chrome: written and not looked at.
+
+## Left
+
+1. The owner's look, and any fixes from it.
+2. `/room-motion` is still the comparison page: it has the switcher (Power-on, Off, Replay) and is marked noindex. Making it the real site (its route, removing the switcher, search-engine settings) is the next job and waits for the owner.
+3. Push and merge: only when the owner says.
 
 ## Working in this copy
 
@@ -89,7 +111,6 @@ Items 1 to 3 go to Sonnet or Haiku sub-agents, or to a session running on Sonnet
 - `.claude/launch.json` (not committed, by the owner's decision) starts the built site on port 5173 for a look in the browser. Build first.
 - If the page is open in a browser that is in the background, it may slow to about one frame a second. Motion's spring then looks stalled; CSS animations do not. Bring the window to the front before judging smoothness.
 - `artifacts/mockup-sandbox/src/.generated/mockup-components.ts` shows as modified but has no content change (line endings). Keep it out of commits, by the owner's decision.
-- The phone-size overlap of the "ROOM_01 / 4.20 m" tag and the ruler is left for later, by the owner's decision.
 
 ---
 
