@@ -1,67 +1,94 @@
 # Status — room motion (round 4)
 
-Updated on 2026-11-13, after a recovery check. Work on Step 3 (Motion B) was stopped part-way on 2026-11-12 (usage limit). The brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
+Updated on 2026-11-13, after the rework of Motion B's opening (the owner's second brief of that day). The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
 
-**Recovery check, 13 November**: nothing was lost. Motion B was already committed (`b557bef`) and so was the earlier status update; the working tree held only the two files that stay out of commits (see the end of this file). Typecheck and build pass on the tip. Unit tests were not run again; the count below is from the last run.
+**Nothing in the rework has been looked at in a browser.** By the working rules the owner checks the page and reports. Everything below about how it looks is what the code is written to do.
 
 ## Where things are
 
 - **Branch**: `feature/room-motion`, created from `feature/room-concepts` at `5ee726b`. It is **not pushed**, and nothing is merged.
-- **Route**: `/room-motion`, and `/room-motion?motion=a|b|c|off`. Off is the default.
+- **Route**: `/room-motion`, and `/room-motion?motion=a|b|c|off`. Off is the default. For Motion B, `&speed=4|6|8` picks the opening's length; 6 is the default and is left out of the address.
 - **Other branches are untouched**: `main`, `feature/room-concepts` and `feature/room-rotation`.
 
 | Step | What | State |
 | --- | --- | --- |
 | 1 | Read the code, propose tooling | Done. Approved by the owner. |
 | 2 | Static hybrid with the switcher | Done, commit `611bbfd`. |
-| — | Kapton amber and the Amber LED header only | Done, commit `1093a57`. The Copper accent, Exploded's own header and their switcher options are removed. |
-| 3 | Motion B, "Power-on" | **Work in progress**, commit `b557bef`. Desktop motion is built; see below for what is left. |
+| — | Kapton amber and the Amber LED header only | Done, commit `1093a57`. |
+| 3 | Motion B, "Power-on" | **Desktop opening reworked, waiting for the owner's look.** First build `b557bef`; rework `99ff493`, `e96a24d`, `6e4214d`, `699921b`. |
 | 4 | Motion C, "Depth focus" | Not started. |
 | 5 | Motion A, "Assembly" | Not started. |
 
-**State of the WIP commit**: typecheck passes and the build passes. **Unit tests: 91 of 94.** The three failures are expected and are listed under "Left".
+**State of the tip**: typecheck passes and the build passes. **Unit tests: 95 of 98.** The three failures are the same expected ones, listed under "Left".
 
-## Motion B: what is built (desktop)
+## Motion B: the rework of 13 November
 
-Seen working in the browser at 1280 px wide. Files are in `src/variants/motion/`.
+**Why**: the owner saw the first build and said the opening was over in one or two seconds, too fast to follow, lit things only a little, and was missed where the room sat below the first screen. The opening is now 4, 6 or 8 seconds (this replaces "2 to 3 seconds" in the brief), starts only when the room is seen, and has a much stronger before and after. The idle packets and the hover lift are **unchanged**, by the owner's instruction.
 
-- **Wiring** (`wiring.tsx`): the room has a new tree of traces. Power enters at the top of the wall's corner, runs along the foot of both slabs to the bookshelf and the project frame, down the left slab's end to the floor, then to the filing cabinet, the desk and monitor, and the mailbox. Each segment knows its distance from the entry point, so the stylesheet lights the whole tree at one speed.
-- **Feed** (`Feed.tsx`): the trace from the end of the header's loading bar down to the top of the wall, measured from the page and re-measured on resize.
-- **Opening** (`power.css`, `usePowerOn.ts`), about 2.9 s: the room draws itself as linework while the loading bar charges; power then runs down the feed and along the traces; each object lights, with a slight overshoot and a flash, when its trace arrives; the room's own light comes up with the monitor.
-- **Skip and return**: any click, tap or key finishes the opening at once. After the first visit in a browser session (sessionStorage `rm-b-seen`), a short power-only opening plays.
-- **Idle**: packets travel from the loading bar to each object in turn; the monitor's cursor, the header's status light and caret blink.
-- **Hover and focus**: a pulse runs the last stretch of that object's trace, then the object rises a little and glows. Leaving reverses it.
-- **Open and close** (`MotionPanel.tsx`, `panel.css`): the object's box is traced, ties run to the panel's corners, the panel's frame is traced, and the sheet unfolds. Everything is a function of one number moved by a spring from Motion, so closing part-way turns it round. Motion loads as its own chunk after first paint (22 kB gzipped, `motionLib.ts`).
+Files are in `src/variants/motion/`: `power.css` (all the timing), `usePowerOn.ts` (when it starts, skip), `wiring.tsx` (traces, the travelling head), `Feed.tsx`, `fit.css` (the desktop fit), `MotionStage.tsx`.
 
-## Motion B: not tested
+### What is built (desktop)
 
-- Mobile and touch: not looked at, at any size. The feed line probably sits too close to the header's corner bracket on a phone.
-- The full-screen System Explorer panel (it unfolds out of the monitor's box): written, not looked at.
-- Closing a panel part-way, and switching from one hotspot to another while a panel closes: written, not looked at.
-- Keyboard focus pulses, and the list view with Motion B on.
-- Any browser other than Chrome.
-- No performance trace has been run. Line drawing and the packets animate `stroke-dashoffset`, which repaints on the main thread.
+1. **The room fits the first screen** (`fit.css`, Motion B only, from 1100 px wide).
+   - Wide window: the header is a 340 px title block at the top left, with the name on three lines, and the room takes the full height beside it. The feed leaves the loading bar, climbs beside the header, runs over the top of the wall and drops into the corner.
+   - Squarer window (narrower than 7:5): a compact two-row header above the room, the feed as before.
+   - The room is never made smaller than the window's height forces. Worked out from the CSS, not measured: in a full-screen window on a 1920x1080 screen the room is its full 1120 px; on a 1366x768 screen (about 640 px of window height) it is about 800 px wide, because a 1120 px room is 747 px tall and cannot fit that height at any header size.
+2. **The opening waits to be seen** (`usePowerOn.ts`). At page load the loading bar charges and the linework is drawn. Then the room waits dark, every animation paused on its first frame (`data-b='dark'`), until the bar has charged, 60% of the room is on screen and the tab is in front. It then runs once, on time (`data-b='opening'`, then `'on'`). Nothing follows the scroll position.
+3. **Three speeds** in the switcher: 4, 6 and 8 seconds, with a Replay button. Power covers the feed and the furthest trace in 2.3, 3.7 or 5.2 seconds at one constant speed, and each object's own beats stretch with it (`--rm-travel`, `--rm-k` in `power.css`).
+4. **Power travels as a head with a tail** (`Heads` in `wiring.tsx`): a hot point with a 150-unit fading tail, moved by transform only. It turns corners, splits in two at each branch, and its tail drains into whatever the trace ends at. The lit trace is drawn in behind it.
+5. **Before power**: near-black stage, dim linework, dim copper, labels hidden. The loading bar is the one bright thing.
+6. **Each object comes on in its own way** as its trace arrives. All of them first flicker, like a tube striking. Then: the shelf's spines light one by one; the project frame draws its three boxes and then the links; the cabinet's drawers come on from the top down; the mailbox's flag goes up; the monitor boots (title bar, its three lights, the prompt types `dotnet run` letter by letter, the output prints, then the glare and the amber edge). Each label appears only when its object is live.
+7. **Skip**: any click, tap or key while the opening runs finishes it at once. While the room is still dark and off screen, keys and clicks elsewhere do not skip it (scrolling to the room with the keyboard must not kill the opening); a click on the room, or keyboard focus reaching a label, powers it at once.
+
+### Added beyond the owner's list
+
+- The bar **releases its charge**: a bright block runs along its segments and leaves by the end where the feed begins, then the bar dips. While it waits for the room to be seen, the charged bar breathes.
+- **A ring spreads from every pad** as power reaches it, and once more from all of them together when the room goes live.
+- **The room comes on in stages**: the wall half lit as power enters it, the floor plate as power steps down onto it, the full light only when the monitor has booted. The header's status light blinks "standby" until then and goes solid at that moment.
+- The opening also waits for the **tab to be in front**, so a page opened in a background tab is not missed.
+- The switcher is a **compact panel at the bottom left** on desktop, so it does not cover the room.
+
+### Changed from the brief: for the owner to confirm
+
+- **The short "return visit" opening is switched off.** Every load, and every Replay, plays the full opening, so the three speeds can be compared. The brief says the opening must not replay in full on every return. Decide what a return shows once a speed is chosen.
+- **The tight header is Motion B's only.** A, C and Off keep the old header and layout until their turn.
+
+### Look at first
+
+1. `/room-motion?motion=b` in a full-screen window: does the header sit clear of the room, and does the feed line run clear of the header's text and the room's labels? The layout was built from the drawing's geometry, not from a look at the page.
+2. The three speeds, with Replay. Can the eye follow the head from the bar to each object?
+3. The monitor's typing: the cover that hides the untyped letters is a flat dark rectangle laid over the screen. If its edge shows, or the letters and the cursor do not line up, say so.
+4. The dark room: is the linework too dim or too bright before power?
+
+### Not checked
+
+- Anything in a browser, at any size: see the note at the top.
+- Mobile and touch, and widths under 1100 px: not touched in the rework. They get the new opening with the old layout.
+- The full-screen System Explorer panel, closing a panel part-way, switching hotspots while a panel closes, keyboard focus pulses, the list view with Motion B on, any browser other than Chrome: as before, written and not looked at.
+- No performance trace. The head adds about twenty small moving groups; the linework and the lit traces still animate `stroke-dashoffset`, which repaints on the main thread.
 
 ## Motion B: left
 
-Items 1 to 3 go to Sonnet or Haiku sub-agents, or to a session running on Sonnet (working rules). None has been started.
+Items 1 to 3 go to Sonnet or Haiku sub-agents, or to a session running on Sonnet (working rules). None has been started; the owner wants B right first.
 
 1. **Tests and the test exception.** Three unit tests fail:
-   - `src/styles/motion.test.ts` rejects `power.css`, because the keyframes `rm-b-draw` animate `stroke-dashoffset`. Add the narrow, named exception the owner asked for, for `/room-motion` only: that one keyframe name, in that one file. Do not loosen the rule for the site, and report the exception.
-   - Two tests in `motion-room.test.tsx` still expect the old 13 layers and an exact match with Exploded. There are now 15 layers (`wallwire` and `bloom` are new, `packets` became `flows`) and the `traces` layer has the new wiring, so the comparison must leave those layers out.
-   - Nothing yet tests the wiring, the opening's phases, or the panel in Motion B.
+   - `src/styles/motion.test.ts` rejects `power.css`, because the keyframes `rm-b-draw` animate `stroke-dashoffset`. It is still the only keyframe that does. Add the narrow, named exception the owner asked for, for `/room-motion` only: that one keyframe name, in that one file. Do not loosen the rule for the site, and report the exception.
+   - Two tests in `motion-room.test.tsx` still expect the old 13 layers and an exact match with Exploded. There are 15 layers (`wallwire` and `bloom` are new, `packets` became `flows`); `traces`, `wallwire` and `flows` hold things Exploded does not have (the wiring, the heads, the pad rings, the typing cover), so the comparison must leave those layers out. The object layers themselves are unchanged.
+   - Nothing yet tests the wiring, the opening's phases (`dark`, `opening`, `on`), or the panel in Motion B. The switcher's speed row and `parseSpeed` are tested.
 2. **Simpler mobile and touch version**: shorter opening without the linework, no hover effects, tap to focus, a simpler panel.
 3. **Reduced-motion state**: with reduced motion the page already shows Off, which is the powered room with the feed and an instant panel. It needs checking and a test.
-4. **Performance trace**: **not yet, and not by a model unless the owner asks.** The owner chooses a motion first; only then is one trace worth running (frame-time numbers and long-frame counts only, then delete the trace file).
-5. **Looking at it**: the owner checks the page and reports what they see. No model opens a browser or takes screenshots unless asked. Open `/room-motion?motion=b` after building and starting the preview (see below).
-6. The report for Step 3, then the owner's go-ahead for Motion C.
+4. **Return visits**: see "Changed from the brief".
+5. **Performance trace**: **not yet, and not by a model unless the owner asks.** The owner chooses a motion first.
+6. **Looking at it**: the owner checks the page and reports what they see. No model opens a browser or takes screenshots unless asked. Open `/room-motion?motion=b` after building and starting the preview (see below).
+7. The report for Step 3, then the owner's go-ahead for Motion C.
 
 ## Working in this copy
 
 - Dependencies are installed in this working copy and match the lockfile. `pnpm` is not on the PATH, so run the tools directly from `artifacts/portfolio`: `node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit`, `node node_modules/vitest/vitest.mjs run`, `node node_modules/vite/bin/vite.js build --config vite.config.ts`.
 - In Git Bash, do not set `BASE_PATH=/`: the shell rewrites it into a Windows path and the built site will not load.
 - `.claude/launch.json` (not committed, by the owner's decision) starts the built site on port 5173 for a look in the browser. Build first.
-- If the page is open in a browser that is in the background, it may slow to about one frame a second. Motion's spring then looks stalled; CSS animations do not. Bring the window to the front before judging smoothness.- `artifacts/mockup-sandbox/src/.generated/mockup-components.ts` shows as modified but has no content change (line endings). Keep it out of commits, by the owner's decision.
+- If the page is open in a browser that is in the background, it may slow to about one frame a second. Motion's spring then looks stalled; CSS animations do not. Bring the window to the front before judging smoothness.
+- `artifacts/mockup-sandbox/src/.generated/mockup-components.ts` shows as modified but has no content change (line endings). Keep it out of commits, by the owner's decision.
 - The phone-size overlap of the "ROOM_01 / 4.20 m" tag and the ruler is left for later, by the owner's decision.
 
 ---
