@@ -7,7 +7,7 @@ import { Feed } from './Feed';
 import { MotionHeader } from './MotionHeader';
 import { MotionPanel } from './MotionPanel';
 import { MotionStage } from './MotionStage';
-import { openingSeen, pickOpening } from './opening';
+import { isMobile, openingSeen, pickOpening } from './opening';
 import { ACCENT, type MotionId } from './options';
 import { usePowerOn } from './usePowerOn';
 import { ARRIVAL, REACH } from './wiring';
@@ -17,6 +17,7 @@ import './room.css';
 import './fit.css';
 import './power.css';
 import './lite.css';
+import './touch.css';
 
 /**
  * The hybrid room (docs/BRIEF-room-motion.md): Elevation's Amber LED header over Exploded's room, in Kapton amber,
@@ -35,7 +36,7 @@ export function MotionRoom({ motion }: { motion: MotionId }) {
   const opener = useRef<HTMLElement | null>(null);
   const root = useRef<HTMLDivElement>(null);
   // The first visit in a session plays the full opening, later ones a short one; chosen once, at mount.
-  const [opening] = useState(() => pickOpening({ seen: openingSeen(), mobile: false }));
+  const [opening] = useState(() => pickOpening({ seen: openingSeen(), mobile: isMobile() }));
   const power = usePowerOn(root, motion === 'b', opening);
   const full = opening === 'full';
 
@@ -62,7 +63,7 @@ export function MotionRoom({ motion }: { motion: MotionId }) {
   const style = { '--accent': ACCENT.hex, '--accent-ink': ACCENT.ink, '--evidence': ACCENT.support, '--rm-progress': 1, '--rm-reach': REACH, '--rm-at-x': ARRIVAL.explorer } as CSSProperties;
 
   return (
-    <div ref={root} className="rp rv rm" data-variant="room-motion" data-motion={motion} data-opening={motion === 'b' ? opening : undefined} data-b={full || power === 'on' ? power : undefined} data-lite={!full && power && power !== 'on' ? power : undefined} data-testid="room-motion" style={style}>
+    <div ref={root} className="rp rv rm" data-variant="room-motion" data-motion={motion} data-open={open ?? undefined} data-opening={motion === 'b' ? opening : undefined} data-b={full || power === 'on' ? power : undefined} data-lite={!full && power && power !== 'on' ? power : undefined} data-testid="room-motion" style={style}>
       <a href="#rv-main" className="rp-skip">Skip to content</a>
       <header className="rp-bar rv-bar">
         <p className="rp-bar-tag">

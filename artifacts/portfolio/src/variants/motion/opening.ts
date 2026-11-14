@@ -7,6 +7,11 @@ export type OpeningKind = 'full' | 'mobile' | 'return';
 
 const KEY = 'rm-power-on-seen';
 
+/** A phone or a touch screen: a narrow window, or no hover. Decides which first-visit opening plays. */
+export const MOBILE_QUERY = '(max-width: 600px), (hover: none)';
+
+export const isMobile = (): boolean => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(MOBILE_QUERY).matches;
+
 /** Has this session already seen the opening? Storage can throw (private modes, blocked cookies): then, not seen. */
 export const openingSeen = (): boolean => {
   try {

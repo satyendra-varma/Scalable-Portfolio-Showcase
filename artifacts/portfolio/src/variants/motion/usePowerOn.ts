@@ -183,7 +183,8 @@ export function usePowerOn(root: RefObject<HTMLElement | null>, active: boolean,
       return button && !(other && button.contains(other)) ? (button.dataset.hotspot as HotspotId) : undefined;
     };
     const onEnter = (e: Event) => { const id = hotspot(e); if (id) pulse(id); };
-    const onLeave = (e: Event) => { const id = hotspot(e); if (id) pulses.get(id)?.cancel(); };
+    // A tap leaves its pulse to finish by itself; only a mouse or the keyboard cancels it on leaving.
+    const onLeave = (e: Event) => { if ((e as PointerEvent).pointerType === 'touch') return; const id = hotspot(e); if (id) pulses.get(id)?.cancel(); };
     const list = el.querySelector('.rv-hotspots');
     list?.addEventListener('pointerover', onEnter);
     list?.addEventListener('focusin', onEnter);

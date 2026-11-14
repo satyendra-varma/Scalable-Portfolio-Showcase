@@ -51,6 +51,8 @@
 .rm .rmh .rmh-led-txt { fill: var(--muted); font-size: 10px; letter-spacing: .14em; }
 
 @media (max-width: 600px) {
+  /* A band of its own for the ruler (y 0 to 9) and the tag (baseline y 22), above the name. */
+  .rm .rmh { padding-top: 36px; }
   .rm .rmh .rv-role { letter-spacing: .04em; font-size: 11px; }
   .rm .rmh .rv-role::before { margin-right: .6em; }
   .rm .rmh .rv-role::after { margin-left: .4em; }
