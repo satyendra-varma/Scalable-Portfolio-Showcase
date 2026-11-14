@@ -1,6 +1,6 @@
 /**
  * Which opening Power-on plays (docs/BRIEF-room-motion.md): the full 4-second one on the first visit in a browser
- * session, a shorter one on later visits ('return', about 1 second) and, on a phone, a middle one ('mobile').
+ * session, the same opening at a quicker pace on later visits ('return', about 3 seconds, return.css) and, on a phone, a simpler one ('mobile', about 2.5 seconds, lite.css).
  * "Session" is sessionStorage: it survives a reload and in-app navigation in the tab, and a new tab starts afresh.
  */
 export type OpeningKind = 'full' | 'mobile' | 'return';

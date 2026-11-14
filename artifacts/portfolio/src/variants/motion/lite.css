@@ -1,12 +1,12 @@
 /*
- * Power-on's two shorter openings (docs/BRIEF-room-motion.md). The room's root says which opening it plays:
+ * Power-on's mobile opening (docs/BRIEF-room-motion.md). The room's root says which opening it plays:
  *   data-opening='full'    the 4-second opening (power.css): first visit, on a desktop;
- *   data-opening='mobile'  about 2.5 seconds: first visit, on a phone or a touch screen;
- *   data-opening='return'  about 1 second: every later visit in the same browser session.
+ *   data-opening='mobile'  about 2.5 seconds: first visit, on a phone or a touch screen (this file);
+ *   data-opening='return'  the full opening at a quicker pace, about 3 seconds: later visits (return.css).
  *
- * The two short ones are one opening at two speeds, and this file is all of it. While one of them waits or runs,
- * the root carries data-lite ('dark', then 'opening') and NOT data-b, so none of power.css's opening applies;
- * when it is over the root carries data-b='on', exactly as after the full opening (usePowerOn).
+ * This file is the mobile opening and nothing else. While it waits or runs, the root carries data-lite ('dark',
+ * then 'opening') and NOT data-b, so none of power.css's opening applies; when it is over the root carries
+ * data-b='on', exactly as after the full opening (usePowerOn).
  *
  * Kept from the full opening: the room starts dark and comes alive; the loading bar lets go of its charge; power
  * moves outward from the bar at one constant speed, so the nearest thing lights first; every object strikes like
@@ -27,14 +27,6 @@
   --lt-up: .55s;      /* the room's light coming up */
   --lt-label: .34s;   /* from power reaching an object to its label */
 }
-.rv.rm[data-motion='b'][data-opening='return'] {
-  --rm-travel: .3;
-  --rm-t0: .06s;
-  --lt-strike: .3s;
-  --lt-boot: .16s;
-  --lt-up: .42s;
-  --lt-label: .16s;
-}
 .rv.rm[data-motion='b'][data-lite] {
   --rm-live: calc(var(--rm-t0) + (var(--rm-feed) + var(--rm-at-x, 1239.8)) / var(--rm-speed) * 1s + var(--lt-boot));
 }
@@ -45,9 +37,8 @@
 @keyframes rm-l-strike { from { opacity: .16; } 14% { opacity: .85; } 28% { opacity: .3; } 48% { opacity: 1; } }
 
 /* ============ The loading bar ============
-   On a phone it charges at page load, as on a desktop but quicker. On a return visit it is already full.
-   While the room waits to be seen the bar breathes; then it lets go: a bright block runs off its end (phone
-   only: on a return there is no time to see it), and the bar dips as power leaves. */
+   On a phone it charges at page load, as on a desktop but quicker.
+   While the room waits to be seen the bar breathes; then it lets go: a bright block runs off its end, and the bar dips as power leaves. */
 .rm[data-opening='mobile'][data-lite='dark'] .rmh-bar-fill { animation: rm-b-charge .5s cubic-bezier(.3, 0, .35, 1) both; }
 .rm[data-lite='dark'] .rmh-bar { animation: rm-b-armed 1.4s ease-in-out .6s infinite alternate; }
 .rm[data-opening='mobile'][data-lite] .rmh-bar::after {

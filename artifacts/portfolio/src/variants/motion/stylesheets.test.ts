@@ -39,7 +39,7 @@ function rules(css: string, media: string | null = null): Rule[] {
   return out;
 }
 
-describe('lite.css, the short openings', () => {
+describe('lite.css, the mobile opening', () => {
   const lite = rules(read('lite.css'));
 
   it('has rules, and every selector is scoped by data-lite or data-opening, so it can never touch the full opening or the room at rest', () => {
@@ -53,6 +53,34 @@ describe('lite.css, the short openings', () => {
 
   it('draws no line', () => {
     expect(read('lite.css')).not.toMatch(/stroke-dash/);
+  });
+
+  it('no longer mentions the return visit, which is return.css', () => {
+    expect(read('lite.css')).not.toMatch(/return/);
+  });
+});
+
+describe('return.css, the full opening at a quicker pace', () => {
+  const ret = rules(read('return.css'));
+  const text = read('return.css');
+
+  it('has rules, each scoped by data-opening=return and starting with .rm or .rv.rm', () => {
+    expect(ret.length).toBeGreaterThan(3);
+    for (const rule of ret) for (const selector of rule.selectors) {
+      expect(selector, selector).toContain("[data-opening='return']");
+      expect(selector, selector).toMatch(/^(\.rv\.rm|\.rm)\b/);
+    }
+  });
+
+  it('sets the pace: --rm-travel 1.6 and --rm-k .5', () => {
+    expect(text).toMatch(/--rm-travel:\s*1\.6\s*;/);
+    expect(text).toMatch(/--rm-k:\s*\.5\s*;/);
+  });
+
+  it('has no keyframes, no transition and no line drawing', () => {
+    expect(text).not.toMatch(/@keyframes/);
+    expect(text).not.toMatch(/transition/);
+    expect(text).not.toMatch(/stroke-dash/);
   });
 });
 

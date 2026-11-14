@@ -96,20 +96,21 @@ describe('the first visit, on a desktop', () => {
 });
 
 describe('a return visit in the same session', () => {
-  it('waits 150 ms with data-lite and no data-b, no linework, then is on', () => {
+  it('is the full opening at a quicker pace: data-b and the linework, power leaving after 250 ms, then on', () => {
     stubAnimations();
     markOpeningSeen();
     render(<MotionRoom motion="b" />);
     expect(room()).toHaveAttribute('data-opening', 'return');
-    expect(room()).toHaveAttribute('data-lite', 'dark');
-    expect(room()).not.toHaveAttribute('data-b');
-    expect(linework()).toBeNull();
+    expect(room()).toHaveAttribute('data-b', 'dark');
+    expect(room()).not.toHaveAttribute('data-lite');
+    expect(linework()).toBeInTheDocument();
 
-    tick(149);
-    expect(room()).toHaveAttribute('data-lite', 'dark');
+    tick(249);
+    expect(room()).toHaveAttribute('data-b', 'dark');
     tick(1);
-    expect(room()).toHaveAttribute('data-lite', 'opening');
-    expect(room()).not.toHaveAttribute('data-b');
+    expect(room()).toHaveAttribute('data-b', 'opening');
+    expect(room()).not.toHaveAttribute('data-lite');
+    expect(linework()).toBeInTheDocument();
 
     tick(20);
     expect(room()).toHaveAttribute('data-b', 'on');
@@ -117,14 +118,14 @@ describe('a return visit in the same session', () => {
     expect(linework()).toBeNull();
   });
 
-  it('gives up on an animation that never ends after 3 seconds', () => {
+  it('gives up on an animation that never ends after 9 seconds', () => {
     stubAnimations([fakeAnimation()]);
     markOpeningSeen();
     render(<MotionRoom motion="b" />);
-    tick(150);
-    expect(room()).toHaveAttribute('data-lite', 'opening');
-    tick(2999);
-    expect(room()).toHaveAttribute('data-lite', 'opening');
+    tick(250);
+    expect(room()).toHaveAttribute('data-b', 'opening');
+    tick(8999);
+    expect(room()).toHaveAttribute('data-b', 'opening');
     tick(1);
     expect(room()).toHaveAttribute('data-b', 'on');
   });
@@ -149,7 +150,7 @@ describe('a first visit on a phone or touch screen', () => {
     expect(room()).not.toHaveAttribute('data-lite');
   });
 
-  it('still plays the short return opening on a later visit', () => {
+  it('still plays the return opening (the full one, quicker) on a later visit', () => {
     stubAnimations();
     stubMedia((query) => query === MOBILE_QUERY);
     markOpeningSeen();
@@ -283,7 +284,7 @@ describe('the page', () => {
     expect(document.head.querySelector('meta[name="description"]')).toHaveAttribute('content', expect.stringContaining('powering on'));
   });
 
-  it('plays the short opening on a return, and Replay brings the first-visit opening back', () => {
+  it('plays the quicker full opening on a return, and Replay brings the first-visit opening back', () => {
     stubAnimations([fakeAnimation()]);
     markOpeningSeen();
     renderPage('/room-motion');

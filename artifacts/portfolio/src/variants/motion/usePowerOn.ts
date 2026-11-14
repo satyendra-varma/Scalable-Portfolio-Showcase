@@ -6,12 +6,12 @@ import { routes } from './wiring';
 /** 'dark': unpowered, waiting to be seen. 'opening': power is travelling in. 'on': running. */
 export type PowerPhase = 'dark' | 'opening' | 'on';
 
-/** The loading bar charges in this long (power.css, lite.css), by kind of opening: power never leaves earlier. */
-const CHARGE_MS: Record<OpeningKind, number> = { full: 1350, mobile: 600, return: 150 };
+/** The loading bar charges in this long (power.css, lite.css, return.css), by kind of opening: power never leaves earlier. The return visit is the full opening at a quicker pace (return.css), so its bar is quick to be full. */
+const CHARGE_MS: Record<OpeningKind, number> = { full: 1350, mobile: 600, return: 250 };
 /** "Most of the room is on screen": this share of the stage, or of the window where the stage is the taller. */
 const IN_VIEW = 0.6;
 /** If an animation never reports its end, the opening is over after this long anyway, by kind of opening. */
-const GIVE_UP_MS: Record<OpeningKind, number> = { full: 14000, mobile: 6000, return: 3000 };
+const GIVE_UP_MS: Record<OpeningKind, number> = { full: 14000, mobile: 6000, return: 9000 };
 const STEPS = Array.from({ length: 21 }, (_, i) => i / 20);
 const MODIFIERS = ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'OS'];
 
@@ -33,7 +33,7 @@ const finite = (a: Animation) => a.effect?.getComputedTiming().iterations !== In
  *    It is a one-time start: nothing follows the scroll position.
  *  - Skipping finishes every animation where it would have ended, so nothing jumps to a different picture.
  *  - `opening` is the kind of opening ('full', 'mobile' or 'return'): it sets only how long the room waits before
- *    power may leave and when a stuck opening is given up on. The animations themselves are CSS (power.css, lite.css).
+ *    power may leave and when a stuck opening is given up on. The animations themselves are CSS (power.css, lite.css, return.css).
  *    Whenever the room reaches 'on' (finished, skipped, or without animation support) the session is marked as
  *    having seen the opening (opening.ts).
  *  - Packets and pulses are a short dash moved along a path (stroke-dashoffset), from script, so each can be

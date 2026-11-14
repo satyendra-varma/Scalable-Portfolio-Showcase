@@ -16,6 +16,7 @@ import '../variants.css';
 import './room.css';
 import './fit.css';
 import './power.css';
+import './return.css';
 import './lite.css';
 import './touch.css';
 
@@ -25,7 +26,7 @@ import './touch.css';
  *
  * `motion` is 'b', Power-on (usePowerOn, power.css; its opening takes about 4 seconds), or 'off', the still state
  * that reduced motion also gets: the room already powered (lit traces, lit room, labels showing), nothing moving,
- * the panel opening at once, in the same layout as Power-on (fit.css). Power-on's opening is the full one on a session's first visit and a short one after.
+ * the panel opening at once, in the same layout as Power-on (fit.css). Power-on's opening is the full one on a session's first visit and the same one at a quicker pace after (return.css).
  * The page keys this component by motion, so choosing a motion starts it afresh.
  * The root carries the choice as data-motion and the accent as custom properties. --rm-progress (0 to 1) is what
  * the header's loading bar shows; it rests at 1, a full bar.
@@ -36,10 +37,10 @@ export function MotionRoom({ motion }: { motion: MotionId }) {
   const [activeSkill, setActiveSkill] = useState<string | null>(null);
   const opener = useRef<HTMLElement | null>(null);
   const root = useRef<HTMLDivElement>(null);
-  // The first visit in a session plays the full opening, later ones a short one; chosen once, at mount.
+  // The first visit in a session plays the full opening, later ones the same opening quicker (return.css); chosen once, at mount.
   const [opening] = useState(() => pickOpening({ seen: openingSeen(), mobile: isMobile() }));
   const power = usePowerOn(root, motion === 'b', opening);
-  const full = opening === 'full';
+  const lite = opening === 'mobile';
 
   // Start closing, and hand focus straight back to the object that opened the panel: the visitor is not kept waiting.
   const close = () => {
@@ -64,7 +65,7 @@ export function MotionRoom({ motion }: { motion: MotionId }) {
   const style = { '--accent': ACCENT.hex, '--accent-ink': ACCENT.ink, '--evidence': ACCENT.support, '--rm-progress': 1, '--rm-reach': REACH, '--rm-at-x': ARRIVAL.explorer } as CSSProperties;
 
   return (
-    <div ref={root} className="rp rv rm" data-variant="room-motion" data-motion={motion} data-open={open ?? undefined} data-opening={motion === 'b' ? opening : undefined} data-b={full || power === 'on' ? power : undefined} data-lite={!full && power && power !== 'on' ? power : undefined} data-testid="room-motion" style={style}>
+    <div ref={root} className="rp rv rm" data-variant="room-motion" data-motion={motion} data-open={open ?? undefined} data-opening={motion === 'b' ? opening : undefined} data-b={!lite || power === 'on' ? power : undefined} data-lite={lite && power && power !== 'on' ? power : undefined} data-testid="room-motion" style={style}>
       <a href="#rv-main" className="rp-skip">Skip to content</a>
       <header className="rp-bar rv-bar">
         <p className="rp-bar-tag">
@@ -92,7 +93,7 @@ export function MotionRoom({ motion }: { motion: MotionId }) {
           </div>
         ) : (
           <>
-            <MotionStage onOpen={onOpen} wire={full && (power === 'dark' || power === 'opening')} />
+            <MotionStage onOpen={onOpen} wire={!lite && (power === 'dark' || power === 'opening')} />
             <Feed />
           </>
         )}
