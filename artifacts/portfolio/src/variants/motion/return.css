@@ -1,6 +1,6 @@
 /*
  * The return visit (docs/BRIEF-room-motion.md): the full opening at a quicker pace, about 3 seconds.
- * Every later visit in a browser session plays the same opening as the first one (power.css): the dark room in
+ * Every later visit in a browser session, on a desktop (a phone always plays the mobile opening, lite.css), plays the same opening as the first one (power.css): the dark room in
  * linework, power leaving the loading bar as a head with a tail, down the feed and along the traces, each object
  * coming on as its trace arrives and its label after it. These are the same rules, not a second set: the root
  * carries data-b exactly as in the full opening, and this file only changes how fast they run.

@@ -150,12 +150,15 @@ describe('a first visit on a phone or touch screen', () => {
     expect(room()).not.toHaveAttribute('data-lite');
   });
 
-  it('still plays the return opening (the full one, quicker) on a later visit', () => {
+  it('plays the mobile opening on a later visit too, never the return one', () => {
     stubAnimations();
     stubMedia((query) => query === MOBILE_QUERY);
     markOpeningSeen();
     render(<MotionRoom motion="b" />);
-    expect(room()).toHaveAttribute('data-opening', 'return');
+    expect(room()).toHaveAttribute('data-opening', 'mobile');
+    expect(room()).toHaveAttribute('data-lite', 'dark');
+    expect(room()).not.toHaveAttribute('data-b');
+    expect(linework()).toBeNull();
   });
 });
 

@@ -1,8 +1,8 @@
 /*
  * Power-on's mobile opening (docs/BRIEF-room-motion.md). The room's root says which opening it plays:
  *   data-opening='full'    the 4-second opening (power.css): first visit, on a desktop;
- *   data-opening='mobile'  about 2.5 seconds: first visit, on a phone or a touch screen (this file);
- *   data-opening='return'  the full opening at a quicker pace, about 3 seconds: later visits (return.css).
+ *   data-opening='mobile'  about 2.5 seconds: a phone or a touch screen, first visit or not (this file);
+ *   data-opening='return'  the full opening at a quicker pace, about 3 seconds: later visits, desktop only (return.css).
  *
  * This file is the mobile opening and nothing else. While it waits or runs, the root carries data-lite ('dark',
  * then 'opening') and NOT data-b, so none of power.css's opening applies; when it is over the root carries

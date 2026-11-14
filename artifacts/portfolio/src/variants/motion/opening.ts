@@ -1,13 +1,14 @@
 /**
- * Which opening Power-on plays (docs/BRIEF-room-motion.md): the full 4-second one on the first visit in a browser
- * session, the same opening at a quicker pace on later visits ('return', about 3 seconds, return.css) and, on a phone, a simpler one ('mobile', about 2.5 seconds, lite.css).
+ * Which opening Power-on plays (docs/BRIEF-room-motion.md): the full 4-second one on a desktop's first visit in a browser
+ * session, the same opening at a quicker pace on its later visits ('return', about 3 seconds, return.css; desktop only) and, on a phone or touch screen,
+ * always a simpler one ('mobile', about 2.5 seconds, lite.css), first visit or not.
  * "Session" is sessionStorage: it survives a reload and in-app navigation in the tab, and a new tab starts afresh.
  */
 export type OpeningKind = 'full' | 'mobile' | 'return';
 
 const KEY = 'rm-power-on-seen';
 
-/** A phone or a touch screen: a narrow window, or no hover. Decides which first-visit opening plays. */
+/** A phone or a touch screen: a narrow window, or no hover. Always plays the mobile opening. */
 export const MOBILE_QUERY = '(max-width: 600px), (hover: none)';
 
 export const isMobile = (): boolean => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(MOBILE_QUERY).matches;
@@ -38,4 +39,4 @@ export const forgetOpeningSeen = (): void => {
 };
 
 export const pickOpening = ({ seen, mobile }: { seen: boolean; mobile: boolean }): OpeningKind =>
-  seen ? 'return' : mobile ? 'mobile' : 'full';
+  mobile ? 'mobile' : seen ? 'return' : 'full';

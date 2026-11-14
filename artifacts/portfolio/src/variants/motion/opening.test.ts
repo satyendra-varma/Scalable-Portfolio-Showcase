@@ -10,11 +10,11 @@ afterEach(() => {
 });
 
 describe('which opening plays', () => {
-  it('is the full one on a first visit on a desktop, the mobile one on a first visit on a phone, and the short one on any return', () => {
+  it('is the full one on a first visit on a desktop, the quicker one on a desktop return, and the mobile one on a phone whether or not it has been seen', () => {
     expect(pickOpening({ seen: false, mobile: false })).toBe('full');
     expect(pickOpening({ seen: false, mobile: true })).toBe('mobile');
     expect(pickOpening({ seen: true, mobile: false })).toBe('return');
-    expect(pickOpening({ seen: true, mobile: true })).toBe('return');
+    expect(pickOpening({ seen: true, mobile: true })).toBe('mobile');
   });
 });
 
