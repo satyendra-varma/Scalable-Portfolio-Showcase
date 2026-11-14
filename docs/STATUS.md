@@ -1,13 +1,13 @@
 # Status — the Power-on room is the home page
 
-Updated on 2026-11-14, after the font browser test was fixed (see "The first CI run" below). Before that: 2026-11-13, the owner's fifth brief of that day: Power-on is chosen, finished, checked by the owner in the browser and green in CI, so it becomes the real home page, and the content now carries the CRM facts the owner confirmed with their lead. The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
+Updated on 2026-11-14, after the font browser test was fixed and the Space Grotesk preload was replaced by a load after the opening (see "The first CI run" below). Before that: 2026-11-13, the owner's fifth brief of that day: Power-on is chosen, finished, checked by the owner in the browser and green in CI, so it becomes the real home page, and the content now carries the CRM facts the owner confirmed with their lead. The original brief, the owner's decisions and the **working rules from 13 November** are in `docs/BRIEF-room-motion.md`. Read those rules before doing anything else.
 
-**No model has looked at this job's changes in a browser.** By the working rules the owner checks the page and reports. Two exceptions, both asked for by the owner: the scripted performance measurement below, from the earlier job, and one headless run of `e2e/room.spec.ts` on 2026-11-14. Everything about how the page looks is what the code is written to do.
+**No model has looked at this job's changes in a browser.** By the working rules the owner checks the page and reports. Two exceptions, both asked for by the owner: the scripted performance measurement below, from the earlier job, and headless runs of the one spec `e2e/room.spec.ts` on 2026-11-14. Everything about how the page looks is what the code is written to do.
 
 ## Where things are
 
-- **Branch**: `feature/room-motion`. The owner pushed it for the CI run of 2026-11-14. The font fix `5d097b6` and the status commit after it are local, **not pushed**. Nothing is merged.
-- **State of the tip**: typecheck passes, the build passes, and **all 157 unit tests pass**. `e2e/room.spec.ts` passes locally, headless, on desktop and mobile (20 of 20). The other two browser specs were not run locally; they passed in CI.
+- **Branch**: `feature/room-motion`. The owner pushed it for the CI run of 2026-11-14. Everything from the font fix `5d097b6` onward is local, **not pushed**. Nothing is merged.
+- **State of the tip**: typecheck passes, the build passes, and **all 165 unit tests pass**. `e2e/room.spec.ts` passes locally, headless, on desktop and mobile (20 of 20). The other two browser specs were not run locally; they passed in CI.
 
 ### Routes
 
@@ -29,6 +29,7 @@ Updated on 2026-11-14, after the font browser test was fixed (see "The first CI 
 | `929bdf4` | The Power-on room at `/`; the earlier room at `/room-original`; the switcher and Replay removed. |
 | `a1831eb` | PostgreSQL is CRM evidence in the Skills panel; React stays a general skill. |
 | `5d097b6` | Browser test: the font check now matches the fonts each page really uses. |
+| `5633b7f` | Space Grotesk is no longer preloaded; the room loads it once the opening has finished. |
 
 ### The first CI run, and the font test (2026-11-14)
 
@@ -37,7 +38,13 @@ CI ran the browser specs for the first time since the Power-on room became the h
 - **Cause**: the test opened `/` and expected all three typefaces to be loaded. The Power-on room's first screen uses only JetBrains Mono (the name, the room's labels) and DM Sans (the positioning line and body text). Nothing on it uses Space Grotesk, so the browser never loads it there. The test was written for the earlier room, whose name is in Space Grotesk. The page is as the owner approved it; the test was out of date.
 - **Space Grotesk is still used**: on the home page, once a panel or the list view opens (panel titles, card titles, System Explorer headings, the list view's section headings); on `/room-original` from the first screen; and in the names of two of the `/room-concepts` rooms (Exploded, Isometric).
 - **Fix** (`e2e/room.spec.ts` only; no page changed): two tests. On the home page: no Google Fonts requests, every font request is one of the site's own `/fonts/` files, DM Sans and JetBrains Mono load, and Space Grotesk loads once the list view shows headings that use it. On `/room-original`: all three load on the first screen.
-- **Found, not changed**: `index.html` still preloads all three font files for every page. So the home page downloads the Space Grotesk file (22 kB) at load although its first screen does not use it. That was right when the earlier room was the home page. Dropping the preload would save the download at load; keeping it means the first panel's headings never flash in a fallback font. It is the owner's call, and the test passes either way.
+- **Found**: `index.html` preloaded all three font files for every page, so the home page downloaded the Space Grotesk file (22 kB) at load although its first screen does not use it. That was right when the earlier room was the home page.
+- **The owner's decision, done in `5633b7f`**: the Space Grotesk preload is dropped (DM Sans and JetBrains Mono keep theirs). The room asks for the font once it is on: when the opening finishes or is skipped, and straight away in the still room that reduced motion gets. The request waits for the browser to be idle (2 seconds at most), so it does not land on the frame in which the room goes live. The first panel or list view should then open with its headings already in Space Grotesk.
+  - Where: `src/lib/fonts.ts` (`warmDisplayFont`), called from one effect in `MotionRoom.tsx` that reads the opening's phase. The opening's own code and stylesheets are untouched.
+  - If a visitor opens a panel within a moment of the room going live, before the file has arrived, the headings still swap from the fallback font once, as any web font does. The fallback is sized to match, so nothing moves.
+  - `/room-original` and the concepts now load Space Grotesk without a preload. Their names are set in it, so on a slow connection the name may show in the fallback font for a moment first. Not looked at.
+  - The home-page browser test now checks three things: the file is not requested before the room is on, the font arrives by itself afterwards with nothing opened, and every font request is one of the site's own files.
+  - The routing unit tests (`App.test.tsx`) began to time out once the suite grew: a lazy page's first load took longer than the default one-second wait. They now wait up to 10 seconds for a lazy page and wait for the robots mark instead of reading it at once. Three full runs in a row pass.
 
 ### Content (Part 1)
 
@@ -169,10 +176,9 @@ Two things to know. The "4 second" opening measures about 4.9 seconds from power
 ## Left
 
 1. The owner's look at the five points above, and any fixes from it.
-2. Push: only when the owner says. The font fix (`5d097b6`) is local; the next push shows whether CI is green on both systems.
+2. Push: only when the owner says. The font fix (`5d097b6`) and the preload change (`5633b7f`) are local; the next push shows whether CI is green on both systems.
 3. The owner's answer on an accessibility scan for the home page.
-4. `index.html` still carries the older static title and description ("Resume-backed portfolio of..."), which a crawler that does not run scripts would read. The page sets the right ones as soon as it loads. Not changed, because the wording is content and the brief did not give any. The same file preloads the Space Grotesk font, which the home page's first screen no longer uses (see "The first CI run" above): keep or drop is the owner's call.
-5. Merge to `main`: only when the owner says.
+4. `index.html` still carries the older static title and description ("Resume-backed portfolio of..."), which a crawler that does not run scripts would read. The page sets the right ones as soon as it loads. Not changed, because the wording is content and the brief did not give any.5. Merge to `main`: only when the owner says.
 
 ## Working in this copy
 
