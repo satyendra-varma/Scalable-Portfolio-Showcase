@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
@@ -63,17 +63,57 @@ test('earlier room (/room-original): panels, filters, Explorer and accessible al
   expect(await page.getByTestId('button-node-1').evaluate(el => getComputedStyle(el).animationName)).toBe('none');
 });
 
-test('fonts are self-hosted: no Google Fonts requests, all three faces load', async ({ page }) => {
+// Two font tests, because the faces are not all used at once on the home page: its first screen
+// uses only DM Sans and JetBrains Mono, and Space Grotesk loads there once a panel or the list view
+// shows. The earlier room uses all three faces on its first screen.
+function recordFontRequests(page: Page) {
   const external: string[] = [];
+  const fonts: string[] = [];
   page.on('request', (req) => {
     if (/fonts\.(googleapis|gstatic)\.com/.test(req.url())) external.push(req.url());
+    if (req.resourceType() === 'font') fonts.push(req.url());
   });
+  return { external, fonts };
+}
+
+function expectSelfHosted(page: Page, rec: { external: string[]; fonts: string[] }) {
+  expect(rec.external).toEqual([]);
+  const origin = new URL(page.url()).origin;
+  for (const url of rec.fonts) {
+    const u = new URL(url);
+    expect(u.origin).toBe(origin);
+    expect(u.pathname).toContain('/fonts/');
+  }
+}
+
+test('fonts on the home page are self-hosted: no Google Fonts requests, and the faces it uses load', async ({ page }) => {
+  const rec = recordFontRequests(page);
   await page.goto('/');
+  await expect(page.getByTestId('room-motion')).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
-  expect(external).toEqual([]);
-  const loaded = await page.evaluate(() =>
-    ['DM Sans', 'Space Grotesk', 'JetBrains Mono'].map((f) => document.fonts.check(`16px "${f}"`)));
-  expect(loaded).toEqual([true, true, true]);
+  expectSelfHosted(page, rec);
+  for (const face of ['DM Sans', 'JetBrains Mono']) {
+    await expect.poll(() => page.evaluate((f) => document.fonts.check(`16px "${f}"`), face)).toBe(true);
+  }
+  // The opening is skippable by a click, so retry; the button is a toggle, so click only while the list is not on (aria-pressed).
+  const toggle = page.getByTestId('button-list-view');
+  await expect(async () => {
+    if ((await toggle.getAttribute('aria-pressed')) !== 'true') await toggle.click({ timeout: 2000 });
+    await expect(page.getByTestId('list-sections')).toBeVisible({ timeout: 1000 });
+  }).toPass();
+  await expect.poll(() => page.evaluate(() => document.fonts.check('700 26px "Space Grotesk"'))).toBe(true);
+  expectSelfHosted(page, rec);
+});
+
+test('fonts on the earlier room (/room-original) are self-hosted: all three faces load on its first screen', async ({ page }) => {
+  const rec = recordFontRequests(page);
+  await page.goto('/room-original');
+  await expect(page.getByTestId('text-name')).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  expectSelfHosted(page, rec);
+  for (const face of ['DM Sans', 'Space Grotesk', 'JetBrains Mono']) {
+    await expect.poll(() => page.evaluate((f) => document.fonts.check(`16px "${f}"`), face)).toBe(true);
+  }
 });
 
 test('no resume PDF is published until the clean copy exists', async ({ page }) => {
