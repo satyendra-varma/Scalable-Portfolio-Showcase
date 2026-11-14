@@ -4,6 +4,13 @@ import { describe, expect, it } from 'vitest';
 
 // Room motion rule: animate transform and opacity only (smooth, and safe to switch off).
 const ALLOWED = new Set(['transform', 'opacity']);
+
+/**
+ * The one named exception to the rule. The owner allowed /room-motion's opening to draw its lines (docs/BRIEF-room-motion.md,
+ * decision 8): in this file only, the keyframes with this name may animate this property. Nothing else is excused:
+ * not another file, another keyframe, another property, and never a transition.
+ */
+const LINE_DRAWING = { file: 'variants/motion/power.css', keyframes: 'rm-b-draw', prop: 'stroke-dashoffset' } as const;
 const roots = [resolve(__dirname), resolve(__dirname, '../variants')].filter(existsSync);
 
 const cssFiles = (dir: string): string[] =>
@@ -58,6 +65,12 @@ function transitionProps(css: string) {
   return found;
 }
 
+/** What a stylesheet (given by its path under src/) animates in keyframes beyond transform and opacity, minus the named exception. */
+const keyframeOffences = (file: string, css: string) =>
+  keyframeProps(css).filter(
+    (k) => !ALLOWED.has(k.prop) && !(file === LINE_DRAWING.file && k.name === LINE_DRAWING.keyframes && k.prop === LINE_DRAWING.prop),
+  );
+
 describe('room motion uses transform and opacity only', () => {
   const files = roots.flatMap(cssFiles);
 
@@ -70,7 +83,7 @@ describe('room motion uses transform and opacity only', () => {
     const css = strip(readFileSync(file, 'utf8'));
 
     it(`${name}: keyframes animate only transform/opacity`, () => {
-      const bad = keyframeProps(css).filter((k) => !ALLOWED.has(k.prop));
+      const bad = keyframeOffences(name, css);
       expect(bad).toEqual([]);
     });
 
@@ -79,4 +92,29 @@ describe('room motion uses transform and opacity only', () => {
       expect(bad).toEqual([]);
     });
   }
+});
+
+describe('the line-drawing exception', () => {
+  const draw = '@keyframes rm-b-draw { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }';
+
+  it('is still in use: power.css really animates stroke-dashoffset in rm-b-draw', () => {
+    const css = strip(readFileSync(resolve(__dirname, '..', LINE_DRAWING.file), 'utf8'));
+    expect(keyframeProps(css)).toContainEqual({ name: LINE_DRAWING.keyframes, prop: LINE_DRAWING.prop });
+    expect(keyframeOffences(LINE_DRAWING.file, css)).toEqual([]);
+  });
+
+  it('excuses that keyframe in that file and nothing else', () => {
+    expect(keyframeOffences(LINE_DRAWING.file, draw)).toEqual([]);
+    // the same keyframe in any other file is rejected
+    expect(keyframeOffences('variants/motion/lite.css', draw)).toHaveLength(2);
+    expect(keyframeOffences('styles/room.css', draw)).toHaveLength(2);
+    // another keyframe name, or another property, in the excused file is rejected
+    expect(keyframeOffences(LINE_DRAWING.file, draw.replace('rm-b-draw', 'rm-b-other'))).toHaveLength(2);
+    expect(keyframeOffences(LINE_DRAWING.file, '@keyframes rm-b-draw { from { stroke-dasharray: 0; } to { top: 0; } }')).toHaveLength(2);
+  });
+
+  it('never excuses a transition', () => {
+    expect(transitionProps('.x { transition: stroke-dashoffset .3s; }')).toEqual(['stroke-dashoffset']);
+    expect(transitionProps('.x { transition-property: stroke-dashoffset; }')).toEqual(['stroke-dashoffset']);
+  });
 });

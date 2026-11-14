@@ -14,9 +14,12 @@ const SHAPES = 'polygon, polyline, path, rect, circle, ellipse, text, stop';
 /** The hybrid renames Exploded's xd- classes and ids to rm-; undo that so the two drawings can be compared. */
 const normal = (value: string) => value.replace(/\brm-/g, 'xd-');
 
-/** Every drawn element in document (paint) order: its tag, attributes, text, and the transforms of its groups. */
-function drawn(root: Element) {
-  return [...root.querySelectorAll(SHAPES)].map((el) => {
+/**
+ * Every drawn element in document (paint) order: its tag, attributes, text, and the transforms of its groups.
+ * Elements matching `leaveOut` (or inside one that does) are not listed.
+ */
+function drawn(root: Element, leaveOut: string) {
+  return [...root.querySelectorAll(SHAPES)].filter((el) => !el.closest(leaveOut)).map((el) => {
     const attrs = [...el.attributes].map((a) => `${a.name}=${normal(a.value)}`).sort().join(' ');
     const transforms: string[] = [];
     for (let p = el.parentElement; p && p !== root; p = p.parentElement) {
@@ -28,26 +31,42 @@ function drawn(root: Element) {
   });
 }
 
+/**
+ * What the hybrid adds to Exploded's drawing, by layer and by precise class: the wiring on the wall and its heads, the
+ * glows behind the objects, the flows and the typing cover, and, on the floor, the lit traces, pads, rings and heads.
+ */
+const HYBRID_ONLY = [
+  'svg[data-layer="wallwire"]', 'svg[data-layer="bloom"]', 'svg[data-layer="flows"]',
+  '.rm-w', '.rm-heads', '.rm-pad', '.rm-pad-ring',
+].join(', ');
+/**
+ * What Exploded draws that the hybrid replaces with that wiring: its three live traces (the dim decorative run
+ * stays and is compared), its four pads, and its four travelling packets (now the flows, which are not drawn at rest).
+ */
+const EXPLODED_REPLACED = 'path.xd-trace:not(.xd-trace-dim), .xd-pad, .xd-pk';
+
 describe('the hybrid room', () => {
   it('draws exactly what Exploded draws, element for element and in the same paint order', () => {
     const exploded = render(<ExplodedScene onOpen={() => {}} />);
-    const original = drawn(exploded.container.querySelector('.xd-svg')!);
+    const original = drawn(exploded.container.querySelector('.xd-svg')!, EXPLODED_REPLACED);
     exploded.unmount();
 
     const hybrid = render(<MotionStage onOpen={() => {}} />);
     const stage = hybrid.container.querySelector('.rm-stage')!;
     // Exploded keeps its gradients and patterns at the top of its one svg; the hybrid renders them once, first.
-    const split = [...drawn(stage.querySelector('.rm-defs')!), ...drawn(stage.querySelector('.rm-canvas')!)];
+    const split = [...drawn(stage.querySelector('.rm-defs')!, HYBRID_ONLY), ...drawn(stage.querySelector('.rm-canvas')!, HYBRID_ONLY)];
 
     expect(original.length).toBeGreaterThan(150);
     expect(split).toEqual(original);
+    // the hybrid's own additions are really there, so the leave-out list is not hiding an empty set
+    expect(stage.querySelectorAll('.rm-w-lit, .rm-pad, .rm-head-core, .rm-bloom, .rm-flow').length).toBeGreaterThan(20);
   });
 
-  it('is cut into thirteen layers, back to front, each object on a layer of its own', () => {
+  it('is cut into fifteen layers, back to front, each object on a layer of its own', () => {
     const { container } = render(<MotionStage onOpen={() => {}} />);
     const svgs = [...container.querySelectorAll<SVGElement>('.rm-canvas > svg.rm-layer')];
     expect(svgs.map((s) => s.dataset.layer)).toEqual(
-      ['light', 'floor', 'traces', 'shadows', 'guides', 'wall', 'shelf', 'frame', 'cabinet', 'mailbox', 'desk', 'monitor', 'packets'],
+      ['light', 'floor', 'traces', 'shadows', 'guides', 'wall', 'wallwire', 'bloom', 'shelf', 'frame', 'cabinet', 'mailbox', 'desk', 'monitor', 'flows'],
     );
     expect(layers.map((l) => l.id)).toEqual(svgs.map((s) => s.dataset.layer));
     expect(Object.fromEntries(svgs.filter((s) => s.dataset.object).map((s) => [s.dataset.layer, s.dataset.object]))).toEqual({
