@@ -1,18 +1,17 @@
 import { Link } from 'wouter';
-import { MOTIONS, DEFAULT_SPEED, SPEEDS, motionHref, type MotionId, type SpeedId } from './options';
+import { MOTIONS, motionHref, type MotionId } from './options';
 import './switcher.css';
 
 type Props = {
   shownMotion: MotionId;
   reducedMotion: boolean;
-  speed?: SpeedId;
   collapsed: boolean;
   onToggle: () => void;
   onReplay?: () => void;
 };
 
-/** Fixed switcher for /room-motion: the motion concept. The choice lives in the query string. */
-export function MotionSwitcher({ shownMotion, reducedMotion, speed = DEFAULT_SPEED, collapsed, onToggle, onReplay }: Props) {
+/** Fixed switcher for /room-motion: Power-on or Off, plus Replay. The choice lives in the query string. */
+export function MotionSwitcher({ shownMotion, reducedMotion, collapsed, onToggle, onReplay }: Props) {
   const motion = MOTIONS.find((m) => m.id === shownMotion) ?? MOTIONS[MOTIONS.length - 1];
 
   return (
@@ -48,7 +47,7 @@ export function MotionSwitcher({ shownMotion, reducedMotion, speed = DEFAULT_SPE
                   <span className="rms-link" aria-disabled="true" data-testid={`link-motion-${m.id}`}>{inner}</span>
                 ) : (
                   <Link
-                    href={motionHref(m.id, speed)}
+                    href={motionHref(m.id)}
                     replace
                     className="rms-link"
                     aria-current={m.id === shownMotion ? 'true' : undefined}
@@ -62,23 +61,7 @@ export function MotionSwitcher({ shownMotion, reducedMotion, speed = DEFAULT_SPE
           })}
         </ul>
         {shownMotion === 'b' && !reducedMotion && (
-          <div className="rms-speed" data-testid="speed-row">
-            <span className="rms-label">Opening</span>
-            <ul className="rms-speeds" aria-label="Opening speed">
-              {SPEEDS.map((s) => (
-                <li key={s.id}>
-                  <Link
-                    href={motionHref('b', s.id)}
-                    replace
-                    className="rms-link rms-speed-link"
-                    aria-current={s.id === speed ? 'true' : undefined}
-                    data-testid={`link-speed-${s.id}`}
-                  >
-                    {s.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <div className="rms-replay-row" data-testid="replay-row">
             <button type="button" className="rms-replay" onClick={onReplay} data-testid="button-replay">Replay</button>
           </div>
         )}

@@ -19,8 +19,8 @@
  * to draw lines (allowed for this file only by src/styles/motion.test.ts).
  */
 .rv.rm[data-motion='b'] {
-  --rm-travel: 3.7;    /* seconds from the loading bar to the furthest object: the 6-second opening */
-  --rm-k: 1;           /* how long each object takes to come on, against the 6-second opening */
+  --rm-travel: 2.3;    /* seconds from the loading bar to the furthest object: the 4-second opening */
+  --rm-k: .8;          /* how long each object takes to come on, in the 4-second opening */
   --rm-t0: calc(.45s * var(--rm-k)); /* the bar releases its charge, then power leaves it */
   --rm-feed: 320;      /* the feed's length from the loading bar to the room, in drawing units (Feed measures it) */
   --rm-speed: calc((var(--rm-feed) + var(--rm-reach, 1442.5)) / var(--rm-travel)); /* drawing units a second */
@@ -30,8 +30,6 @@
   --rm-spring: linear(0, .3 7%, .7 16%, .99 26%, 1.085 36%, 1.06 46%, 1.012 60%, .995 76%, 1);
   --rm-out: cubic-bezier(.2, .8, .2, 1);
 }
-.rv.rm[data-speed='4'] { --rm-travel: 2.3; --rm-k: .8; }  /* the 4-second opening */
-.rv.rm[data-speed='8'] { --rm-travel: 5.2; --rm-k: 1.2; } /* the 8-second opening */
 .rv.rm[data-b='dark'] { --rm-play: paused; }
 /* When this element's trace arrives. Declared on each element, because it depends on the element's own --at. */
 .rm[data-motion='b'] :is(.rm-stage, .rm-stage *, .rm-feed, .rm-feed *) { --rm-arrive: calc(var(--rm-t0) + (var(--rm-feed) + var(--at, 0)) / var(--rm-speed) * 1s); }
