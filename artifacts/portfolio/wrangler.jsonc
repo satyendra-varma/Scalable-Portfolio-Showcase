@@ -2,7 +2,7 @@
 // no Worker script (no "main"), and the .NET API is not deployed.
 // The Worker name must equal the Worker name in Cloudflare's dashboard.
 {
-  "name": "scalable-portfolio-showcase",
+  "name": "satyendra-varma",
   "compatibility_date": "2026-11-14",
   "assets": {
     // Where `vite build` writes the site (see build.outDir in vite.config.ts).
