@@ -1,0 +1,15 @@
+// Cloudflare Workers config: the built site is served as static assets. There is
+// no Worker script (no "main"), and the .NET API is not deployed.
+// The Worker name must equal the Worker name in Cloudflare's dashboard.
+{
+  "name": "satyendra-varma",
+  "compatibility_date": "2026-11-14",
+  "assets": {
+    // Where `vite build` writes the site (see build.outDir in vite.config.ts).
+    // Relative to this file.
+    "directory": "./dist/public",
+    // A path that is not a file (/room-original, /room-concepts/...) gets
+    // index.html with 200, so a refresh or a shared link reaches the router.
+    "not_found_handling": "single-page-application"
+  }
+}
