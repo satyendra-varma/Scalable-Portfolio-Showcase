@@ -88,6 +88,8 @@ function expectSelfHosted(page: Page, rec: { external: string[]; fonts: string[]
 }
 
 test('fonts on the home page are self-hosted, and the heading face loads by itself after the opening', async ({ page }) => {
+  // Two waits of up to 20 s each (the opening, then the font) can add up on a slow runner: give this one test the slow-test budget.
+  test.slow();
   const rec = recordFontRequests(page);
   await page.goto('/');
   await expect(page.getByTestId('room-motion')).toBeVisible();
@@ -103,14 +105,13 @@ test('fonts on the home page are self-hosted, and the heading face loads by itse
     fetched: performance.getEntriesByType('resource').some((e) => e.name.includes('space-grotesk')),
   }));
   expect(early.on || !early.fetched).toBe(true);
-  // The face arrives by itself after the opening (about 5 s on a desktop, then an idle callback), with nothing opened.
+  // The room goes on when the opening ends (about 5 s on a desktop; data-b is 'on'). Wait for that settled state rather than
+  // racing the animation, then the face must arrive by itself (an idle callback), with nothing opened.
+  await expect(page.getByTestId('room-motion')).toHaveAttribute('data-b', 'on', { timeout: 20_000 });
   await expect.poll(() => page.evaluate(() => document.fonts.check('700 26px "Space Grotesk"')), { timeout: 20_000 }).toBe(true);
-  // The opening is skippable by a click, so retry; the button is a toggle, so click only while the list is not on (aria-pressed).
-  const toggle = page.getByTestId('button-list-view');
-  await expect(async () => {
-    if ((await toggle.getAttribute('aria-pressed')) !== 'true') await toggle.click({ timeout: 2000 });
-    await expect(page.getByTestId('list-sections')).toBeVisible({ timeout: 1000 });
-  }).toPass();
+  // The room is settled, so one click opens the list view.
+  await page.getByTestId('button-list-view').click();
+  await expect(page.getByTestId('list-sections')).toBeVisible();
   expect(await page.evaluate(() => document.fonts.check('700 26px "Space Grotesk"'))).toBe(true);
   expectSelfHosted(page, rec);
 });
